@@ -28,7 +28,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 # Application definition
 LOCAL_APPS = [
     'users',
-    'profile',
+    'profiles',
 ]
 
 THIRD_PARTY_APPS = [
