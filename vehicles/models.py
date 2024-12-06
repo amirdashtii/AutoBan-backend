@@ -1,11 +1,12 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.conf import settings
+from uuid import uuid4
 
 from .validation import VehiclePlateValidator
 
 
-class VehicleType(models.Model):
+class Type(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self) -> str:
@@ -16,26 +17,31 @@ class VehicleType(models.Model):
 
 
 class Brand(models.Model):
-    vehicle_type = models.ForeignKey(
-        VehicleType,
-        on_delete=models.CASCADE,
-        related_name='brand'
-    )
     name = models.CharField(max_length=255)
+    type = models.ForeignKey(
+        Type,
+        on_delete=models.CASCADE,
+        related_name='brands'
+    )
 
     class Meta:
         ordering = ['name']
-        unique_together = ('vehicle_type', 'name')
+        unique_together = ('type', 'name')
 
     def __str__(self) -> str:
-        return f"{self.name} ({self.vehicle_type.name})"
+        return f"{self.name} ({self.type.name})"
 
 
 class Model(models.Model):
+    type = models.ForeignKey(
+        Type,
+        on_delete=models.CASCADE,
+        related_name='models'
+    )
     brand = models.ForeignKey(
         Brand,
         on_delete=models.CASCADE,
-        related_name='model'
+        related_name='models'
     )
     name = models.CharField(max_length=255)
 
@@ -50,6 +56,7 @@ class Model(models.Model):
 
 
 class Vehicle(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4)
     name = models.CharField(max_length=255,
                             null=True,
                             blank=True
@@ -57,12 +64,12 @@ class Vehicle(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='vehicle'
+        related_name='vehicles'
     )
     model = models.ForeignKey(
         Model,
         on_delete=models.CASCADE,
-        related_name='vehicle'
+        related_name='vehicles'
     )
     color = models.CharField(max_length=255, null=True, blank=True)
     year = models.IntegerField(null=True,
@@ -81,7 +88,7 @@ class Vehicle(models.Model):
         blank=True,
         validators=[
             MinValueValidator(0),
-            MaxValueValidator(99999)
+            MaxValueValidator(9999999)
         ])
     insurance_date = models.DateField(null=True, blank=True)
 

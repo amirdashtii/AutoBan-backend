@@ -8,33 +8,31 @@ from urllib.parse import urlencode
 from . import models
 
 
-@admin.register(models.VehicleType)
-class VehicleTypeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'brand_count']
-    ordering = ['name']
+@admin.register(models.Type)
+class TypeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'brand_count']
     search_fields = ['name']
 
     @admin.display(ordering='brand_count')
-    def brand_count(self, vehicle_type):
+    def brand_count(self, type):
         url = (
             reverse('admin:vehicles_brand_changelist')
             + '?'
             + urlencode({
-                'vehicle_type__id': str(vehicle_type.id)
+                'type__id': str(type.id)
             }))
-        return format_html('<a href="{}">{}</a>', url, vehicle_type.brand_count)
+        return format_html('<a href="{}">{}</a>', url, type.brand_count)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(brand_count=Count('brand'))
+        return super().get_queryset(request).annotate(brand_count=Count('brands'))
 
 
 @admin.register(models.Brand)
 class BrandAdmin(admin.ModelAdmin):
-    autocomplete_fields = ['vehicle_type']
-    list_display = ['name', 'vehicle_type', 'model_count']
-    list_filter = ['vehicle_type']
-    ordering = ['name', 'vehicle_type']
-    search_fields = ['name']
+    autocomplete_fields = ['type']
+    list_display = ['id', 'name', 'type', 'type_id', 'model_count']
+    list_filter = ['type']
+    search_fields = ['name', 'type']
 
     @admin.display(ordering='model_count')
     def model_count(self, brand):
@@ -47,16 +45,16 @@ class BrandAdmin(admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>', url, brand.model_count)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(model_count=Count('model'))
+        return super().get_queryset(request).annotate(model_count=Count('models'))
 
 
 @admin.register(models.Model)
 class ModelAdmin(admin.ModelAdmin):
     autocomplete_fields = ['brand']
-    list_display = ['name', 'brand', 'vehicle_count']
-    list_filter = ['brand']
-    ordering = ['name', 'brand']
-    search_fields = ['name']
+    list_display = ['id', 'name', 'type', 'type_id',
+                    'brand', 'brand_id', 'vehicle_count']
+    list_filter = ['type', 'brand']
+    search_fields = ['name', 'type', 'brand']
 
     @admin.display(ordering='vehicle_count')
     def vehicle_count(self, model):
@@ -69,16 +67,16 @@ class ModelAdmin(admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>', url, model.vehicle_count)
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        return super().get_queryset(request).annotate(vehicle_count=Count('vehicle'))
+        return super().get_queryset(request).annotate(vehicle_count=Count('vehicles'))
 
 
 @admin.register(models.Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
     autocomplete_fields = ['user', 'model']
-    list_display = ['name', 'user', 'model', 'plate_number',
+    list_display = ['id', 'name', 'user', 'model', 'plate_number',
                     'color', 'year', 'mileage', 'insurance_date']
     list_filter = ['model']
     search_fields = ['name', 'plate_number',
                      'color', 'year', 'mileage', 'insurance_date']
-    ordering = ['name', 'model', 'plate_number',
+    ordering = ['id', 'name', 'model', 'plate_number',
                 'color', 'year', 'mileage', 'insurance_date']
