@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Service, OilChange
 
 
@@ -7,7 +8,6 @@ class OilChangeSerializer(serializers.ModelSerializer):
         model = OilChange
         fields = ['id', 'service', 'oil_type', 'oil_lifetime_distance', 'next_change_mileage',
                   'next_service_date', 'description']
-
 
 class UpdateOilChangeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,3 +32,11 @@ class UpdateServiceSerializer(serializers.ModelSerializer):
         fields = ['service_date', 'mileage', 'description']
 
 
+class VehicleServiceSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+    oil_change = OilChangeSerializer(read_only=True)
+
+    class Meta:
+        model = Service
+        fields = ['id', 'user', 'vehicle', 'service_date',
+                  'mileage', 'description', 'oil_change']
