@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from datetime import timedelta
 import os
 from .env import env, BASE_DIR
-    
+
 env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -30,6 +30,7 @@ LOCAL_APPS = [
     'users',
     'profiles',
     'vehicles',
+    'services',
 ]
 
 THIRD_PARTY_APPS = [
