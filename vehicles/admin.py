@@ -72,7 +72,7 @@ class ModelAdmin(admin.ModelAdmin):
 
 @admin.register(models.Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    autocomplete_fields = ['user', 'model']
+    autocomplete_fields = ['model']
     list_display = ['id', 'name', 'user', 'model', 'plate_number',
                     'color', 'year', 'mileage', 'insurance_date']
     list_filter = ['model']

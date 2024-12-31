@@ -11,9 +11,10 @@ from .serializers import ProfileSerializer
 class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
 
-    @action(detail=False, methods=['get', 'Put'], permission_classes=[IsAuthenticated])
+    # @action(detail=False, methods=['get', 'Put'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get', 'Put'])
     def me(self, request):
         (profile, created) = Profile.objects.get_or_create(user=request.user)
         if request.method == 'GET':

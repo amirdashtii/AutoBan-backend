@@ -1,23 +1,21 @@
 from django.contrib import admin
 from .models import Profile
 
-# Define a custom admin class for the User model
 
-
-class UserAdmin(admin.ModelAdmin):
-    # List of fields to display in the admin list view
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'first_name', 'last_name',
-                    'birth_date', 'email', 'gender')
+                    'birth_date', 'gender', 'user__username', 'user__email', 'user__phone_number')
+    list_filter = ('birth_date', 'gender', 'user__is_active', 'user__is_admin')
+    search_fields = ('first_name', 'last_name',
+                     'user__username', 'user__email', 'phone_number')
+    readonly_fields = ('user',)
 
-    # Enables filter options in the sidebar
-    list_filter = ('birth_date', 'gender')
-
-    # Fields to use as search criteria in the admin site
-    search_fields = ('first_name', 'last_name', 'email')
-
-    # Fields that are read-only in the detail view
-    readonly_fields = ()
-
-
-# Register the User model along with the custom admin class
-admin.site.register(Profile, UserAdmin)
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'first_name', 'last_name', 'birth_date', 'gender', 'user__username', 'user__phone_number', 'user__email')
+        }),
+        ('Permissions', {
+            'fields': ('user__is_active', 'user__is_admin')
+        }),
+    )
