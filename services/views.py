@@ -1,5 +1,6 @@
 from django.db.models import Count
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -13,6 +14,8 @@ from .serializers import (
 
 
 class ServiceViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
     def get_serializer_class(self):
         if self.request.method == 'PUT':
             return UpdateServiceSerializer
@@ -32,7 +35,7 @@ class ServiceViewSet(ModelViewSet):
 class VehicleServiceViewSet(ModelViewSet):
 
     serializer_class = VehicleServiceSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         vehicle_pk = self.kwargs['vehicle_pk']
@@ -44,6 +47,7 @@ class VehicleServiceViewSet(ModelViewSet):
 
 
 class OilChangeViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
     def get_serializer_class(self):
         if self.request.method == 'PUT':
             return UpdateOilChangeSerializer

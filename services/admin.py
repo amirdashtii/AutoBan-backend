@@ -9,7 +9,6 @@ class ServiceAdmin(admin.ModelAdmin):
                     'service_date', 'mileage', 'description']
     search_fields = ['user__username',
                      'vehicle__name', 'service_date', 'mileage']
-    readonly_fields = ['id']
     list_filter = ['service_date', 'vehicle__name']
 
     fieldsets = (
@@ -31,7 +30,6 @@ class OilChangeAdmin(admin.ModelAdmin):
     list_filter = ['oil_type', 'next_service_date']
     search_fields = ['oil_type', 'service__user__phone_number',
                      'service__user__username', 'service__vehicle__name']
-    readonly_fields = ['id']
 
     fieldsets = (
         (None, {

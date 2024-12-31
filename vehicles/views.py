@@ -1,8 +1,11 @@
 from django.db.models import Count
 
 from rest_framework import status
+from rest_framework.exceptions import NotAuthenticated
+from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
 
 from .models import Type, Brand, Model, Vehicle
 from .serializers import TypeSerializer, BrandSerializer, ModelSerializer, VehicleSerializer
@@ -12,9 +15,19 @@ class TypeViewSet(ModelViewSet):
     queryset = Type.objects.annotate(brand_count=Count('brands')).all()
     serializer_class = TypeSerializer
 
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAdminUser()]
+
 
 class BrandViewSet(ModelViewSet):
     serializer_class = BrandSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAdminUser()]
 
     def get_queryset(self):
         return Brand.objects.filter(type_id=self.kwargs['type_pk'])
@@ -30,6 +43,11 @@ class BrandViewSet(ModelViewSet):
 
 class ModelViewSet(ModelViewSet):
     serializer_class = ModelSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAdminUser()]
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -48,6 +66,12 @@ class ModelViewSet(ModelViewSet):
 
 class VehicleViewSet(ModelViewSet):
     serializer_class = VehicleSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Vehicle.objects.filter(user=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Vehicle.objects.filter(user=user)
+        else:
+            raise NotAuthenticated(
+                "Authentication credentials were not provided.")

@@ -49,6 +49,7 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
+    @property
     def is_staff(self):
         return self.is_admin
 
