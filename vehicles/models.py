@@ -1,12 +1,14 @@
+from uuid import uuid4
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.conf import settings
-from uuid import uuid4
 
+from autoban.common.models import BaseModel
 from .validation import VehiclePlateValidator
 
 
-class Type(models.Model):
+class Type(BaseModel):
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self) -> str:
@@ -16,7 +18,7 @@ class Type(models.Model):
         ordering = ['name']
 
 
-class Brand(models.Model):
+class Brand(BaseModel):
     name = models.CharField(max_length=255)
     type = models.ForeignKey(
         Type,
@@ -32,7 +34,7 @@ class Brand(models.Model):
         return f"{self.name} ({self.type.name})"
 
 
-class Model(models.Model):
+class Model(BaseModel):
     type = models.ForeignKey(
         Type,
         on_delete=models.CASCADE,
@@ -55,7 +57,7 @@ class Model(models.Model):
         ordering = ['name']
 
 
-class Vehicle(models.Model):
+class Vehicle(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4)
     name = models.CharField(max_length=255,
                             null=True,

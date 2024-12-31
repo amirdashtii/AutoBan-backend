@@ -2,8 +2,10 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from autoban.common.models import BaseModel
 
-class Profile(models.Model):
+
+class Profile(BaseModel):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(_("first name"), max_length=255, blank=True)
