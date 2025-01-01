@@ -71,6 +71,17 @@ AutoBan is a Django-based application for managing vehicles, services, and user 
 
 ## API Endpoints
 
+### user
+
+- `GET /api/auth/users/` - List all users (admin only)
+- `POST /api/auth/users/` - Create a new user
+- `GET /api/auth/users/me/` - Retrieve the authenticated user's profile
+- `PUT /api/auth/users/me/` - Update the authenticated user's profile
+- `DELETE /api/auth/users/me/` - Delete the authenticated user's profile
+- `GET /api/auth/users/{id}/` - Retrieve a specific user (admin only)
+- `PUT /api/auth/users/{id}/` - Update a specific user (admin only)
+- `DELETE /api/auth/users/{id}/` - Delete a specific user (admin only)
+
 ### Authentication
 
 - `POST /api/auth/jwt/create/` - Log in a user and obtain a token
