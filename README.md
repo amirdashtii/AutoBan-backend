@@ -73,33 +73,33 @@ AutoBan is a Django-based application for managing vehicles, services, and user 
 
 ### Authentication
 
-- `POST /auth/jwt/create/` - Log in a user and obtain a token
-- `POST /auth/jwt/refresh/` - Refresh the JWT token
-- `POST /auth/jwt/verify/` - Verify the JWT token
+- `POST /api/auth/jwt/create/` - Log in a user and obtain a token
+- `POST /api/auth/jwt/refresh/` - Refresh the JWT token
+- `POST /api/auth/jwt/verify/` - Verify the JWT token
 
 ### User Profiles
 
-- `GET /profiles/me/` - Retrieve the authenticated user's profile
-- `PUT /profiles/me/` - Update the authenticated user's profile
+- `GET /api/profiles/me/` - Retrieve the authenticated user's profile
+- `PUT /api/profiles/me/` - Update the authenticated user's profile
 
 ### Vehicles
 
-- `GET /vehicles/me/` - List all vehicles for the authenticated user
+- `GET /api/vehicles/me/` - List all vehicles for the authenticated user
 
 ### Vehicle Types
 
-- `GET /types/` - List all vehicle types
-- `GET /types/{id}/` - Retrieve a specific vehicle type
+- `GET /api/types/` - List all vehicle types
+- `GET /api/types/{id}/` - Retrieve a specific vehicle type
 
 ### Brands
 
-- `GET /types/{type_id}/brands/` - List all brands for a specific vehicle type
-- `GET /types/{type_id}/brands/{id}/` - Retrieve a specific brand for a specific vehicle type
+- `GET /api/types/{type_id}/brands/` - List all brands for a specific vehicle type
+- `GET /api/types/{type_id}/brands/{id}/` - Retrieve a specific brand for a specific vehicle type
 
 ### Models
 
-- `GET /types/{type_id}/brands/{brand_id}/models/` - List all models for a specific brand and vehicle type
-- `GET /types/{type_id}/brands/{brand_id}/models/{id}/` - Retrieve a specific model for a specific brand and vehicle type
+- `GET /api/types/{type_id}/brands/{brand_id}/models/` - List all models for a specific brand and vehicle type
+- `GET /api/types/{type_id}/brands/{brand_id}/models/{id}/` - Retrieve a specific model for a specific brand and vehicle type
 
 ## License
 
