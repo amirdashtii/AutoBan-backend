@@ -15,7 +15,7 @@ types_router.register('brands', views.BrandViewSet, basename='type-brands')
 # Nested Router for Models under Brands
 brands_router = routers.NestedDefaultRouter(
     types_router, 'brands', lookup='brand')
-brands_router.register('models', views.ModelViewSet, basename='brand-models')
+brands_router.register('models', views.VModelViewSet, basename='brand-models')
 
 # Combining URLs from different routers
 urlpatterns = [

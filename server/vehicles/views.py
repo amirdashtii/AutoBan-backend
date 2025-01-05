@@ -8,7 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 
 
 from .models import Type, Brand, Model, Vehicle
-from .serializers import TypeSerializer, BrandSerializer, ModelSerializer, VehicleSerializer
+from .serializers import TypeSerializer, BrandSerializer, ModelSerializer, VehicleSerializer, UpdateVehicleSerializer
 
 
 class TypeViewSet(ModelViewSet):
@@ -41,7 +41,7 @@ class BrandViewSet(ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
-class ModelViewSet(ModelViewSet):
+class VModelViewSet(ModelViewSet):
     serializer_class = ModelSerializer
 
     def get_permissions(self):
@@ -65,13 +65,21 @@ class ModelViewSet(ModelViewSet):
 
 
 class VehicleViewSet(ModelViewSet):
-    serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return UpdateVehicleSerializer
+        return VehicleSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated:
-            return Vehicle.objects.filter(user=user)
-        else:
-            raise NotAuthenticated(
-                "Authentication credentials were not provided.")
+        return Vehicle.objects.filter(user=self.request.user)
+
+    def get_serializer_context(self):
+        return {'request': self.request}

@@ -20,6 +20,7 @@ class ServiceViewSet(ModelViewSet):
         if self.request.method == 'PUT':
             return UpdateServiceSerializer
         return ServiceSerializer
+
     queryset = Service.objects.prefetch_related('oil_change').annotate(
         oil_change_count=Count('oil_change')).all()
 
@@ -48,6 +49,7 @@ class VehicleServiceViewSet(ModelViewSet):
 
 class OilChangeViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
+
     def get_serializer_class(self):
         if self.request.method == 'PUT':
             return UpdateOilChangeSerializer
@@ -55,6 +57,12 @@ class OilChangeViewSet(ModelViewSet):
 
     def get_queryset(self):
         return OilChange.objects.filter(service_id=self.kwargs['service_pk'])
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_serializer_context(self):
         return {'request': self.request}
