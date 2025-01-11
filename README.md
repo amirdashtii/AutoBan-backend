@@ -17,8 +17,8 @@ AutoBan is a Django-based application for managing vehicles, services, and user 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/amirdashtii/AutoBan.git
-   cd AutoBan
+   git clone https://github.com/amirdashtii/AutoBan-backend.git
+   cd AutoBan-backend
    ```
 
 2. Create a .env file based on the provided .env.example:
@@ -114,4 +114,4 @@ AutoBan is a Django-based application for managing vehicles, services, and user 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/amirdashtii/AutoBan/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/amirdashtii/AutoBan-backend/blob/main/LICENSE) file for details.
