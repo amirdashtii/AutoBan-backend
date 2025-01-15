@@ -64,6 +64,14 @@ AutoBan is a Django-based application for managing vehicles, services, and user 
    python manage.py runserver
    ```
 
+## Importing Initial Data
+
+To import initial data for vehicle types, brands, and models from CSV files, use the following command:
+
+   ```bash
+   python manage.py import_data --types data/types.csv --brands data/brands.csv --models data/models.csv
+   ```
+
 ## Usage
 
 - Access the admin panel at `http://127.0.0.1:8000/admin/` to manage vehicles, services, and user profiles.
