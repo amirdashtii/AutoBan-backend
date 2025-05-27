@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"errors"
+	"AutoBan/internal/errors"
 	"strings"
 
 	"github.com/google/uuid"
@@ -103,10 +103,10 @@ func NewUser(phoneNumber, password string) *User {
 // Validate validates the user entity
 func (u *User) Validate() error {
 	if u.PhoneNumber == "" {
-		return errors.New("phone number is required")
+		return errors.ErrPhoneNumberRequired
 	}
 	if u.Password == "" {
-		return errors.New("password is required")
+		return errors.ErrPasswordRequired
 	}
 	return nil
 }
