@@ -3,7 +3,8 @@ package user
 import (
 	"AutoBan/internal/domain/entity"
 	"AutoBan/internal/dto"
-	. "AutoBan/internal/errors"
+	"AutoBan/internal/errors"
+	"AutoBan/pkg/logger"
 )
 
 // UserUseCase interface defines the methods for user operations
@@ -33,7 +34,8 @@ func NewUserUseCase() UserUseCase {
 
 func (u *userUseCase) Register(userDTO dto.UserRegisterDTO) (*entity.User, error) {
 	if userDTO.PhoneNumber == "" || userDTO.Password == "" {
-		return nil, ErrPhoneNumberOrPasswordRequired
+		logger.Error(errors.ErrPhoneNumberOrPasswordRequired, "Phone number or password is required")
+		return nil, errors.ErrPhoneNumberOrPasswordRequired
 	}
 	// اینجا می‌توانید منطق ثبت‌نام را اضافه کنید
 	return &entity.User{PhoneNumber: userDTO.PhoneNumber, Password: userDTO.Password}, nil
@@ -44,7 +46,8 @@ func (u *userUseCase) Register(userDTO dto.UserRegisterDTO) (*entity.User, error
 
 func (u *userUseCase) Login(userDTO dto.UserLoginDTO) (*entity.User, error) {
 	if userDTO.PhoneNumber == "" || userDTO.Password == "" {
-		return nil, ErrPhoneNumberOrPasswordRequired
+		logger.Error(errors.ErrPhoneNumberOrPasswordRequired, "Phone number or password is required")
+		return nil, errors.ErrPhoneNumberOrPasswordRequired
 	}
 	// اینجا می‌توانید منطق ورود را اضافه کنید
 	return &entity.User{PhoneNumber: userDTO.PhoneNumber, Password: userDTO.Password}, nil

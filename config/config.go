@@ -2,7 +2,7 @@ package config
 
 import (
 	"AutoBan/internal/errors"
-	"log"
+	"AutoBan/pkg/logger"
 	"os"
 	"sync"
 
@@ -67,7 +67,7 @@ func loadConfig() (*Config, error) {
 
 	var config Config
 	if err := v.Unmarshal(&config); err != nil {
-		log.Println(err)
+		logger.Error(err, "Failed to unmarshal config")
 		return nil, errors.ErrLoadConfig
 	}
 	return &config, nil
@@ -98,7 +98,7 @@ func readYAMLConfig(v *viper.Viper) {
 	v.AddConfigPath(".")
 
 	if err := v.ReadInConfig(); err != nil {
-		log.Println(err)
+		logger.Info("Failed to read yaml config")
 	}
 }
 
@@ -109,7 +109,7 @@ func readEnvConfig(v *viper.Viper) {
 
 	err := v.ReadInConfig()
 	if err != nil {
-		log.Println(err)
+		logger.Info("Failed to read env config")
 	} else {
 		v.Set("environment", v.GetString("ENVIRONMENT"))
 

@@ -2,15 +2,16 @@ package main
 
 import (
 	"AutoBan/config"
-	"log"
+	"AutoBan/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	logger.InitLogger()
 	config, err := config.GetConfig()
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		logger.Fatalf("Failed to load config: %v", err)
 	}
 
 	r := gin.Default()
