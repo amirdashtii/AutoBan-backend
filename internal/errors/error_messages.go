@@ -7,4 +7,5 @@ var (
 	ErrPhoneNumberRequired           = New("phone number is required", "شماره تلفن الزامی است")
 	ErrPasswordRequired              = New("password is required", "رمز عبور الزامی است")
 	ErrPhoneNumberOrPasswordRequired = New("phone number and password are required", "شماره تلفن و رمز عبور الزامی است")
+	ErrLoadConfig                    = New("failed to load config", "خطای بارگذاری کانفیگ")
 )

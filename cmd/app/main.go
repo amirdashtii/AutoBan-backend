@@ -1,19 +1,19 @@
 package main
 
 import (
-	"net/http"
+	"AutoBan/config"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	config, err := config.GetConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
 	r := gin.Default()
 
-	r.GET("/lale", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "salam lale",
-		})
-	})
-
-	r.Run() // listen and serve on 0.0.0.0:8080
+	r.Run(config.Server.Address + ":" + config.Server.Port) // listen and serve on specified address and port}
 }
