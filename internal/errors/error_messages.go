@@ -4,8 +4,8 @@ package errors
 var (
 	ErrUserNotFound                  = New("User not found", "کاربر یافت نشد")
 	ErrInternalServerError           = New("Internal Server Error", "خطای داخلی سرور")
-	ErrPhoneNumberRequired           = New("phone number is required", "شماره تلفن الزامی است")
-	ErrPasswordRequired              = New("password is required", "رمز عبور الزامی است")
+	ErrInvalidPhoneNumber            = New("Invalid phone number", "شماره تلفن معتبر نیست")
+	ErrInvalidPassword               = New("password must be at least 8 characters long and include uppercase, lowercase, and numbers", "رمز عبور باید حداقل 8 کاراکتر باشد و شامل حروف بزرگ، کوچک و اعداد باشد")
 	ErrPhoneNumberOrPasswordRequired = New("phone number and password are required", "شماره تلفن و رمز عبور الزامی است")
 	ErrLoadConfig                    = New("failed to load config", "خطای بارگذاری کانفیگ")
 )
