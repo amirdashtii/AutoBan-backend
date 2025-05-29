@@ -2,6 +2,7 @@ package errors
 
 // تعریف پیام‌های خطا به صورت ثابت
 var (
+	ErrInvalidRequestBody            = New("Invalid request body", "درخواست معتبر نیست")
 	ErrUserNotFound                  = New("User not found", "کاربر یافت نشد")
 	ErrInternalServerError           = New("Internal Server Error", "خطای داخلی سرور")
 	ErrInvalidPhoneNumber            = New("Invalid phone number", "شماره تلفن معتبر نیست")

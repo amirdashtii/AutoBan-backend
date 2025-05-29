@@ -1,30 +1,35 @@
 # TODO List for AutoBan Project
 
 ## User Use Case
-- [x] Implement user registration logic
-- [x] Add data repository for user storage
-- [ ] Implement user login logic
-- [ ] Enhance input validation and error handling
+1. [x] Implement user registration logic
+2. [x] Add data repository for user storage
+3. [x] Implement user login logic
+4. [ ] Enhance input validation and error handling
 
 ## Auth Use Case
-- [ ] Define AuthUseCase interface
-- [ ] Implement JWT token generation
-- [ ] Implement token validation logic
+5. [ ] Define AuthUseCase interface
+6. [ ] Implement JWT token generation
+7. [ ] Implement token validation logic
 
 ## Admin Use Case
-- [ ] Define AdminUseCase interface
-- [ ] Implement admin user management
-- [ ] Add role-based access control
+8. [ ] Define AdminUseCase interface
+9. [ ] Implement admin user management
+10. [ ] Add role-based access control
 
 ## General
-- [ ] Write unit tests for user use case
-- [ ] Write unit tests for auth use case
-- [ ] Write unit tests for admin use case
-- [ ] Review and refactor code for best practices
+11. [ ] Write unit tests for user use case
+12. [ ] Write unit tests for auth use case
+13. [ ] Write unit tests for admin use case
+14. [ ] Review and refactor code for best practices
 
 ## Database Setup
-- [x] Set up PostgreSQL using Docker Compose
-- [x] Create a single instance of PostgreSQL for development
-- [x] Ensure the database setup is easy to test and mock
-- [ ] Write integration tests for database interactions
-- [ ] Document the database setup and usage in the README file 
+15. [x] Set up PostgreSQL using Docker Compose
+16. [x] Create a single instance of PostgreSQL for development
+17. [x] Ensure the database setup is easy to test and mock
+18. [ ] Write integration tests for database interactions
+19. [ ] Document the database setup and usage in the README file
+
+## API Endpoints
+20. [x] Create endpoints for user registration
+21. [x] Create endpoints for user login
+22. [ ] Create endpoints for admin management 

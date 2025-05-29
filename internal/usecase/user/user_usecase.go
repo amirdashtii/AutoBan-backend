@@ -7,6 +7,8 @@ import (
 	"AutoBan/internal/repository"
 	"AutoBan/internal/validation"
 	"AutoBan/pkg/logger"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // UserUseCase interface defines the methods for user operations
@@ -49,12 +51,19 @@ func (u *userUseCase) Register(userDTO dto.UserRegisterDTO) (*entity.User, error
 		return nil, errors.ErrInvalidPassword
 	}
 
+	// هش کردن رمز عبور
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userDTO.Password), bcrypt.DefaultCost)
+	if err != nil {
+		logger.Error(err, "Failed to hash password")
+		return nil, errors.ErrInternalServerError
+	}
+
 	// ذخیره‌سازی کاربر جدید
-	user := entity.User{PhoneNumber: userDTO.PhoneNumber, Password: userDTO.Password}
+	user := entity.User{PhoneNumber: userDTO.PhoneNumber, Password: string(hashedPassword)}
 	err = u.userRepo.CreateUser(&user)
 	if err != nil {
 		logger.Error(err, "Failed to save user")
-		return nil, err
+		return nil, errors.ErrInternalServerError
 	}
 
 	return &user, nil
@@ -64,10 +73,31 @@ func (u *userUseCase) Register(userDTO dto.UserRegisterDTO) (*entity.User, error
 // تابع Login یک کاربر را وارد سیستم می‌کند
 
 func (u *userUseCase) Login(userDTO dto.UserLoginDTO) (*entity.User, error) {
-	if userDTO.PhoneNumber == "" || userDTO.Password == "" {
-		logger.Error(errors.ErrPhoneNumberOrPasswordRequired, "Phone number or password is required")
-		return nil, errors.ErrPhoneNumberOrPasswordRequired
+	err := validation.ValidatePhoneNumber(userDTO.PhoneNumber)
+	if err != nil {
+		logger.Error(err, "Invalid phone number")
+		return nil, errors.ErrInvalidPhoneNumber
 	}
-	// اینجا می‌توانید منطق ورود را اضافه کنید
-	return &entity.User{PhoneNumber: userDTO.PhoneNumber, Password: userDTO.Password}, nil
+
+	err = validation.ValidatePassword(userDTO.Password)
+	if err != nil {
+		logger.Error(err, "Invalid password")
+		return nil, errors.ErrInvalidPassword
+	}
+
+	// بررسی وجود کاربر
+	user, err := u.userRepo.GetUserByPhoneNumber(userDTO.PhoneNumber)
+	if err != nil {
+		logger.Error(err, "User not found")
+		return nil, errors.ErrUserNotFound
+	}
+
+	// تطبیق رمز عبور
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userDTO.Password))
+	if err != nil {
+		logger.Error(err, "Invalid password")
+		return nil, errors.ErrInvalidPassword
+	}
+
+	return user, nil
 }

@@ -48,3 +48,13 @@ func (r *UserRepository) UpdateUser(user *entity.User) error {
 func (r *UserRepository) DeleteUser(id uint) error {
 	return r.db.Delete(&entity.User{}, id).Error
 }
+
+// GetUserByPhoneNumber retrieves a user by their phone number
+// GetUserByPhoneNumber یک کاربر را بر اساس شماره تلفن بازیابی می‌کند
+func (r *UserRepository) GetUserByPhoneNumber(phoneNumber string) (*entity.User, error) {
+	var user entity.User
+	if err := r.db.Where("phone_number = ?", phoneNumber).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
