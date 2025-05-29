@@ -1,10 +1,12 @@
 package database
 
 import (
-	"log"
+	"fmt"
 	"sync"
 
+	"AutoBan/config"
 	"AutoBan/internal/domain/entity"
+	"AutoBan/pkg/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -17,12 +19,19 @@ var (
 
 // ConnectDatabase initializes the database connection and performs migrations
 func ConnectDatabase() *gorm.DB {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		logger.Error(err, "Failed to get config")
+		return nil
+	}
+
 	once.Do(func() {
-		dsn := "host=localhost user=autoban password=autoban dbname=autoban port=5432 sslmode=disable"
+		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+			cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
 		var err error
 		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
-			log.Fatal("failed to connect database: ", err)
+			logger.Error(err, "failed to connect database")
 		}
 
 		// Perform migrations

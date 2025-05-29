@@ -4,12 +4,12 @@
 1. [x] Implement user registration logic
 2. [x] Add data repository for user storage
 3. [x] Implement user login logic
-4. [ ] Enhance input validation and error handling
+4. [x] Enhance input validation and error handling
 
 ## Auth Use Case
-5. [ ] Define AuthUseCase interface
-6. [ ] Implement JWT token generation
-7. [ ] Implement token validation logic
+5. [x] Define AuthUseCase interface
+6. [x] Implement JWT token generation
+7. [x] Implement token validation logic
 
 ## Admin Use Case
 8. [ ] Define AdminUseCase interface
@@ -32,4 +32,5 @@
 ## API Endpoints
 20. [x] Create endpoints for user registration
 21. [x] Create endpoints for user login
-22. [ ] Create endpoints for admin management 
+22. [ ] Create endpoints for user management 
+23. [ ] Create endpoints for admin management 
