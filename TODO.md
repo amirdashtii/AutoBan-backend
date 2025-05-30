@@ -1,20 +1,21 @@
 # TODO List for AutoBan Project
 
-## User Use Case
-1. [x] Implement user registration logic
-2. [x] Add data repository for user storage
-3. [x] Implement user login logic
-4. [x] Enhance input validation and error handling
-
 ## Auth Use Case
-5. [x] Define AuthUseCase interface
-6. [x] Implement JWT token generation
-7. [x] Implement token validation logic
+1. [x] Implement login functionality
+2. [x] Implement register functionality
+3. [x] Implement logout functionality
+4. [x] Implement refresh token functionality
+
+## User Use Case
+5. [x] Implement get user functionality
+6. [ ] Implement update user functionality
+7. [ ] Implement change password functionality
+8. [ ] Implement delete user functionality
 
 ## Admin Use Case
-8. [ ] Define AdminUseCase interface
-9. [ ] Implement admin user management
-10. [ ] Add role-based access control
+9. [ ] Implement list users functionality
+10. [ ] Implement view other users functionality
+11. [ ] Implement additional admin operations
 
 ## General
 11. [ ] Write unit tests for user use case

@@ -1,18 +1,27 @@
-package auth
+package usecase
 
 import (
 	"AutoBan/config"
+	"AutoBan/internal/domain/entity"
+	"AutoBan/internal/dto"
 	"AutoBan/internal/errors"
+	"AutoBan/internal/repository"
+	"AutoBan/internal/validation"
 	"AutoBan/pkg/logger"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // AuthUseCase interface defines the methods for authentication operations
 // اینترفیس AuthUseCase متدهای مربوط به عملیات‌های احراز هویت را تعریف می‌کند
 
 type AuthUseCase interface {
+	Register(request *dto.RegisterRequest) error
+	Login(request *dto.LoginRequest) (*dto.LoginResponse, error)
+	Logout(request *dto.LogoutRequest) error
+	RefreshToken(request *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
 	GenerateAccessToken(userID string) (string, error)
 	GenerateRefreshToken(userID string) (string, error)
 	ValidateAccessToken(token string) (bool, error)
@@ -23,7 +32,8 @@ type AuthUseCase interface {
 // ساختار authUseCase اینترفیس AuthUseCase را پیاده‌سازی می‌کند
 
 type authUseCase struct {
-	secretKey string
+	authRepository repository.AuthRepository
+	secretKey      string
 }
 
 // NewAuthUseCase creates a new instance of authUseCase
@@ -36,6 +46,77 @@ func NewAuthUseCase() AuthUseCase {
 		return nil
 	}
 	return &authUseCase{secretKey: cfg.JWT.Secret}
+}
+
+func (a *authUseCase) Register(request *dto.RegisterRequest) error {
+	err := validation.ValidateRegisterRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate register request")
+		return err
+	}
+
+	user := &entity.User{
+		PhoneNumber: request.PhoneNumber,
+		Password:    request.Password,
+	}
+
+	err = a.authRepository.Register(user)
+	if err != nil {
+		logger.Error(err, "Failed to register user")
+		if err == errors.ErrUserAlreadyExists {
+			return err
+		}
+		return errors.ErrInternalServerError
+	}
+	return nil
+}
+
+func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.LoginResponse, error) {
+	err := validation.ValidateLoginRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate login request")
+		return nil, err
+	}
+
+	user, err := a.authRepository.FindByPhoneNumber(request.PhoneNumber)
+	if err != nil {
+		logger.Error(err, "Failed to login user")
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
+	if err != nil {
+		logger.Error(err, "Failed to login user")
+		return nil, errors.ErrInvalidPhoneNumberOrPassword
+	}
+
+	accessToken, err := a.GenerateAccessToken(user.ID.String())
+	if err != nil {
+		logger.Error(err, "Failed to generate access token")
+		return nil, errors.ErrInternalServerError
+	}
+
+	refreshToken, err := a.GenerateRefreshToken(user.ID.String())
+	if err != nil {
+		logger.Error(err, "Failed to generate refresh token")
+		return nil, errors.ErrInternalServerError
+	}
+
+	return &dto.LoginResponse{
+		Token: dto.Token{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
+	}, nil
+}
+func (a *authUseCase) Logout(request *dto.LogoutRequest) error {
+	// todo: implement logout
+	return nil
+}
+
+func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
+	// todo: implement refresh token
+	return nil, nil
 }
 
 // ValidateToken validates a given JWT token

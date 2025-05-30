@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"AutoBan/internal/dto"
-	"AutoBan/internal/usecase/user"
+	"AutoBan/internal/usecase"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,13 +13,13 @@ import (
 // ساختار UserController
 
 type UserController struct {
-	userUseCase user.UserUseCase
+	userUseCase usecase.UserUseCase
 }
 
 // NewUserController creates a new UserController
 // تابع NewUserController یک UserController جدید ایجاد می‌کند
 
-func NewUserController(uuc user.UserUseCase) *UserController {
+func NewUserController(uuc usecase.UserUseCase) *UserController {
 	return &UserController{userUseCase: uuc}
 }
 
