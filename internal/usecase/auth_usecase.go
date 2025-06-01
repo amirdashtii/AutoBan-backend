@@ -45,7 +45,8 @@ func NewAuthUseCase() AuthUseCase {
 		logger.Error(err, "Failed to get config")
 		return nil
 	}
-	return &authUseCase{secretKey: cfg.JWT.Secret}
+	authRepository := repository.NewAuthRepository()
+	return &authUseCase{secretKey: cfg.JWT.Secret, authRepository: authRepository}
 }
 
 func (a *authUseCase) Register(request *dto.RegisterRequest) error {
@@ -55,10 +56,13 @@ func (a *authUseCase) Register(request *dto.RegisterRequest) error {
 		return err
 	}
 
-	user := &entity.User{
-		PhoneNumber: request.PhoneNumber,
-		Password:    request.Password,
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+	if err != nil {
+		logger.Error(err, "Failed to hash password")
+		return errors.ErrInternalServerError
 	}
+
+	user := entity.NewUser(request.PhoneNumber, string(hashedPassword))
 
 	err = a.authRepository.Register(user)
 	if err != nil {
@@ -103,10 +107,8 @@ func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.LoginResponse, erro
 	}
 
 	return &dto.LoginResponse{
-		Token: dto.Token{
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-		},
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}, nil
 }
 func (a *authUseCase) Logout(request *dto.LogoutRequest) error {

@@ -10,7 +10,7 @@ import (
 
 // Custom validation for Iranian phone numbers
 func iranPhone(fl validator.FieldLevel) bool {
-	iranPhoneRegex := regexp.MustCompile(`^\+98\d{10}$`)
+	iranPhoneRegex := regexp.MustCompile(`^09\d{9}$`)
 	return iranPhoneRegex.MatchString(fl.Field().String())
 }
 

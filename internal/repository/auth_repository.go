@@ -3,6 +3,7 @@ package repository
 import (
 	"AutoBan/internal/domain/entity"
 	"AutoBan/internal/errors"
+	"AutoBan/internal/infrastructure/database"
 
 	"gorm.io/gorm"
 )
@@ -16,7 +17,8 @@ type authRepository struct {
 	db *gorm.DB
 }
 
-func NewAuthRepository(db *gorm.DB) AuthRepository {
+func NewAuthRepository() AuthRepository {
+	db := database.ConnectDatabase()
 	return &authRepository{db: db}
 }
 
