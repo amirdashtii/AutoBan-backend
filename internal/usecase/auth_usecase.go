@@ -22,7 +22,7 @@ type AuthUseCase interface {
 	Login(request *dto.LoginRequest) (*dto.LoginResponse, error)
 	Logout(request *dto.LogoutRequest) error
 	RefreshToken(request *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
-	GenerateAccessToken(userID string) (string, error)
+	GenerateAccessToken(user *entity.User) (string, error)
 	GenerateRefreshToken(userID string) (string, error)
 	ValidateAccessToken(token string) (bool, error)
 	ValidateRefreshToken(token string) (bool, error)
@@ -94,7 +94,7 @@ func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.LoginResponse, erro
 		return nil, errors.ErrInvalidPhoneNumberOrPassword
 	}
 
-	accessToken, err := a.GenerateAccessToken(user.ID.String())
+	accessToken, err := a.GenerateAccessToken(user)
 	if err != nil {
 		logger.Error(err, "Failed to generate access token")
 		return nil, errors.ErrInternalServerError
@@ -117,8 +117,63 @@ func (a *authUseCase) Logout(request *dto.LogoutRequest) error {
 }
 
 func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
-	// todo: implement refresh token
-	return nil, nil
+	// Parse and validate the refresh token
+	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.ErrInvalidToken
+		}
+		return []byte(a.secretKey), nil
+	})
+
+	if err != nil {
+		logger.Error(err, "Failed to parse refresh token")
+		return nil, errors.ErrInvalidToken
+	}
+
+	if !token.Valid {
+		logger.Error(nil, "Invalid refresh token")
+		return nil, errors.ErrInvalidToken
+	}
+
+	// Extract claims from the token
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		logger.Error(nil, "Failed to extract claims")
+		return nil, errors.ErrInvalidToken
+	}
+
+	// Get user ID from claims
+	userID, ok := claims["user_id"].(string)
+	if !ok {
+		logger.Error(nil, "User ID not found in claims")
+		return nil, errors.ErrInvalidToken
+	}
+
+	// Find user in database
+	user, err := a.authRepository.FindByID(userID)
+	if err != nil {
+		logger.Error(err, "Failed to find user")
+		return nil, err
+	}
+
+	// Generate new access token
+	newAccessToken, err := a.GenerateAccessToken(user)
+	if err != nil {
+		logger.Error(err, "Failed to generate new access token")
+		return nil, errors.ErrInternalServerError
+	}
+
+	// Generate new refresh token
+	newRefreshToken, err := a.GenerateRefreshToken(userID)
+	if err != nil {
+		logger.Error(err, "Failed to generate new refresh token")
+		return nil, errors.ErrInternalServerError
+	}
+
+	return &dto.RefreshTokenResponse{
+		AccessToken:  newAccessToken,
+		RefreshToken: newRefreshToken,
+	}, nil
 }
 
 // ValidateToken validates a given JWT token
@@ -143,10 +198,13 @@ func (a *authUseCase) ValidateToken(tokenString string) (bool, error) {
 // GenerateAccessToken generates a new access token for a given user ID
 // تابع GenerateAccessToken یک اکسس توکن جدید برای یک شناسه کاربری تولید می‌کند
 
-func (a *authUseCase) GenerateAccessToken(userID string) (string, error) {
+func (a *authUseCase) GenerateAccessToken(user *entity.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(time.Minute * 15).Unix(), // 15 minutes expiration
+		"user_id":      user.ID.String(),
+		"role":         user.Role,
+		"phone_number": user.PhoneNumber,
+		"status":       user.Status,
+		"exp":          time.Now().Add(time.Minute * 15).Unix(), // 15 minutes expiration
 	})
 
 	tokenString, err := token.SignedString([]byte(a.secretKey))

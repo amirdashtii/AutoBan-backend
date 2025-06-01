@@ -11,6 +11,7 @@ import (
 type AuthRepository interface {
 	Register(user *entity.User) error
 	FindByPhoneNumber(phoneNumber string) (*entity.User, error)
+	FindByID(id string) (*entity.User, error)
 }
 
 type authRepository struct {
@@ -37,6 +38,21 @@ func (r *authRepository) FindByPhoneNumber(phoneNumber string) (*entity.User, er
 	var user entity.User
 	err := r.db.Where("phone_number = ?", phoneNumber).First(&user).Error
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.ErrUserNotFound
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *authRepository) FindByID(id string) (*entity.User, error) {
+	var user entity.User
+	err := r.db.Where("id = ?", id).First(&user).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.ErrUserNotFound
+		}
 		return nil, err
 	}
 	return &user, nil
