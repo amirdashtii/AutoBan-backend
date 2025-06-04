@@ -20,14 +20,14 @@ import (
 
 // AuthUseCase interface defines the methods for authentication operations
 type AuthUseCase interface {
-	Register(request *dto.RegisterRequest) error
-	Login(request *dto.LoginRequest) (*dto.TokenResponse, error)
-	Logout(request *dto.LogoutRequest, userID string) error
-	RefreshToken(request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
-	GenerateAccessToken(user *entity.User) (string, error)
-	GenerateRefreshToken(userID string, deviceID string) (string, error)
-	GetUserSessions(userID string) ([]*entity.Session, error)
-	LogoutAllDevices(userID string) error
+	Register(ctx context.Context, request *dto.RegisterRequest) error
+	Login(ctx context.Context, request *dto.LoginRequest) (*dto.TokenResponse, error)
+	Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error
+	RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
+	GenerateAccessToken(ctx context.Context, user *entity.User) (string, error)
+	GenerateRefreshToken(ctx context.Context, userID string, deviceID string) (string, error)
+	GetUserSessions(ctx context.Context, userID string) ([]*entity.Session, error)
+	LogoutAllDevices(ctx context.Context, userID string) error
 }
 
 // authUseCase struct implements the AuthUseCase interface
@@ -53,7 +53,7 @@ func NewAuthUseCase() AuthUseCase {
 	}
 }
 
-func (a *authUseCase) Register(request *dto.RegisterRequest) error {
+func (a *authUseCase) Register(ctx context.Context, request *dto.RegisterRequest) error {
 	err := validation.ValidateRegisterRequest(request)
 	if err != nil {
 		logger.Error(err, "Failed to validate register request")
@@ -68,7 +68,7 @@ func (a *authUseCase) Register(request *dto.RegisterRequest) error {
 
 	user := entity.NewUser(request.PhoneNumber, string(hashedPassword))
 
-	err = a.authRepository.Register(user)
+	err = a.authRepository.Register(ctx, user)
 	if err != nil {
 		logger.Error(err, "Failed to register user")
 		if err == errors.ErrUserAlreadyExists {
@@ -79,14 +79,14 @@ func (a *authUseCase) Register(request *dto.RegisterRequest) error {
 	return nil
 }
 
-func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.TokenResponse, error) {
+func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dto.TokenResponse, error) {
 	err := validation.ValidateLoginRequest(request)
 	if err != nil {
 		logger.Error(err, "Failed to validate login request")
 		return nil, err
 	}
 
-	user, err := a.authRepository.FindByPhoneNumber(request.PhoneNumber)
+	user, err := a.authRepository.FindByPhoneNumber(ctx, request.PhoneNumber)
 	if err != nil {
 		logger.Error(err, "Failed to find user")
 		return nil, err
@@ -99,14 +99,14 @@ func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.TokenResponse, erro
 	}
 
 	deviceID := generateDeviceID()
-	tokens, err := a.GenerateTokens(user, deviceID)
+	tokens, err := a.GenerateTokens(ctx, user, deviceID)
 	if err != nil {
 		return nil, errors.ErrInternalServerError
 	}
 
 	// ذخیره نشست در Redis
 	session := entity.NewSession(user.ID.String(), deviceID, tokens.RefreshToken)
-	err = a.sessionRepository.SaveSession(context.Background(), session)
+	err = a.sessionRepository.SaveSession(ctx, session)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.TokenResponse, erro
 	return &tokens, nil
 }
 
-func (a *authUseCase) Logout(request *dto.LogoutRequest, userID string) error {
+func (a *authUseCase) Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error {
 	// پارس کردن توکن برای دریافت شناسه کاربر و دستگاه
 	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -141,7 +141,7 @@ func (a *authUseCase) Logout(request *dto.LogoutRequest, userID string) error {
 	deviceID := claims["device_id"].(string)
 
 	// حذف نشست از Redis
-	err = a.sessionRepository.DeleteSession(context.Background(), userID, deviceID)
+	err = a.sessionRepository.DeleteSession(ctx, userID, deviceID)
 	if err != nil {
 		return err
 	}
@@ -149,9 +149,9 @@ func (a *authUseCase) Logout(request *dto.LogoutRequest, userID string) error {
 	return nil
 }
 
-func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.TokenResponse, error) {
+func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error) {
 	// چک کردن اعتبار توکن در وایت‌لیست
-	if !a.sessionRepository.IsRefreshTokenValid(context.Background(), request.RefreshToken) {
+	if !a.sessionRepository.IsRefreshTokenValid(ctx, request.RefreshToken) {
 		logger.Error(nil, "Token is not in whitelist")
 		return nil, errors.ErrInvalidToken
 	}
@@ -178,7 +178,7 @@ func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.Token
 	deviceID := claims["device_id"].(string)
 
 	// چک کردن وجود نشست در Redis
-	session, err := a.sessionRepository.GetSession(context.Background(), userID, deviceID)
+	session, err := a.sessionRepository.GetSession(ctx, userID, deviceID)
 	if err != nil {
 		logger.Error(err, "Failed to get session")
 		return nil, errors.ErrInvalidToken
@@ -190,14 +190,14 @@ func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.Token
 	}
 
 	// دریافت اطلاعات کاربر
-	user, err := a.authRepository.FindByID(userID)
+	user, err := a.authRepository.FindByID(ctx, userID)
 	if err != nil {
 		logger.Error(err, "Failed to find user")
 		return nil, err
 	}
 
 	// ایجاد توکن‌های جدید
-	tokens, err := a.GenerateTokens(user, deviceID)
+	tokens, err := a.GenerateTokens(ctx, user, deviceID)
 	if err != nil {
 		logger.Error(err, "Failed to generate new access token")
 		return nil, errors.ErrInternalServerError
@@ -206,7 +206,7 @@ func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.Token
 	// بروزرسانی نشست در Redis
 	session.RefreshToken = tokens.RefreshToken
 	session.LastUsed = time.Now()
-	err = a.sessionRepository.SaveSession(context.Background(), session)
+	err = a.sessionRepository.SaveSession(ctx, session)
 	if err != nil {
 		logger.Error(err, "Failed to update session")
 		return nil, errors.ErrInternalServerError
@@ -219,13 +219,13 @@ func generateDeviceID() string {
 	return fmt.Sprintf("dev_%s", uuid.New().String())
 }
 
-func (a *authUseCase) GenerateTokens(user *entity.User, deviceID string) (dto.TokenResponse, error) {
-	accessToken, err := a.GenerateAccessToken(user)
+func (a *authUseCase) GenerateTokens(ctx context.Context, user *entity.User, deviceID string) (dto.TokenResponse, error) {
+	accessToken, err := a.GenerateAccessToken(ctx, user)
 	if err != nil {
 		return dto.TokenResponse{}, err
 	}
 
-	refreshToken, err := a.GenerateRefreshToken(user.ID.String(), deviceID)
+	refreshToken, err := a.GenerateRefreshToken(ctx, user.ID.String(), deviceID)
 	if err != nil {
 		return dto.TokenResponse{}, err
 	}
@@ -236,7 +236,7 @@ func (a *authUseCase) GenerateTokens(user *entity.User, deviceID string) (dto.To
 	}, nil
 }
 
-func (a *authUseCase) GenerateAccessToken(user *entity.User) (string, error) {
+func (a *authUseCase) GenerateAccessToken(ctx context.Context, user *entity.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":      user.ID.String(),
 		"role":         user.Role,
@@ -254,7 +254,7 @@ func (a *authUseCase) GenerateAccessToken(user *entity.User) (string, error) {
 	return tokenString, nil
 }
 
-func (a *authUseCase) GenerateRefreshToken(userID string, deviceID string) (string, error) {
+func (a *authUseCase) GenerateRefreshToken(ctx context.Context, userID string, deviceID string) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id":   userID,
 		"device_id": deviceID,
@@ -265,8 +265,8 @@ func (a *authUseCase) GenerateRefreshToken(userID string, deviceID string) (stri
 	return token.SignedString([]byte(a.secretKey))
 }
 
-func (a *authUseCase) GetUserSessions(userID string) ([]*entity.Session, error) {
-	sessions, err := a.sessionRepository.GetAllSessions(context.Background(), userID)
+func (a *authUseCase) GetUserSessions(ctx context.Context, userID string) ([]*entity.Session, error) {
+	sessions, err := a.sessionRepository.GetAllSessions(ctx, userID)
 	if err != nil {
 		logger.Error(err, "Failed to get user sessions")
 		return nil, errors.ErrInternalServerError
@@ -274,8 +274,8 @@ func (a *authUseCase) GetUserSessions(userID string) ([]*entity.Session, error) 
 	return sessions, nil
 }
 
-func (a *authUseCase) LogoutAllDevices(userID string) error {
-	err := a.sessionRepository.DeleteAllSessions(context.Background(), userID)
+func (a *authUseCase) LogoutAllDevices(ctx context.Context, userID string) error {
+	err := a.sessionRepository.DeleteAllSessions(ctx, userID)
 	if err != nil {
 		return err
 	}

@@ -88,7 +88,7 @@ func (c *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.authUseCase.Register(&request); err != nil {
+	if err := c.authUseCase.Register(ctx, &request); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -114,7 +114,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	response, err := c.authUseCase.Login(&request)
+	response, err := c.authUseCase.Login(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -141,7 +141,7 @@ func (c *AuthController) GetUserSessions(ctx *gin.Context) {
 		return
 	}
 
-	sessions, err := c.authUseCase.GetUserSessions(userID)
+	sessions, err := c.authUseCase.GetUserSessions(ctx, userID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -189,7 +189,7 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.authUseCase.Logout(&request, userID); err != nil {
+	if err := c.authUseCase.Logout(ctx, &request, userID); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
@@ -215,7 +215,7 @@ func (c *AuthController) LogoutAllDevices(ctx *gin.Context) {
 		return
 	}
 
-	err := c.authUseCase.LogoutAllDevices(userID)
+	err := c.authUseCase.LogoutAllDevices(ctx, userID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -243,7 +243,7 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	response, err := c.authUseCase.RefreshToken(&request)
+	response, err := c.authUseCase.RefreshToken(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
