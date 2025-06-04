@@ -86,7 +86,7 @@ func setDefaultValues(v *viper.Viper) {
 	v.SetDefault("db.name", "autoban")
 
 	v.SetDefault("redis.addr", "localhost:6379")
-	v.SetDefault("redis.password", "")
+	v.SetDefault("redis.password", "autoban")
 	v.SetDefault("redis.db", 0)
 
 	v.SetDefault("jwt.secret", "mysecretkey")
@@ -95,7 +95,7 @@ func setDefaultValues(v *viper.Viper) {
 func readYAMLConfig(v *viper.Viper) {
 	v.SetConfigName("config")
 	v.SetConfigType("yaml")
-	v.AddConfigPath(".")
+	v.AddConfigPath("./config")
 
 	if err := v.ReadInConfig(); err != nil {
 		logger.Info("Failed to read yaml config")
