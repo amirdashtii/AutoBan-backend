@@ -1,62 +1,38 @@
 package controller
 
-import (
-	"net/http"
+// import (
+// 	"AutoBan/internal/middleware"
+// 	"AutoBan/internal/usecase"
 
-	"AutoBan/internal/dto"
-	"AutoBan/internal/usecase"
+// 	"github.com/gin-gonic/gin"
+// )
 
-	"github.com/gin-gonic/gin"
-)
+// type UserController struct {
+// 	userUseCase usecase.UserUseCase
+// }
 
-// UserController struct
-// ساختار UserController
+// func NewUserController() *UserController {
+// 	userUseCase := usecase.NewUserUseCase()
+// 	return &UserController{userUseCase: userUseCase}
+// }
 
-type UserController struct {
-	userUseCase usecase.UserUseCase
-}
+// func UserRoutes(router *gin.Engine) {
+// 	c := NewUserController()
 
-// NewUserController creates a new UserController
-// تابع NewUserController یک UserController جدید ایجاد می‌کند
+// 	userGroup := router.Group("/api/v1/users")
+// 	{
 
-func NewUserController(uuc usecase.UserUseCase) *UserController {
-	return &UserController{userUseCase: uuc}
-}
+// 		protected := userGroup.Use(middleware.AuthMiddleware())
+// 		{
 
-// Register handles user registration
-// تابع Register ثبت‌نام کاربر را مدیریت می‌کند
+// 			protected.GET("/me", c.GetProfile)
 
-func (uc *UserController) Register(c *gin.Context) {
-	var userDTO dto.UserRegisterDTO
-	if err := c.ShouldBindJSON(&userDTO); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 			protected.PUT("/me", c.UpdateProfile)
+// 		}
 
-	user, err := uc.userUseCase.Register(userDTO)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 		admin := protected.Use(middleware.RequireAdmin())
+// 		{
 
-	c.JSON(http.StatusOK, gin.H{"user": user})
-}
-
-// Login handles user login
-// تابع Login ورود کاربر را مدیریت می‌کند
-
-func (uc *UserController) Login(c *gin.Context) {
-	var userDTO dto.UserLoginDTO
-	if err := c.ShouldBindJSON(&userDTO); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	user, err := uc.userUseCase.Login(userDTO)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"user": user})
-}
+// 		}
+// 	}
+// }

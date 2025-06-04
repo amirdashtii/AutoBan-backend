@@ -29,7 +29,7 @@ func (r *authRepository) Register(user *entity.User) error {
 		if err == gorm.ErrDuplicatedKey {
 			return errors.ErrUserAlreadyExists
 		}
-		return err
+		return errors.ErrInternalServerError
 	}
 	return nil
 }
@@ -41,7 +41,7 @@ func (r *authRepository) FindByPhoneNumber(phoneNumber string) (*entity.User, er
 		if err == gorm.ErrRecordNotFound {
 			return nil, errors.ErrUserNotFound
 		}
-		return nil, err
+		return nil, errors.ErrInternalServerError
 	}
 	return &user, nil
 }
@@ -53,7 +53,7 @@ func (r *authRepository) FindByID(id string) (*entity.User, error) {
 		if err == gorm.ErrRecordNotFound {
 			return nil, errors.ErrUserNotFound
 		}
-		return nil, err
+		return nil, errors.ErrInternalServerError
 	}
 	return &user, nil
 }

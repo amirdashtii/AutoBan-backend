@@ -8,37 +8,35 @@ import (
 	"AutoBan/internal/repository"
 	"AutoBan/internal/validation"
 	"AutoBan/pkg/logger"
+	"context"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // AuthUseCase interface defines the methods for authentication operations
-// اینترفیس AuthUseCase متدهای مربوط به عملیات‌های احراز هویت را تعریف می‌کند
-
 type AuthUseCase interface {
 	Register(request *dto.RegisterRequest) error
-	Login(request *dto.LoginRequest) (*dto.LoginResponse, error)
-	Logout(request *dto.LogoutRequest) error
-	RefreshToken(request *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
+	Login(request *dto.LoginRequest) (*dto.TokenResponse, error)
+	Logout(request *dto.LogoutRequest, userID string) error
+	RefreshToken(request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
 	GenerateAccessToken(user *entity.User) (string, error)
-	GenerateRefreshToken(userID string) (string, error)
-	ValidateAccessToken(token string) (bool, error)
-	ValidateRefreshToken(token string) (bool, error)
+	GenerateRefreshToken(userID string, deviceID string) (string, error)
+	GetUserSessions(userID string) ([]*entity.Session, error)
+	LogoutAllDevices(userID string) error
 }
 
 // authUseCase struct implements the AuthUseCase interface
-// ساختار authUseCase اینترفیس AuthUseCase را پیاده‌سازی می‌کند
-
 type authUseCase struct {
-	authRepository repository.AuthRepository
-	secretKey      string
+	authRepository    repository.AuthRepository
+	sessionRepository repository.SessionRepository
+	secretKey         string
 }
 
 // NewAuthUseCase creates a new instance of authUseCase
-// تابع NewAuthUseCase یک نمونه جدید از authUseCase ایجاد می‌کند
-
 func NewAuthUseCase() AuthUseCase {
 	cfg, err := config.GetConfig()
 	if err != nil {
@@ -46,7 +44,12 @@ func NewAuthUseCase() AuthUseCase {
 		return nil
 	}
 	authRepository := repository.NewAuthRepository()
-	return &authUseCase{secretKey: cfg.JWT.Secret, authRepository: authRepository}
+	sessionRepository := repository.NewSessionRepository()
+	return &authUseCase{
+		authRepository:    authRepository,
+		sessionRepository: sessionRepository,
+		secretKey:         cfg.JWT.Secret,
+	}
 }
 
 func (a *authUseCase) Register(request *dto.RegisterRequest) error {
@@ -75,7 +78,7 @@ func (a *authUseCase) Register(request *dto.RegisterRequest) error {
 	return nil
 }
 
-func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.LoginResponse, error) {
+func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.TokenResponse, error) {
 	err := validation.ValidateLoginRequest(request)
 	if err != nil {
 		logger.Error(err, "Failed to validate login request")
@@ -84,40 +87,74 @@ func (a *authUseCase) Login(request *dto.LoginRequest) (*dto.LoginResponse, erro
 
 	user, err := a.authRepository.FindByPhoneNumber(request.PhoneNumber)
 	if err != nil {
-		logger.Error(err, "Failed to login user")
+		logger.Error(err, "Failed to find user")
 		return nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
 	if err != nil {
-		logger.Error(err, "Failed to login user")
+		logger.Error(err, "Failed to compare hash and password")
 		return nil, errors.ErrInvalidPhoneNumberOrPassword
 	}
 
-	accessToken, err := a.GenerateAccessToken(user)
+	deviceID := generateDeviceID()
+	tokens, err := a.GenerateTokens(user, deviceID)
 	if err != nil {
-		logger.Error(err, "Failed to generate access token")
 		return nil, errors.ErrInternalServerError
 	}
 
-	refreshToken, err := a.GenerateRefreshToken(user.ID.String())
+	// ذخیره نشست در Redis
+	session := entity.NewSession(user.ID.String(), deviceID, tokens.RefreshToken)
+	err = a.sessionRepository.SaveSession(context.Background(), session)
 	if err != nil {
-		logger.Error(err, "Failed to generate refresh token")
-		return nil, errors.ErrInternalServerError
+		return nil, err
 	}
 
-	return &dto.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}, nil
+	return &tokens, nil
 }
-func (a *authUseCase) Logout(request *dto.LogoutRequest) error {
-	// todo: implement logout
+
+func (a *authUseCase) Logout(request *dto.LogoutRequest, userID string) error {
+	// پارس کردن توکن برای دریافت شناسه کاربر و دستگاه
+	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.ErrInvalidToken
+		}
+		return []byte(a.secretKey), nil
+	})
+
+	if err != nil {
+		logger.Error(err, "Failed to parse refresh token")
+		return err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		logger.Error(nil, "Failed to get token claims")
+		return errors.ErrInvalidToken
+	}
+	if userID != claims["user_id"].(string) {
+		logger.Error(nil, "User ID does not match")
+		return errors.ErrInvalidToken
+	}
+
+	deviceID := claims["device_id"].(string)
+
+	// حذف نشست از Redis
+	err = a.sessionRepository.DeleteSession(context.Background(), userID, deviceID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
-	// Parse and validate the refresh token
+func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.TokenResponse, error) {
+	// چک کردن اعتبار توکن در وایت‌لیست
+	if !a.sessionRepository.IsRefreshTokenValid(context.Background(), request.RefreshToken) {
+		logger.Error(nil, "Token is not in whitelist")
+		return nil, errors.ErrInvalidToken
+	}
+	// پارس کردن توکن
 	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.ErrInvalidToken
@@ -130,73 +167,73 @@ func (a *authUseCase) RefreshToken(request *dto.RefreshTokenRequest) (*dto.Refre
 		return nil, errors.ErrInvalidToken
 	}
 
-	if !token.Valid {
-		logger.Error(nil, "Invalid refresh token")
-		return nil, errors.ErrInvalidToken
-	}
-
-	// Extract claims from the token
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		logger.Error(nil, "Failed to extract claims")
+		logger.Error(nil, "Failed to get token claims")
 		return nil, errors.ErrInvalidToken
 	}
 
-	// Get user ID from claims
-	userID, ok := claims["user_id"].(string)
-	if !ok {
-		logger.Error(nil, "User ID not found in claims")
+	userID := claims["user_id"].(string)
+	deviceID := claims["device_id"].(string)
+
+	// چک کردن وجود نشست در Redis
+	session, err := a.sessionRepository.GetSession(context.Background(), userID, deviceID)
+	if err != nil {
+		logger.Error(err, "Failed to get session")
 		return nil, errors.ErrInvalidToken
 	}
 
-	// Find user in database
+	if !session.IsActive {
+		logger.Error(nil, "Session is not active")
+		return nil, errors.ErrInvalidToken
+	}
+
+	// دریافت اطلاعات کاربر
 	user, err := a.authRepository.FindByID(userID)
 	if err != nil {
 		logger.Error(err, "Failed to find user")
 		return nil, err
 	}
 
-	// Generate new access token
-	newAccessToken, err := a.GenerateAccessToken(user)
+	// ایجاد توکن‌های جدید
+	tokens, err := a.GenerateTokens(user, deviceID)
 	if err != nil {
 		logger.Error(err, "Failed to generate new access token")
 		return nil, errors.ErrInternalServerError
 	}
 
-	// Generate new refresh token
-	newRefreshToken, err := a.GenerateRefreshToken(userID)
+	// بروزرسانی نشست در Redis
+	session.RefreshToken = tokens.RefreshToken
+	session.LastUsed = time.Now()
+	err = a.sessionRepository.SaveSession(context.Background(), session)
 	if err != nil {
-		logger.Error(err, "Failed to generate new refresh token")
+		logger.Error(err, "Failed to update session")
 		return nil, errors.ErrInternalServerError
 	}
 
-	return &dto.RefreshTokenResponse{
-		AccessToken:  newAccessToken,
-		RefreshToken: newRefreshToken,
-	}, nil
+	return &tokens, nil
 }
 
-// ValidateToken validates a given JWT token
-// تابع ValidateToken یک توکن JWT داده شده را اعتبارسنجی می‌کند
+func generateDeviceID() string {
+	return fmt.Sprintf("dev_%s", uuid.New().String())
+}
 
-func (a *authUseCase) ValidateToken(tokenString string) (bool, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, jwt.ErrSignatureInvalid
-		}
-		return []byte(a.secretKey), nil
-	})
-
+func (a *authUseCase) GenerateTokens(user *entity.User, deviceID string) (dto.TokenResponse, error) {
+	accessToken, err := a.GenerateAccessToken(user)
 	if err != nil {
-		logger.Error(err, "Failed to validate token")
-		return false, errors.ErrInternalServerError
+		return dto.TokenResponse{}, err
 	}
 
-	return token.Valid, nil
-}
+	refreshToken, err := a.GenerateRefreshToken(user.ID.String(), deviceID)
+	if err != nil {
+		return dto.TokenResponse{}, err
+	}
 
-// GenerateAccessToken generates a new access token for a given user ID
-// تابع GenerateAccessToken یک اکسس توکن جدید برای یک شناسه کاربری تولید می‌کند
+	return dto.TokenResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
+}
 
 func (a *authUseCase) GenerateAccessToken(user *entity.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -216,34 +253,30 @@ func (a *authUseCase) GenerateAccessToken(user *entity.User) (string, error) {
 	return tokenString, nil
 }
 
-// GenerateRefreshToken generates a new refresh token for a given user ID
-// تابع GenerateRefreshToken یک رفرش توکن جدید برای یک شناسه کاربری تولید می‌کند
-
-func (a *authUseCase) GenerateRefreshToken(userID string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24 * 7).Unix(), // 7 days expiration
-	})
-
-	tokenString, err := token.SignedString([]byte(a.secretKey))
-	if err != nil {
-		logger.Error(err, "Failed to generate refresh token")
-		return "", errors.ErrInternalServerError
+func (a *authUseCase) GenerateRefreshToken(userID string, deviceID string) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id":   userID,
+		"device_id": deviceID,
+		"exp":       time.Now().Add(time.Hour * 24 * 7).Unix(), // 7 روز
 	}
 
-	return tokenString, nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(a.secretKey))
 }
 
-// ValidateAccessToken validates a given access token
-// تابع ValidateAccessToken یک اکسس توکن داده شده را اعتبارسنجی می‌کند
-
-func (a *authUseCase) ValidateAccessToken(tokenString string) (bool, error) {
-	return a.ValidateToken(tokenString)
+func (a *authUseCase) GetUserSessions(userID string) ([]*entity.Session, error) {
+	sessions, err := a.sessionRepository.GetAllSessions(context.Background(), userID)
+	if err != nil {
+		logger.Error(err, "Failed to get user sessions")
+		return nil, errors.ErrInternalServerError
+	}
+	return sessions, nil
 }
 
-// ValidateRefreshToken validates a given refresh token
-// تابع ValidateRefreshToken یک رفرش توکن داده شده را اعتبارسنجی می‌کند
-
-func (a *authUseCase) ValidateRefreshToken(tokenString string) (bool, error) {
-	return a.ValidateToken(tokenString)
+func (a *authUseCase) LogoutAllDevices(userID string) error {
+	err := a.sessionRepository.DeleteAllSessions(context.Background(), userID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

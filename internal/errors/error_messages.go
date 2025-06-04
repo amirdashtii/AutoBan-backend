@@ -11,4 +11,8 @@ var (
 	ErrUserAlreadyExists            = New("user already exists", "کاربر قبلا ثبت نام کرده است")
 	ErrInvalidPhoneNumberOrPassword = New("invalid phone number or password", "شماره تلفن یا رمز عبور معتبر نیست")
 	ErrInvalidToken                 = New("invalid or expired token", "توکن نامعتبر یا منقضی شده است")
+	ErrTokenNotFound                = New("authentication token not found", "توکن احراز هویت یافت نشد")
+	ErrInvalidTokenFormat           = New("invalid token format", "فرمت توکن احراز هویت نامعتبر است")
+	ErrInvalidTokenClaims           = New("invalid token claims", "اطلاعات توکن نامعتبر است")
+	ErrAccessDenied                 = New("access denied", "شما دسترسی لازم برای این عملیات را ندارید")
 )

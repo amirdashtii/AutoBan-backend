@@ -24,7 +24,7 @@ type LoginRequest struct {
 
 // LoginResponse represents the response body for successful login
 // @Description User login response containing access and refresh tokens
-type LoginResponse struct {
+type TokenResponse struct {
 	// JWT access token
 	// @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 	AccessToken string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
@@ -49,13 +49,16 @@ type RefreshTokenRequest struct {
 	RefreshToken string `validate:"required" json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
 }
 
-// RefreshTokenResponse represents the response body for successful token refresh
-// @Description Token refresh response containing new access and refresh tokens
-type RefreshTokenResponse struct {
-	// JWT access token
-	// @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-	AccessToken string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
-	// JWT refresh token
-	// @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
+// SessionResponse represents a user session in the response
+// @Description User session information
+type SessionResponse struct {
+	DeviceID string `json:"device_id" example:"dev_1234567890"`
+	LastUsed string `json:"last_used" example:"2024-03-15T14:30:00Z"`
+	IsActive bool   `json:"is_active" example:"true"`
+}
+
+// GetSessionsResponse represents the response body for get sessions
+// @Description Response containing list of user sessions
+type GetSessionsResponse struct {
+	Sessions []SessionResponse `json:"sessions"`
 }

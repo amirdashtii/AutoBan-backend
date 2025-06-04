@@ -34,7 +34,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "auth-public"
                 ],
                 "summary": "User login",
                 "parameters": [
@@ -52,21 +52,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginResponse"
+                            "$ref": "#/definitions/dto.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -74,7 +78,12 @@ const docTemplate = `{
         },
         "/api/v1/auth/logout": {
             "post": {
-                "description": "Logout a user using refresh token",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Logout a user by invalidating the refresh token",
                 "consumes": [
                     "application/json"
                 ],
@@ -82,12 +91,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "auth-protected"
                 ],
                 "summary": "User logout",
                 "parameters": [
                     {
-                        "description": "User logout details",
+                        "description": "Refresh token to invalidate",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -110,22 +119,40 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             }
         },
-        "/api/v1/auth/refresh-token": {
+        "/api/v1/auth/logout-all": {
             "post": {
-                "description": "Get new access token using refresh token",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Logs out the user from all devices by invalidating all refresh tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -133,12 +160,56 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "auth-protected"
+                ],
+                "summary": "Logout from all devices",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refresh-token": {
+            "post": {
+                "description": "Get new access and refresh tokens using a valid refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth-public"
                 ],
                 "summary": "Refresh access token",
                 "parameters": [
                     {
-                        "description": "Refresh token details",
+                        "description": "Current refresh token",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -151,21 +222,34 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenResponse"
+                            "$ref": "#/definitions/dto.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -181,7 +265,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "auth-public"
                 ],
                 "summary": "Register a new user",
                 "parameters": [
@@ -196,8 +280,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -209,14 +293,64 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {}
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/sessions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns all active sessions for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth-protected"
+                ],
+                "summary": "Get user sessions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetSessionsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -224,6 +358,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.GetSessionsResponse": {
+            "description": "Response containing list of user sessions",
+            "type": "object",
+            "properties": {
+                "sessions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.SessionResponse"
+                    }
+                }
+            }
+        },
         "dto.LoginRequest": {
             "description": "User login request",
             "type": "object",
@@ -233,31 +379,15 @@ const docTemplate = `{
             ],
             "properties": {
                 "password": {
-                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers\n@Example Password123\n@x-order 1",
+                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers\n@Example Password123",
                     "type": "string",
                     "minLength": 8,
                     "example": "Password123"
                 },
                 "phone_number": {
-                    "description": "Iranian phone number in format 09XXXXXXXXX\n@Example 09123456789\n@x-order 0",
+                    "description": "Iranian phone number in format 09XXXXXXXXX\n@Example 09123456789",
                     "type": "string",
                     "example": "09123456789"
-                }
-            }
-        },
-        "dto.LoginResponse": {
-            "description": "User login response containing access and refresh tokens",
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "description": "JWT access token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n@x-order 0",
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                },
-                "refresh_token": {
-                    "description": "JWT refresh token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n@x-order 1",
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 }
             }
         },
@@ -289,22 +419,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RefreshTokenResponse": {
-            "description": "Token refresh response containing new access and refresh tokens",
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "description": "JWT access token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n@x-order 0",
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                },
-                "refresh_token": {
-                    "description": "JWT refresh token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n@x-order 1",
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                }
-            }
-        },
         "dto.RegisterRequest": {
             "description": "User registration request",
             "type": "object",
@@ -314,15 +428,49 @@ const docTemplate = `{
             ],
             "properties": {
                 "password": {
-                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers\n@Example Password123\n@x-order 1",
+                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers\n@Example Password123",
                     "type": "string",
                     "minLength": 8,
                     "example": "Password123"
                 },
                 "phone_number": {
-                    "description": "Iranian phone number in format 09XXXXXXXXX\n@Example 09123456789\n@x-order 0",
+                    "description": "Iranian phone number in format 09XXXXXXXXX\n@Example 09123456789",
                     "type": "string",
                     "example": "09123456789"
+                }
+            }
+        },
+        "dto.SessionResponse": {
+            "description": "User session information",
+            "type": "object",
+            "properties": {
+                "device_id": {
+                    "type": "string",
+                    "example": "dev_1234567890"
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "last_used": {
+                    "type": "string",
+                    "example": "2024-03-15T14:30:00Z"
+                }
+            }
+        },
+        "dto.TokenResponse": {
+            "description": "User login response containing access and refresh tokens",
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "description": "JWT access token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "refresh_token": {
+                    "description": "JWT refresh token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 }
             }
         }
@@ -334,24 +482,14 @@ const docTemplate = `{
             "name": "Authorization",
             "in": "header"
         }
-    },
-    "tags": [
-        {
-            "description": "Authentication operations",
-            "name": "auth",
-            "externalDocs": {
-                "description": "Authentication operations documentation",
-                "url": "https://example.com/auth"
-            }
-        }
-    ]
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/api/v1",
+	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
 	Title:            "AutoBan API",
 	Description:      "This is a sample server for AutoBan.",

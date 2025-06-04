@@ -1,5 +1,13 @@
-basePath: /api/v1
+basePath: /
 definitions:
+  dto.GetSessionsResponse:
+    description: Response containing list of user sessions
+    properties:
+      sessions:
+        items:
+          $ref: '#/definitions/dto.SessionResponse'
+        type: array
+    type: object
   dto.LoginRequest:
     description: User login request
     properties:
@@ -7,7 +15,6 @@ definitions:
         description: |-
           Password must be at least 8 characters long and include uppercase, lowercase, and numbers
           @Example Password123
-          @x-order 1
         example: Password123
         minLength: 8
         type: string
@@ -15,30 +22,11 @@ definitions:
         description: |-
           Iranian phone number in format 09XXXXXXXXX
           @Example 09123456789
-          @x-order 0
         example: "09123456789"
         type: string
     required:
     - password
     - phone_number
-    type: object
-  dto.LoginResponse:
-    description: User login response containing access and refresh tokens
-    properties:
-      access_token:
-        description: |-
-          JWT access token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-          @x-order 0
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        type: string
-      refresh_token:
-        description: |-
-          JWT refresh token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-          @x-order 1
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        type: string
     type: object
   dto.LogoutRequest:
     description: User logout request
@@ -64,24 +52,6 @@ definitions:
     required:
     - refresh_token
     type: object
-  dto.RefreshTokenResponse:
-    description: Token refresh response containing new access and refresh tokens
-    properties:
-      access_token:
-        description: |-
-          JWT access token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-          @x-order 0
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        type: string
-      refresh_token:
-        description: |-
-          JWT refresh token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-          @x-order 1
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        type: string
-    type: object
   dto.RegisterRequest:
     description: User registration request
     properties:
@@ -89,7 +59,6 @@ definitions:
         description: |-
           Password must be at least 8 characters long and include uppercase, lowercase, and numbers
           @Example Password123
-          @x-order 1
         example: Password123
         minLength: 8
         type: string
@@ -97,12 +66,40 @@ definitions:
         description: |-
           Iranian phone number in format 09XXXXXXXXX
           @Example 09123456789
-          @x-order 0
         example: "09123456789"
         type: string
     required:
     - password
     - phone_number
+    type: object
+  dto.SessionResponse:
+    description: User session information
+    properties:
+      device_id:
+        example: dev_1234567890
+        type: string
+      is_active:
+        example: true
+        type: boolean
+      last_used:
+        example: "2024-03-15T14:30:00Z"
+        type: string
+    type: object
+  dto.TokenResponse:
+    description: User login response containing access and refresh tokens
+    properties:
+      access_token:
+        description: |-
+          JWT access token
+          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      refresh_token:
+        description: |-
+          JWT refresh token
+          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -136,27 +133,29 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.LoginResponse'
+            $ref: '#/definitions/dto.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
             type: object
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
             type: object
       summary: User login
       tags:
-      - auth
+      - auth-public
   /api/v1/auth/logout:
     post:
       consumes:
       - application/json
-      description: Logout a user using refresh token
+      description: Logout a user by invalidating the refresh token
       parameters:
-      - description: User logout details
+      - description: Refresh token to invalidate
         in: body
         name: request
         required: true
@@ -174,23 +173,65 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
             type: object
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: User logout
       tags:
-      - auth
+      - auth-protected
+  /api/v1/auth/logout-all:
+    post:
+      consumes:
+      - application/json
+      description: Logs out the user from all devices by invalidating all refresh
+        tokens
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Logout from all devices
+      tags:
+      - auth-protected
   /api/v1/auth/refresh-token:
     post:
       consumes:
       - application/json
-      description: Get new access token using refresh token
+      description: Get new access and refresh tokens using a valid refresh token
       parameters:
-      - description: Refresh token details
+      - description: Current refresh token
         in: body
         name: request
         required: true
@@ -202,20 +243,28 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.RefreshTokenResponse'
+            $ref: '#/definitions/dto.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
             type: object
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
             type: object
       summary: Refresh access token
       tags:
-      - auth
+      - auth-public
   /api/v1/auth/register:
     post:
       consumes:
@@ -231,8 +280,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             additionalProperties:
               type: string
@@ -240,16 +289,47 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
             type: object
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties: {}
+            additionalProperties:
+              type: string
             type: object
       summary: Register a new user
       tags:
-      - auth
+      - auth-public
+  /api/v1/auth/sessions:
+    get:
+      consumes:
+      - application/json
+      description: Returns all active sessions for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetSessionsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user sessions
+      tags:
+      - auth-protected
 schemes:
 - http
 - https
@@ -260,9 +340,3 @@ securityDefinitions:
     name: Authorization
     type: apiKey
 swagger: "2.0"
-tags:
-- description: Authentication operations
-  externalDocs:
-    description: Authentication operations documentation
-    url: https://example.com/auth
-  name: auth
