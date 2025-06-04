@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"AutoBan/internal/errors"
-	"AutoBan/pkg/logger"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 )

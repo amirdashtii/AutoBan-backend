@@ -1,12 +1,12 @@
 package usecase
 
 import (
-	"AutoBan/internal/domain/entity"
-	"AutoBan/internal/dto"
-	"AutoBan/internal/errors"
-	"AutoBan/internal/repository"
-	"AutoBan/internal/validation"
-	"AutoBan/pkg/logger"
+	"github.com/amirdashtii/AutoBan/internal/domain/entity"
+	"github.com/amirdashtii/AutoBan/internal/dto"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/internal/repository"
+	"github.com/amirdashtii/AutoBan/internal/validation"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"golang.org/x/crypto/bcrypt"
 )

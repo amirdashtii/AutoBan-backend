@@ -1,11 +1,11 @@
 package main
 
 import (
-	"AutoBan/config"
-	"AutoBan/internal/interface/controller"
-	"AutoBan/pkg/logger"
+	"github.com/amirdashtii/AutoBan/config"
+	"github.com/amirdashtii/AutoBan/internal/interface/controller"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
-	_ "AutoBan/docs"
+	_ "github.com/amirdashtii/AutoBan/docs"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sync"
 
-	"AutoBan/config"
-	"AutoBan/internal/domain/entity"
-	"AutoBan/pkg/logger"
+	"github.com/amirdashtii/AutoBan/config"
+	"github.com/amirdashtii/AutoBan/internal/domain/entity"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -39,7 +39,7 @@ func ConnectDatabase() *gorm.DB {
 		if err != nil {
 			logger.Error(err, "failed to migrate database")
 		}
-		
+
 	})
 	return db
 }

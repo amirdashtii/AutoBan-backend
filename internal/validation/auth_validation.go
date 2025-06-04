@@ -1,9 +1,10 @@
 package validation
 
 import (
-	"AutoBan/internal/dto"
-	"AutoBan/internal/errors"
 	"regexp"
+
+	"github.com/amirdashtii/AutoBan/internal/dto"
+	"github.com/amirdashtii/AutoBan/internal/errors"
 
 	"github.com/go-playground/validator/v10"
 )

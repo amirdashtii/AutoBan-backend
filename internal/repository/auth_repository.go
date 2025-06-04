@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"AutoBan/internal/domain/entity"
-	"AutoBan/internal/errors"
-	"AutoBan/internal/infrastructure/database"
+	"github.com/amirdashtii/AutoBan/internal/domain/entity"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/internal/infrastructure/database"
 
 	"gorm.io/gorm"
 )

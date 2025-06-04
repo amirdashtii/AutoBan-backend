@@ -1,16 +1,17 @@
 package usecase
 
 import (
-	"AutoBan/config"
-	"AutoBan/internal/domain/entity"
-	"AutoBan/internal/dto"
-	"AutoBan/internal/errors"
-	"AutoBan/internal/repository"
-	"AutoBan/internal/validation"
-	"AutoBan/pkg/logger"
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/amirdashtii/AutoBan/config"
+	"github.com/amirdashtii/AutoBan/internal/domain/entity"
+	"github.com/amirdashtii/AutoBan/internal/dto"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/internal/repository"
+	"github.com/amirdashtii/AutoBan/internal/validation"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"

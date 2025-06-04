@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"time"
 
-	"AutoBan/internal/dto"
-	"AutoBan/internal/errors"
-	"AutoBan/internal/middleware"
-	"AutoBan/internal/usecase"
-	"AutoBan/pkg/logger"
+	"github.com/amirdashtii/AutoBan/internal/dto"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/internal/middleware"
+	"github.com/amirdashtii/AutoBan/internal/usecase"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 )

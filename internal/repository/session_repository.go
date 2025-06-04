@@ -1,14 +1,15 @@
 package repository
 
 import (
-	"AutoBan/config"
-	"AutoBan/internal/domain/entity"
-	"AutoBan/internal/errors"
-	"AutoBan/pkg/logger"
 	"context"
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/amirdashtii/AutoBan/config"
+	"github.com/amirdashtii/AutoBan/internal/domain/entity"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"github.com/redis/go-redis/v9"
 )

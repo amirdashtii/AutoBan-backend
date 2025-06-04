@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"AutoBan/config"
-	"AutoBan/internal/errors"
-	"AutoBan/pkg/logger"
 	"strings"
+
+	"github.com/amirdashtii/AutoBan/config"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
