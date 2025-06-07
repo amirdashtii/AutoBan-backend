@@ -7,6 +7,7 @@ import (
 	"github.com/amirdashtii/AutoBan/config"
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
+	"golang.org/x/crypto/bcrypt"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,6 +17,32 @@ var (
 	db   *gorm.DB
 	once sync.Once
 )
+
+// createSuperAdmin creates a super admin user if it doesn't exist
+func createSuperAdmin(db *gorm.DB) error {
+	var count int64
+	if err := db.Model(&entity.User{}).Where("phone_number = ?", "09000000000").Count(&count).Error; err != nil {
+		return err
+	}
+
+	if count == 0 {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte("Admin123"), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+
+		superAdmin := entity.NewUser("09000000000", string(hashedPassword))
+		superAdmin.Role = entity.SuperAdminRole
+
+		if err := db.Create(superAdmin).Error; err != nil {
+			return err
+		}
+
+		logger.Info("Super admin user created successfully")
+	}
+
+	return nil
+}
 
 // ConnectDatabase initializes the database connection and performs migrations
 func ConnectDatabase() *gorm.DB {
@@ -40,6 +67,10 @@ func ConnectDatabase() *gorm.DB {
 			logger.Error(err, "failed to migrate database")
 		}
 
+		// Create super admin user
+		if err := createSuperAdmin(db); err != nil {
+			logger.Error(err, "failed to create super admin user")
+		}
 	})
 	return db
 }
