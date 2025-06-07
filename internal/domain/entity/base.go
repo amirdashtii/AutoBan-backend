@@ -7,5 +7,5 @@ import (
 
 type BaseEntity struct {
 	gorm.Model
-	ID uuid.UUID `json:"id"`
+	ID uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
 }

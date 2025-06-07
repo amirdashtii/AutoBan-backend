@@ -45,6 +45,7 @@ func main() {
 
 	// Setup routes
 	controller.AuthRoutes(r)
+	controller.UserRoutes(r)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

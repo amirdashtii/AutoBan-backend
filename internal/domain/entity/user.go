@@ -2,6 +2,7 @@ package entity
 
 import (
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -81,6 +82,7 @@ type User struct {
 	Password    string     `json:"password"`
 	FirstName   *string    `json:"first_name"`
 	LastName    *string    `json:"last_name"`
+	Birthday    *time.Time `json:"birthday"`
 	Email       *string    `gorm:"unique" json:"email"`
 	Status      StatusType `json:"status"`
 	Role        RoleType   `json:"role"`

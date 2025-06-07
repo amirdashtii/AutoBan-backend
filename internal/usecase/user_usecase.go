@@ -1,103 +1,108 @@
 package usecase
 
 import (
+	"context"
+	"time"
+
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/repository"
-	"github.com/amirdashtii/AutoBan/internal/validation"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
-
-	"golang.org/x/crypto/bcrypt"
+	"github.com/google/uuid"
 )
 
-// UserUseCase interface defines the methods for user operations
-// اینترفیس UserUseCase متدهای مربوط به عملیات‌های کاربر را تعریف می‌کند
-
 type UserUseCase interface {
-	Register(userDTO dto.UserRegisterDTO) (*entity.User, error)
-	Login(userDTO dto.UserLoginDTO) (*entity.User, error)
+	GetProfile(ctx context.Context, userID string) (*dto.GetProfileResponse, error)
+	UpdateProfile(ctx context.Context, userID string, request dto.UpdateProfileRequest) (*dto.UpdateProfileResponse, error)
+	ChangePassword(ctx context.Context, userID string, request dto.UpdatePasswordRequest) error
+	DeleteUser(ctx context.Context, userID string) error
 }
-
-// userUseCase struct implements the UserUseCase interface
-// ساختار userUseCase اینترفیس UserUseCase را پیاده‌سازی می‌کند
 
 type userUseCase struct {
-	userRepo repository.UserRepository
+	userRepository repository.UserRepository
 }
 
-// NewUserUseCase creates a new instance of userUseCase
-// تابع NewUserUseCase یک نمونه جدید از userUseCase ایجاد می‌کند
-
-func NewUserUseCase(userRepo repository.UserRepository) UserUseCase {
-	return &userUseCase{userRepo: userRepo}
+func NewUserUseCase() UserUseCase {
+	userRepository := repository.NewUserRepository()
+	return &userUseCase{userRepository: userRepository}
 }
 
-// Register registers a new user
-// تابع Register یک کاربر جدید را ثبت‌نام می‌کند
-
-func (u *userUseCase) Register(userDTO dto.UserRegisterDTO) (*entity.User, error) {
-
-	err := validation.ValidatePhoneNumber(userDTO.PhoneNumber)
+func (u *userUseCase) GetProfile(ctx context.Context, userID string) (*dto.GetProfileResponse, error) {
+	var user entity.User
+	user.ID = uuid.MustParse(userID)
+	err := u.userRepository.GetProfile(ctx, &user)
 	if err != nil {
-		logger.Error(err, "Invalid phone number")
-		return nil, errors.ErrInvalidPhoneNumber
+		logger.Error(err, "Failed to get profile")
+		return nil, errors.ErrFailedToGetProfile
 	}
-
-	// اعتبارسنجی رمز عبور
-	err = validation.ValidatePassword(userDTO.Password)
-	if err != nil {
-		logger.Error(err, "Invalid password")
-		return nil, errors.ErrInvalidPassword
+	birthday := ""
+	if user.Birthday != nil {
+		birthday = user.Birthday.Format("2006-01-02")
 	}
-
-	// هش کردن رمز عبور
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userDTO.Password), bcrypt.DefaultCost)
-	if err != nil {
-		logger.Error(err, "Failed to hash password")
-		return nil, errors.ErrInternalServerError
-	}
-
-	// ذخیره‌سازی کاربر جدید
-	user := entity.User{PhoneNumber: userDTO.PhoneNumber, Password: string(hashedPassword)}
-	err = u.userRepo.CreateUser(&user)
-	if err != nil {
-		logger.Error(err, "Failed to save user")
-		return nil, errors.ErrInternalServerError
-	}
-
-	return &user, nil
+	return &dto.GetProfileResponse{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Birthday:  &birthday,
+	}, nil
 }
 
-// Login logs in a user
-// تابع Login یک کاربر را وارد سیستم می‌کند
-
-func (u *userUseCase) Login(userDTO dto.UserLoginDTO) (*entity.User, error) {
-	err := validation.ValidatePhoneNumber(userDTO.PhoneNumber)
+func (u *userUseCase) UpdateProfile(ctx context.Context, userID string, request dto.UpdateProfileRequest) (*dto.UpdateProfileResponse, error) {
+	var birthday *time.Time
+	if request.Birthday != nil {
+		parsedTime, err := time.Parse("2006-01-02", *request.Birthday)
+		if err != nil {
+			logger.Error(err, "Failed to parse birthday")
+			return nil, errors.ErrInvalidBirthday
+		}
+		birthday = &parsedTime
+	}
+	user := entity.User{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Email:     request.Email,
+		Birthday:  birthday,
+	}
+	user.ID = uuid.MustParse(userID)
+	err := u.userRepository.UpdateProfile(ctx, &user)
 	if err != nil {
-		logger.Error(err, "Invalid phone number")
-		return nil, errors.ErrInvalidPhoneNumber
+		logger.Error(err, "Failed to update profile")
+		return nil, errors.ErrFailedToUpdateProfile
 	}
 
-	err = validation.ValidatePassword(userDTO.Password)
-	if err != nil {
-		logger.Error(err, "Invalid password")
-		return nil, errors.ErrInvalidPassword
+	responseBirthday := ""
+	if user.Birthday != nil {
+		responseBirthday = user.Birthday.Format("2006-01-02")
 	}
+	return &dto.UpdateProfileResponse{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Birthday:  &responseBirthday,
+	}, nil
+}
 
-	// بررسی وجود کاربر
-	user, err := u.userRepo.GetUserByPhoneNumber(userDTO.PhoneNumber)
-	if err != nil {
-		logger.Error(err, "User not found")
-		return nil, errors.ErrUserNotFound
+func (u *userUseCase) ChangePassword(ctx context.Context, userID string, request dto.UpdatePasswordRequest) error {
+	user := entity.User{
+		Password: request.Password,
 	}
-
-	// تطبیق رمز عبور
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userDTO.Password))
+	user.ID = uuid.MustParse(userID)
+	err := u.userRepository.ChangePassword(ctx, &user)
 	if err != nil {
-		logger.Error(err, "Invalid password")
-		return nil, errors.ErrInvalidPassword
+		logger.Error(err, "Failed to update password")
+		return errors.ErrFailedToUpdatePassword
 	}
+	return nil
+}
 
-	return user, nil
+func (u *userUseCase) DeleteUser(ctx context.Context, userID string) error {
+	var user entity.User
+	user.ID = uuid.MustParse(userID)
+	err := u.userRepository.DeleteUser(ctx, &user)
+	if err != nil {
+		logger.Error(err, "Failed to delete user")
+		return errors.ErrFailedToDeleteUser
+	}
+	return nil
 }

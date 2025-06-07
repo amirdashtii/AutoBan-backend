@@ -1,38 +1,141 @@
 package controller
 
-// import (
-// 	"AutoBan/internal/middleware"
-// 	"AutoBan/internal/usecase"
+import (
+	"net/http"
 
-// 	"github.com/gin-gonic/gin"
-// )
+	"github.com/amirdashtii/AutoBan/internal/dto"
+	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/internal/middleware"
+	"github.com/amirdashtii/AutoBan/internal/usecase"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
+	"github.com/gin-gonic/gin"
+)
 
-// type UserController struct {
-// 	userUseCase usecase.UserUseCase
-// }
+// @tag.name     users
+// @tag.description Protected user endpoints - valid token required
+// @tag.x-order  3
 
-// func NewUserController() *UserController {
-// 	userUseCase := usecase.NewUserUseCase()
-// 	return &UserController{userUseCase: userUseCase}
-// }
+type UserController struct {
+	userUseCase usecase.UserUseCase
+}
 
-// func UserRoutes(router *gin.Engine) {
-// 	c := NewUserController()
+func NewUserController() *UserController {
+	userUseCase := usecase.NewUserUseCase()
+	return &UserController{userUseCase: userUseCase}
+}
 
-// 	userGroup := router.Group("/api/v1/users")
-// 	{
+func UserRoutes(router *gin.Engine) {
+	c := NewUserController()
 
-// 		protected := userGroup.Use(middleware.AuthMiddleware())
-// 		{
+	userGroup := router.Group("/api/v1/users")
+	{
+		protected := userGroup.Use(middleware.AuthMiddleware())
+		{
+			protected.GET("/me", c.GetProfile)
+			protected.PUT("/me", c.UpdateProfile)
+			protected.PUT("/me/change-password", c.ChangePassword)
+			protected.DELETE("/me", c.DeleteUser)
+		}
+	}
+}
 
-// 			protected.GET("/me", c.GetProfile)
+// @Summary     Get user profile
+// @Description Get the profile information of the authenticated user
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Success     200 {object} dto.GetProfileResponse
+// @Failure     401 {object} map[string]string "Unauthorized"
+// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Router      /api/v1/users/me [get]
+func (c *UserController) GetProfile(ctx *gin.Context) {
+	userID := ctx.GetString("user_id")
+	user, err := c.userUseCase.GetProfile(ctx, userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
 
-// 			protected.PUT("/me", c.UpdateProfile)
-// 		}
+	ctx.JSON(http.StatusOK, user)
+}
 
-// 		admin := protected.Use(middleware.RequireAdmin())
-// 		{
+// @Summary     Update user profile
+// @Description Update the profile information of the authenticated user
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Param       request body dto.UpdateProfileRequest true "Profile update information"
+// @Success     200 {object} dto.GetProfileResponse
+// @Failure     400 {object} map[string]string "Bad Request"
+// @Failure     401 {object} map[string]string "Unauthorized"
+// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Router      /api/v1/users/me [put]
+func (c *UserController) UpdateProfile(ctx *gin.Context) {
+	userID := ctx.GetString("user_id")
+	var request dto.UpdateProfileRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Error(err, "Failed to bind request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		return
+	}
+	user, err := c.userUseCase.UpdateProfile(ctx, userID, request)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
 
-// 		}
-// 	}
-// }
+	ctx.JSON(http.StatusOK, user)
+}
+
+// @Summary     Update user password
+// @Description Update the password of the authenticated user
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Param       request body dto.UpdatePasswordRequest true "Password update information"
+// @Success     200 {object} map[string]string "Password updated successfully"
+// @Failure     400 {object} map[string]string "Bad Request"
+// @Failure     401 {object} map[string]string "Unauthorized"
+// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Router      /api/v1/users/me/change-password [put]	
+func (c *UserController) ChangePassword(ctx *gin.Context) {
+	userID := ctx.GetString("user_id")
+	var request dto.UpdatePasswordRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Error(err, "Failed to bind request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		return
+	}
+	err := c.userUseCase.ChangePassword(ctx, userID, request)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Password updated successfully"})
+}
+
+// @Summary     Delete user
+// @Description Delete the authenticated user
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Success     200 {object} map[string]string "User deleted successfully"
+// @Failure     400 {object} map[string]string "Bad Request"
+// @Failure     401 {object} map[string]string "Unauthorized"
+// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Router      /api/v1/users/me [delete]	
+func (c *UserController) DeleteUser(ctx *gin.Context) {
+	userID := ctx.GetString("user_id")
+	err := c.userUseCase.DeleteUser(ctx, userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
+}

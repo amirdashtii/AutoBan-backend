@@ -355,9 +355,140 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get the profile information of the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetProfileResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the profile information of the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update user profile",
+                "parameters": [
+                    {
+                        "description": "Profile update information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetProfileResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "dto.GetProfileResponse": {
+            "description": "User profile information response",
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "User's email address (optional)\n@Example john.doe@example.com",
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                },
+                "first_name": {
+                    "description": "User's first name (optional)\n@Example John",
+                    "type": "string",
+                    "example": "John"
+                },
+                "last_name": {
+                    "description": "User's last name (optional)\n@Example Doe",
+                    "type": "string",
+                    "example": "Doe"
+                }
+            }
+        },
         "dto.GetSessionsResponse": {
             "description": "Response containing list of user sessions",
             "type": "object",
@@ -471,6 +602,27 @@ const docTemplate = `{
                     "description": "JWT refresh token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+            }
+        },
+        "dto.UpdateProfileRequest": {
+            "description": "User profile update request",
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "User's email address (optional)\n@Example john.doe@example.com",
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                },
+                "first_name": {
+                    "description": "User's first name (optional)\n@Example John",
+                    "type": "string",
+                    "example": "John"
+                },
+                "last_name": {
+                    "description": "User's last name (optional)\n@Example Doe",
+                    "type": "string",
+                    "example": "Doe"
                 }
             }
         }

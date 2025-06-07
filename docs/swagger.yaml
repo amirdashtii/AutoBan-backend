@@ -1,5 +1,27 @@
 basePath: /
 definitions:
+  dto.GetProfileResponse:
+    description: User profile information response
+    properties:
+      email:
+        description: |-
+          User's email address (optional)
+          @Example john.doe@example.com
+        example: john.doe@example.com
+        type: string
+      first_name:
+        description: |-
+          User's first name (optional)
+          @Example John
+        example: John
+        type: string
+      last_name:
+        description: |-
+          User's last name (optional)
+          @Example Doe
+        example: Doe
+        type: string
+    type: object
   dto.GetSessionsResponse:
     description: Response containing list of user sessions
     properties:
@@ -99,6 +121,28 @@ definitions:
           JWT refresh token
           @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    type: object
+  dto.UpdateProfileRequest:
+    description: User profile update request
+    properties:
+      email:
+        description: |-
+          User's email address (optional)
+          @Example john.doe@example.com
+        example: john.doe@example.com
+        type: string
+      first_name:
+        description: |-
+          User's first name (optional)
+          @Example John
+        example: John
+        type: string
+      last_name:
+        description: |-
+          User's last name (optional)
+          @Example Doe
+        example: Doe
         type: string
     type: object
 host: localhost:8080
@@ -330,6 +374,76 @@ paths:
       summary: Get user sessions
       tags:
       - auth-protected
+  /api/v1/users/me:
+    get:
+      consumes:
+      - application/json
+      description: Get the profile information of the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetProfileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update the profile information of the authenticated user
+      parameters:
+      - description: Profile update information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetProfileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user profile
+      tags:
+      - users
 schemes:
 - http
 - https
