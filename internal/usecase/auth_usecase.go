@@ -26,7 +26,7 @@ type AuthUseCase interface {
 	RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
 	GenerateAccessToken(ctx context.Context, user *entity.User) (string, error)
 	GenerateRefreshToken(ctx context.Context, userID string, deviceID string) (string, error)
-	GetUserSessions(ctx context.Context, userID string) ([]*entity.Session, error)
+	GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error)
 	LogoutAllDevices(ctx context.Context, userID string) error
 }
 
@@ -265,13 +265,22 @@ func (a *authUseCase) GenerateRefreshToken(ctx context.Context, userID string, d
 	return token.SignedString([]byte(a.secretKey))
 }
 
-func (a *authUseCase) GetUserSessions(ctx context.Context, userID string) ([]*entity.Session, error) {
+func (a *authUseCase) GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error) {
 	sessions, err := a.sessionRepository.GetAllSessions(ctx, userID)
 	if err != nil {
 		logger.Error(err, "Failed to get user sessions")
 		return nil, errors.ErrInternalServerError
 	}
-	return sessions, nil
+	// تبدیل نشست‌ها به مدل پاسخ
+	var sessionResponses []dto.SessionResponse
+	for _, session := range sessions {
+		sessionResponses = append(sessionResponses, dto.SessionResponse{
+			DeviceID: session.DeviceID,
+			LastUsed: session.LastUsed.Format(time.RFC3339),
+			IsActive: session.IsActive,
+		})
+	}
+	return sessionResponses, nil
 }
 
 func (a *authUseCase) LogoutAllDevices(ctx context.Context, userID string) error {

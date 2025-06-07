@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
@@ -89,7 +88,7 @@ func (c *AuthController) Register(ctx *gin.Context) {
 	}
 
 	if err := c.authUseCase.Register(ctx, &request); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
@@ -116,7 +115,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 
 	response, err := c.authUseCase.Login(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
@@ -141,25 +140,13 @@ func (c *AuthController) GetUserSessions(ctx *gin.Context) {
 		return
 	}
 
-	sessions, err := c.authUseCase.GetUserSessions(ctx, userID)
+	sessionResponses, err := c.authUseCase.GetUserSessions(ctx, userID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
-	// تبدیل نشست‌ها به مدل پاسخ
-	var sessionResponses []dto.SessionResponse
-	for _, session := range sessions {
-		sessionResponses = append(sessionResponses, dto.SessionResponse{
-			DeviceID: session.DeviceID,
-			LastUsed: session.LastUsed.Format(time.RFC3339),
-			IsActive: session.IsActive,
-		})
-	}
-
-	ctx.JSON(http.StatusOK, dto.GetSessionsResponse{
-		Sessions: sessionResponses,
-	})
+	ctx.JSON(http.StatusOK, sessionResponses)
 }
 
 // @Summary     User logout
