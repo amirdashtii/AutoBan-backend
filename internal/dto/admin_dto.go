@@ -54,13 +54,13 @@ type UpdateUserRequest struct {
 	LastName string `json:"last_name" example:"Doe"`
 	// User's email address
 	// @Example john.doe@example.com
-	Email string `json:"email" example:"john.doe@example.com"`
+	Email string `validate:"email" json:"email" example:"john.doe@example.com"`
 	// User's phone number
 	// @Example 09123456789
-	Phone string `json:"phone" example:"09123456789"`
+	Phone string `validate:"phone" json:"phone" example:"09123456789"`
 	// User's birthday in YYYY-MM-DD format
 	// @Example 1990-01-01
-	Birthday string `json:"birthday" example:"1990-01-01"`
+	Birthday string `validate:"datetime" json:"birthday" example:"1990-01-01"`
 }
 
 // ChangeUserRoleRequest represents the request for changing user role
@@ -68,7 +68,7 @@ type UpdateUserRequest struct {
 type ChangeUserRoleRequest struct {
 	// New role for the user (User, Admin, SuperAdmin)
 	// @Example Admin
-	Role string `json:"role" example:"Admin" enums:"User,Admin,SuperAdmin"`
+	Role string `validate:"role" json:"role" example:"Admin" enums:"User,Admin,SuperAdmin"`
 }
 
 // ChangeUserStatusRequest represents the request for changing user status
@@ -76,7 +76,7 @@ type ChangeUserRoleRequest struct {
 type ChangeUserStatusRequest struct {
 	// New status for the user (Active, Deactivated, Deleted)
 	// @Example Active
-	Status string `json:"status" example:"Active" enums:"Active,Deactivated,Deleted"`
+	Status string `validate:"status" json:"status" example:"Active" enums:"Active,Deactivated,Deleted"`
 }
 
 // ChangeUserPasswordRequest represents the request for changing user password
@@ -84,5 +84,5 @@ type ChangeUserStatusRequest struct {
 type ChangeUserPasswordRequest struct {
 	// New password for the user (minimum 8 characters)
 	// @Example NewPassword123
-	NewPassword string `json:"new_password" example:"NewPassword123" minLength:"8"`
+	NewPassword string `validate:"password" json:"new_password" example:"NewPassword123" minLength:"8"`
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/repository"
+	"github.com/amirdashtii/AutoBan/internal/validation"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -79,9 +80,16 @@ func (u *adminUseCase) ListUsers(ctx context.Context) ([]dto.User, error) {
 }
 
 func (u *adminUseCase) GetUserById(ctx context.Context, userID string) (*dto.User, error) {
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user ID")
+		return nil, errors.ErrInvalidUserID
+	}
+
 	var user entity.User
-	user.ID = uuid.MustParse(userID)
-	err := u.adminRepository.GetUserById(ctx, &user)
+	user.ID = userUUID
+
+	err = u.adminRepository.GetUserById(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to get user by id")
 		return nil, errors.ErrFailedToGetUserById
@@ -120,6 +128,17 @@ func (u *adminUseCase) GetUserById(ctx context.Context, userID string) (*dto.Use
 }
 
 func (u *adminUseCase) UpdateUser(ctx context.Context, userID string, request dto.UpdateUserRequest) error {
+	err := validation.AdminValidateUpdateProfileRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate update user request")
+		return err
+	}
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user ID")
+		return errors.ErrInvalidUserID
+	}
+
 	var birthday *time.Time
 	if request.Birthday != "" {
 		parsedTime, err := time.Parse("2006-01-02", request.Birthday)
@@ -131,14 +150,14 @@ func (u *adminUseCase) UpdateUser(ctx context.Context, userID string, request dt
 	}
 
 	var user entity.User
-	user.ID = uuid.MustParse(userID)
+	user.ID = userUUID
 	user.FirstName = &request.FirstName
 	user.LastName = &request.LastName
 	user.Email = &request.Email
 	user.PhoneNumber = request.Phone
 	user.Birthday = birthday
-	
-	err := u.adminRepository.UpdateUser(ctx, &user)
+
+	err = u.adminRepository.UpdateUser(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to update user")
 		return errors.ErrFailedToUpdateUser
@@ -147,10 +166,23 @@ func (u *adminUseCase) UpdateUser(ctx context.Context, userID string, request dt
 }
 
 func (u *adminUseCase) ChangeUserRole(ctx context.Context, userID string, request dto.ChangeUserRoleRequest) error {
+	err := validation.AdminValidateChangeUserRoleRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate change user role request")
+		return err
+	}
+
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user ID")
+		return errors.ErrInvalidUserID
+	}
+
 	var user entity.User
-	user.ID = uuid.MustParse(userID)
+	user.ID = userUUID
 	user.Role = entity.ParseRoleType(request.Role)
-	err := u.adminRepository.UpdateUser(ctx, &user)
+
+	err = u.adminRepository.UpdateUser(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to change user role")
 		return errors.ErrFailedToChangeUserRole
@@ -159,10 +191,23 @@ func (u *adminUseCase) ChangeUserRole(ctx context.Context, userID string, reques
 }
 
 func (u *adminUseCase) ChangeUserStatus(ctx context.Context, userID string, request dto.ChangeUserStatusRequest) error {
+	err := validation.AdminValidateChangeUserStatusRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate change user status request")
+		return err
+	}
+
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user ID")
+		return errors.ErrInvalidUserID
+	}
+
 	var user entity.User
-	user.ID = uuid.MustParse(userID)
+	user.ID = userUUID
 	user.Status = entity.ParseStatusType(request.Status)
-	err := u.adminRepository.UpdateUser(ctx, &user)
+
+	err = u.adminRepository.UpdateUser(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to change user status")
 		return errors.ErrFailedToChangeUserStatus
@@ -171,13 +216,26 @@ func (u *adminUseCase) ChangeUserStatus(ctx context.Context, userID string, requ
 }
 
 func (u *adminUseCase) ChangeUserPassword(ctx context.Context, userID string, request dto.ChangeUserPasswordRequest) error {
-	var user entity.User
-	user.ID = uuid.MustParse(userID)
+	err := validation.AdminValidateChangeUserPasswordRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate change user password request")
+		return err
+	}
+
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user ID")
+		return errors.ErrInvalidUserID
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Error(err, "Failed to hash password")
 		return errors.ErrFailedToHashPassword
 	}
+
+	var user entity.User
+	user.ID = userUUID
 	user.Password = string(hashedPassword)
 
 	err = u.adminRepository.UpdateUser(ctx, &user)
@@ -189,9 +247,15 @@ func (u *adminUseCase) ChangeUserPassword(ctx context.Context, userID string, re
 }
 
 func (u *adminUseCase) DeleteUser(ctx context.Context, userID string) error {
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user ID")
+		return errors.ErrInvalidUserID
+	}
+
 	var user entity.User
-	user.ID = uuid.MustParse(userID)
-	err := u.adminRepository.DeleteUser(ctx, &user)
+	user.ID = userUUID
+	err = u.adminRepository.DeleteUser(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to delete user")
 		return errors.ErrFailedToDeleteUser
