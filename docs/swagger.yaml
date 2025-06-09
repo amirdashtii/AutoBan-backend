@@ -1,8 +1,53 @@
 basePath: /
 definitions:
+  dto.ChangeUserPasswordRequest:
+    description: Request to change user password
+    properties:
+      new_password:
+        description: |-
+          New password for the user (minimum 8 characters)
+          @Example NewPassword123
+        example: NewPassword123
+        minLength: 8
+        type: string
+    type: object
+  dto.ChangeUserRoleRequest:
+    description: Request to change user role
+    properties:
+      role:
+        description: |-
+          New role for the user (User, Admin, SuperAdmin)
+          @Example Admin
+        enum:
+        - User
+        - Admin
+        - SuperAdmin
+        example: Admin
+        type: string
+    type: object
+  dto.ChangeUserStatusRequest:
+    description: Request to change user status
+    properties:
+      status:
+        description: |-
+          New status for the user (Active, Deactivated, Deleted)
+          @Example Active
+        enum:
+        - Active
+        - Deactivated
+        - Deleted
+        example: Active
+        type: string
+    type: object
   dto.GetProfileResponse:
     description: User profile information response
     properties:
+      birthday:
+        description: |-
+          User's birthday (optional)
+          @Example 1990-01-01
+        example: "1990-01-01"
+        type: string
       email:
         description: |-
           User's email address (optional)
@@ -28,6 +73,15 @@ definitions:
       sessions:
         items:
           $ref: '#/definitions/dto.SessionResponse'
+        type: array
+    type: object
+  dto.ListUsersResponse:
+    description: Response containing list of users
+    properties:
+      users:
+        description: List of users
+        items:
+          $ref: '#/definitions/dto.User'
         type: array
     type: object
   dto.LoginRequest:
@@ -123,9 +177,22 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
     type: object
+  dto.UpdatePasswordRequest:
+    description: User password update request
+    properties:
+      password:
+        example: password
+        type: string
+    type: object
   dto.UpdateProfileRequest:
     description: User profile update request
     properties:
+      birthday:
+        description: |-
+          User's birthday (optional)
+          @Example 1990-01-01
+        example: "1990-01-01"
+        type: string
       email:
         description: |-
           User's email address (optional)
@@ -143,6 +210,92 @@ definitions:
           User's last name (optional)
           @Example Doe
         example: Doe
+        type: string
+    type: object
+  dto.UpdateUserRequest:
+    description: Request to update user details
+    properties:
+      birthday:
+        description: |-
+          User's birthday in YYYY-MM-DD format
+          @Example 1990-01-01
+        example: "1990-01-01"
+        type: string
+      email:
+        description: |-
+          User's email address
+          @Example john.doe@example.com
+        example: john.doe@example.com
+        type: string
+      first_name:
+        description: |-
+          User's first name
+          @Example John
+        example: John
+        type: string
+      last_name:
+        description: |-
+          User's last name
+          @Example Doe
+        example: Doe
+        type: string
+      phone:
+        description: |-
+          User's phone number
+          @Example 09123456789
+        example: "09123456789"
+        type: string
+    type: object
+  dto.User:
+    description: User information model
+    properties:
+      birthday:
+        description: |-
+          User's birthday in YYYY-MM-DD format
+          @Example 1990-01-01
+        example: "1990-01-01"
+        type: string
+      email:
+        description: |-
+          User's email address
+          @Example john.doe@example.com
+        example: john.doe@example.com
+        type: string
+      first_name:
+        description: |-
+          User's first name
+          @Example John
+        example: John
+        type: string
+      id:
+        description: |-
+          Unique identifier of the user
+          @Example 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      last_name:
+        description: |-
+          User's last name
+          @Example Doe
+        example: Doe
+        type: string
+      phone:
+        description: |-
+          User's phone number
+          @Example 09123456789
+        example: "09123456789"
+        type: string
+      role:
+        description: |-
+          User's role (User, Admin, SuperAdmin)
+          @Example Admin
+        example: Admin
+        type: string
+      status:
+        description: |-
+          User's status (Active, Deactivated, Deleted)
+          @Example Active
+        example: Active
         type: string
     type: object
 host: localhost:8080
@@ -374,7 +527,416 @@ paths:
       summary: Get user sessions
       tags:
       - auth-protected
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all users with pagination
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListUsersResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden - Admin access required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List all users
+      tags:
+      - admin
+  /api/v1/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user from the system
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden - Admin access required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - admin
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.User'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden - Admin access required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user details
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update user information
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User update information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden - Admin access required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user
+      tags:
+      - admin
+  /api/v1/users/{id}/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Change the password of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Change user password request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangeUserPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User password changed successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden - Admin access required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Change user password
+      tags:
+      - admin
+  /api/v1/users/{id}/role:
+    post:
+      consumes:
+      - application/json
+      description: Change the role of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Change user role request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangeUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User role changed successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden - Admin access required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Change user role
+      tags:
+      - admin
+  /api/v1/users/{id}/status:
+    post:
+      consumes:
+      - application/json
+      description: Change the status of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Change user status request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangeUserStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User status changed successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden - Admin access required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Change user status
+      tags:
+      - admin
   /api/v1/users/me:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - users
     get:
       consumes:
       - application/json
@@ -442,6 +1004,50 @@ paths:
       security:
       - BearerAuth: []
       summary: Update user profile
+      tags:
+      - users
+  /api/v1/users/me/change-password:
+    put:
+      consumes:
+      - application/json
+      description: Update the password of the authenticated user
+      parameters:
+      - description: Password update information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user password
       tags:
       - users
 schemes:

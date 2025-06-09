@@ -46,7 +46,7 @@ func main() {
 	// Setup routes
 	controller.AuthRoutes(r)
 	controller.UserRoutes(r)
-
+	controller.AdminRoutes(r)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run(config.Server.Address + ":" + config.Server.Port) // listen and serve on specified address and port
