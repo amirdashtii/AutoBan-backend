@@ -76,4 +76,72 @@ go run cmd/app/main.go
 We welcome contributions to this project. Please submit a Pull Request to contribute.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for more details. 
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
+## Database Setup & Configuration
+
+### PostgreSQL Database
+The project uses PostgreSQL as its primary database. The database is containerized using Docker and can be easily set up using Docker Compose.
+
+#### Default Configuration
+```yaml
+Database Name: autoban
+User: autoban
+Password: autoban
+Port: 5432
+Host: localhost (when running locally)
+```
+
+#### Redis Cache
+Redis is used for session management and caching.
+```yaml
+Port: 6379
+Password: autoban (default, configurable via REDIS_PASSWORD)
+Persistence: Enabled (AOF mode)
+```
+
+### Environment Variables
+Create a `.env` file in the root directory using `.env.example` as a template. The following variables are required for database configuration:
+
+```env
+# PostgreSQL Configuration
+DB_HOST=your_db_host      # Default: localhost
+DB_PORT=your_db_port      # Default: 5432
+DB_USER=your_db_user      # Default: autoban
+DB_PASSWORD=your_db_password  # Default: autoban
+DB_NAME=your_db_name      # Default: autoban
+
+# Redis Configuration
+REDIS_ADDR=your_redis_addr    # Default: localhost:6379
+REDIS_PASSWORD=your_redis_password  # Default: autoban
+REDIS_DB=your_redis_db        # Default: 0
+```
+
+### Data Persistence
+- PostgreSQL data is persisted in a Docker volume named `db_data`
+- Redis data is persisted in a Docker volume named `redis_data`
+
+### Development Setup
+1. Start the databases:
+```bash
+docker-compose up -d
+```
+This will start both PostgreSQL and Redis with the default configuration.
+
+2. Verify the databases are running:
+```bash
+docker-compose ps
+```
+
+3. Connect to PostgreSQL:
+```bash
+psql -h localhost -p 5432 -U autoban -d autoban
+```
+
+4. Connect to Redis:
+```bash
+redis-cli -h localhost -p 6379
+```
+
+### Database Schema
+The database schema is managed through migrations (documentation coming soon). 

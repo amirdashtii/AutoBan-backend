@@ -8,14 +8,14 @@
 
 ## User Use Case
 5. [x] Implement get user functionality
-6. [ ] Implement update user functionality
-7. [ ] Implement change password functionality
-8. [ ] Implement delete user functionality
+6. [x] Implement update user functionality
+7. [x] Implement change password functionality
+8. [x] Implement delete user functionality
 
 ## Admin Use Case
-9. [ ] Implement list users functionality
-10. [ ] Implement view other users functionality
-11. [ ] Implement additional admin operations
+9. [x] Implement list users functionality
+10. [x] Implement view other users functionality
+11. [x] Implement additional admin operations
 
 ## General
 11. [ ] Write unit tests for user use case
@@ -28,10 +28,10 @@
 16. [x] Create a single instance of PostgreSQL for development
 17. [x] Ensure the database setup is easy to test and mock
 18. [ ] Write integration tests for database interactions
-19. [ ] Document the database setup and usage in the README file
+19. [x] Document the database setup and usage in the README file
 
 ## API Endpoints
 20. [x] Create endpoints for user registration
 21. [x] Create endpoints for user login
-22. [ ] Create endpoints for user management 
-23. [ ] Create endpoints for admin management 
+22. [x] Create endpoints for user management 
+23. [x] Create endpoints for admin management 
