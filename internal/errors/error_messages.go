@@ -1,6 +1,5 @@
 package errors
 
-// تعریف پیام‌های خطا به صورت ثابت
 var (
 	ErrInvalidRequestBody           = New("Invalid request body", "درخواست معتبر نیست")
 	ErrUserNotFound                 = New("User not found", "کاربر یافت نشد")
@@ -31,4 +30,53 @@ var (
 	ErrFailedToChangeUserStatus     = New("failed to change user status", "خطای تغییر وضعیت کاربر")
 	ErrFailedToChangeUserPassword   = New("failed to change user password", "خطای تغییر رمز عبور کاربر")
 	ErrInvalidUserID                = New("invalid user id", "شناسه کاربر نامعتبر است")
+)
+
+var (
+	ErrFailedToListVehicleTypes  = New("failed to list vehicle types", "خطای فهرست نوع ماشین")
+	ErrFailedToGetVehicleType    = New("failed to get vehicle type", "خطای دریافت نوع ماشین")
+	ErrInvalidVehicleTypeID      = New("invalid vehicle type id", "شناسه نوع ماشین نامعتبر است")
+	ErrFailedToCreateVehicleType = New("failed to create vehicle type", "خطای ساخت نوع ماشین")
+	ErrFailedToUpdateVehicleType = New("failed to update vehicle type", "خطای به روز رسانی نوع ماشین")
+	ErrFailedToDeleteVehicleType = New("failed to delete vehicle type", "خطای حذف نوع ماشین")
+)
+
+var (
+	ErrFailedToListVehicleBrands       = New("failed to list vehicle brands", "خطای فهرست برند ماشین")
+	ErrFailedToGetVehicleBrand         = New("failed to get vehicle brand", "خطای دریافت برند ماشین")
+	ErrInvalidVehicleBrandID           = New("invalid vehicle brand id", "شناسه برند ماشین نامعتبر است")
+	ErrFailedToListVehicleBrandsByType = New("failed to list vehicle brands by type", "خطای فهرست برند ماشین برای نوع ماشین")
+	ErrInvalidVehicleBrandType         = New("invalid vehicle brand type", "نوع برند ماشین نامعتبر است")
+	ErrFailedToCreateVehicleBrand      = New("failed to create vehicle brand", "خطای ساخت برند ماشین")
+	ErrFailedToUpdateVehicleBrand      = New("failed to update vehicle brand", "خطای به روز رسانی برند ماشین")
+	ErrFailedToDeleteVehicleBrand      = New("failed to delete vehicle brand", "خطای حذف برند ماشین")
+)
+
+var (
+	ErrFailedToListVehicleModels        = New("failed to list vehicle models", "خطای فهرست مدل ماشین")
+	ErrFailedToGetVehicleModel          = New("failed to get vehicle model", "خطای دریافت مدل ماشین")
+	ErrInvalidVehicleModelID            = New("invalid vehicle model id", "شناسه مدل ماشین نامعتبر است")
+	ErrFailedToCreateVehicleModel       = New("failed to create vehicle model", "خطای ساخت مدل ماشین")
+	ErrFailedToUpdateVehicleModel       = New("failed to update vehicle model", "خطای به روز رسانی مدل ماشین")
+	ErrFailedToDeleteVehicleModel       = New("failed to delete vehicle model", "خطای حذف مدل ماشین")
+	ErrFailedToListVehicleModelsByBrand = New("failed to list vehicle models by brand", "خطای فهرست مدل ماشین برای برند ماشین")
+)
+
+var (
+	ErrFailedToListVehicleGenerations        = New("failed to list vehicle generations", "خطای فهرست گنریشن ماشین")
+	ErrFailedToListVehicleGenerationsByModel = New("failed to list vehicle generations by models", "خطای فهرست گنریشن ماشین برای مدل")
+	ErrFailedToGetVehicleGeneration          = New("failed to get vehicle generation", "خطای دریافت گنریشن ماشین")
+	ErrInvalidVehicleGenerationID            = New("invalid vehicle generation id", "شناسه گنریشن ماشین نامعتبر است")
+	ErrFailedToCreateVehicleGeneration       = New("failed to create vehicle generation", "خطای ساخت گنریشن ماشین")
+	ErrFailedToUpdateVehicleGeneration       = New("failed to update vehicle generation", "خطای به روز رسانی گنریشن ماشین")
+	ErrFailedToDeleteVehicleGeneration       = New("failed to delete vehicle generation", "خطای حذف گنریشن ماشین")
+)
+
+var (
+	ErrFailedToCreateUserVehicle = New("failed to create user vehicle", "خطای ساخت وسیله نقلیه کاربر")
+	ErrFailedToListUserVehicles  = New("failed to list user vehicles", "خطای فهرست وسیله نقلیه کاربر")
+	ErrFailedToGetUserVehicle    = New("failed to get user vehicle", "خطای دریافت وسیله نقلیه کاربر")
+	ErrInvalidUserVehicleID      = New("invalid vehicle user vehicle id", "شناسه وسیله نقلیه کاربر نامعتبر است")
+	ErrFailedToUpdateUserVehicle = New("failed to update user vehicle", "خطای به روز رسانی وسیلقه نقلیه کاربر")
+	ErrFailedToDeleteUserVehicle = New("failed to delete user vehicle", "خطای حذف وسیلثه نقلیه کاربر")
 )

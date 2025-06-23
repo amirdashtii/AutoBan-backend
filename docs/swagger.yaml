@@ -75,6 +75,13 @@ definitions:
           $ref: '#/definitions/dto.SessionResponse'
         type: array
     type: object
+  dto.ListUserVehiclesResponse:
+    properties:
+      vehicles:
+        items:
+          $ref: '#/definitions/dto.UserVehicleResponse'
+        type: array
+    type: object
   dto.ListUsersResponse:
     description: Response containing list of users
     properties:
@@ -82,6 +89,34 @@ definitions:
         description: List of users
         items:
           $ref: '#/definitions/dto.User'
+        type: array
+    type: object
+  dto.ListVehicleBrandsResponse:
+    properties:
+      brands:
+        items:
+          $ref: '#/definitions/dto.VehicleBrandResponse'
+        type: array
+    type: object
+  dto.ListVehicleGenerationsResponse:
+    properties:
+      generations:
+        items:
+          $ref: '#/definitions/dto.VehicleGenerationResponse'
+        type: array
+    type: object
+  dto.ListVehicleModelsResponse:
+    properties:
+      models:
+        items:
+          $ref: '#/definitions/dto.VehicleModelResponse'
+        type: array
+    type: object
+  dto.ListVehicleTypesResponse:
+    properties:
+      types:
+        items:
+          $ref: '#/definitions/dto.VehicleTypeResponse'
         type: array
     type: object
   dto.LoginRequest:
@@ -298,6 +333,202 @@ definitions:
         example: Active
         type: string
     type: object
+  dto.UserVehicleRequest:
+    properties:
+      color:
+        type: string
+      current_mileage:
+        type: integer
+      generation_id:
+        type: string
+      license_plate:
+        type: string
+      production_year:
+        type: integer
+      purchase_date:
+        type: string
+      vin:
+        type: string
+    required:
+    - generation_id
+    - production_year
+    type: object
+  dto.UserVehicleResponse:
+    properties:
+      assembler:
+        type: string
+      assembly_type:
+        type: string
+      body_style:
+        type: string
+      color:
+        type: string
+      current_mileage:
+        type: integer
+      engine_size:
+        type: integer
+      engine_type:
+        type: string
+      generation_id:
+        description: |-
+          VehicleType    string    `json:"vehicle_type"`
+          Brand          string    `json:"brand"`
+          Model          string    `json:"model"`
+          Generation     string    `json:"generation"`
+        type: string
+      id:
+        type: integer
+      license_plate:
+        type: string
+      production_year:
+        type: integer
+      purchase_date:
+        type: string
+      special_features:
+        type: string
+      transmission:
+        description: Technical specifications from generation
+        type: string
+      user_id:
+        type: string
+      vin:
+        type: string
+    type: object
+  dto.VehicleBrandRequest:
+    properties:
+      description:
+        type: string
+      end_year:
+        type: integer
+      name:
+        type: string
+      start_year:
+        type: integer
+      vehicle_type_id:
+        type: string
+    required:
+    - description
+    - name
+    - vehicle_type_id
+    type: object
+  dto.VehicleBrandResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      vehicle_type:
+        type: string
+    type: object
+  dto.VehicleGenerationRequest:
+    properties:
+      assembler:
+        type: string
+      assembly_type:
+        type: string
+      body_style:
+        type: string
+      description:
+        type: string
+      end_year:
+        type: integer
+      engine_size:
+        type: integer
+      engine_type:
+        type: string
+      model_id:
+        type: string
+      name:
+        type: string
+      special_features:
+        type: string
+      start_year:
+        type: integer
+      transmission:
+        type: string
+    type: object
+  dto.VehicleGenerationResponse:
+    properties:
+      assembler:
+        type: string
+      assembly_type:
+        type: string
+      body_style:
+        type: string
+      description:
+        type: string
+      end_year:
+        type: integer
+      engine_size:
+        type: integer
+      engine_type:
+        type: string
+      id:
+        type: integer
+      model_id:
+        type: string
+      name:
+        type: string
+      special_features:
+        type: string
+      start_year:
+        type: integer
+      transmission:
+        type: string
+    type: object
+  dto.VehicleModelRequest:
+    properties:
+      brand_id:
+        type: string
+      description:
+        type: string
+      end_year:
+        type: integer
+      name:
+        type: string
+      start_year:
+        type: integer
+    required:
+    - brand_id
+    - description
+    - name
+    type: object
+  dto.VehicleModelResponse:
+    properties:
+      brand_id:
+        type: string
+      description:
+        type: string
+      end_year:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      start_year:
+        type: integer
+    type: object
+  dto.VehicleTypeRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  dto.VehicleTypeResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -312,6 +543,276 @@ info:
   title: AutoBan API
   version: "1.0"
 paths:
+  /api/v1/admin/vehicles/brands:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle brand
+      parameters:
+      - description: Vehicle Brand
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleBrandRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleBrandResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle brand
+      tags:
+      - brands
+  /api/v1/admin/vehicles/brands/{brandId}/models:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle model
+      parameters:
+      - description: Vehicle Model
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleModelRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleModelResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle model
+      tags:
+      - models
+  /api/v1/admin/vehicles/brands/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle brand
+      parameters:
+      - description: Vehicle Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle brand
+      tags:
+      - brands
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle brand
+      parameters:
+      - description: Vehicle Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Brand
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleBrandRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleBrandResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle brand
+      tags:
+      - brands
+  /api/v1/admin/vehicles/generations:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle generation
+      parameters:
+      - description: Vehicle Generation
+        in: body
+        name: generation
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleGenerationRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleGenerationResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle generation
+      tags:
+      - generations
+  /api/v1/admin/vehicles/generations/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle generation
+      parameters:
+      - description: Vehicle Generation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle generation
+      tags:
+      - generations
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle generation
+      parameters:
+      - description: Vehicle generation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Generation
+        in: body
+        name: generation
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleGenerationRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleGenerationResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle generation
+      tags:
+      - generations
+  /api/v1/admin/vehicles/models/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle model
+      parameters:
+      - description: Vehicle Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle model
+      tags:
+      - models
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle model
+      parameters:
+      - description: Vehicle Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Model
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleModelRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleModelResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle model
+      tags:
+      - models
+  /api/v1/admin/vehicles/types:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle type
+      parameters:
+      - description: Vehicle Type
+        in: body
+        name: vehicleType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleTypeResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle type
+      tags:
+      - types
+  /api/v1/admin/vehicles/types/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle type
+      parameters:
+      - description: Vehicle Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle type
+      tags:
+      - types
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle type
+      parameters:
+      - description: Vehicle Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Type
+        in: body
+        name: vehicleType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VehicleTypeRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleTypeResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle type
+      tags:
+      - types
   /api/v1/auth/login:
     post:
       consumes:
@@ -527,6 +1028,117 @@ paths:
       summary: Get user sessions
       tags:
       - auth-protected
+  /api/v1/user/vehicles:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all user vehicle
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListUserVehiclesResponse'
+      security:
+      - BearerAuth: []
+      summary: List all user vehicles
+      tags:
+      - user-vehicles
+    post:
+      consumes:
+      - application/json
+      description: Add new vehicle to user
+      parameters:
+      - description: UserVehicle Type
+        in: body
+        name: vehicleType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.UserVehicleResponse'
+      security:
+      - BearerAuth: []
+      summary: Add new vehicle to
+      tags:
+      - user-vehicles
+  /api/v1/user/vehicles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user vehicle
+      parameters:
+      - description: User Vehicle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: delete a user vehicle
+      tags:
+      - user-vehicles
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific user vehicle
+      parameters:
+      - description: User Vehicle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserVehicleResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user vehicle details
+      tags:
+      - user-vehicles
+    put:
+      consumes:
+      - application/json
+      description: Update the details of a specific user vehicle
+      parameters:
+      - description: User Vehicle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User Vehicle
+        in: body
+        name: userVehicle
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserVehicleResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user vehicle details
+      tags:
+      - user-vehicles
   /api/v1/users:
     get:
       consumes:
@@ -1050,6 +1662,209 @@ paths:
       summary: Update user password
       tags:
       - users
+  /api/v1/vehicles/brands:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all available vehicle brands
+      produces:
+      - application/json
+      responses: {}
+      summary: List all vehicle brands
+      tags:
+      - brands
+  /api/v1/vehicles/brands/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific vehicle brand
+      parameters:
+      - description: Vehicle Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleBrandResponse'
+      summary: Get vehicle brand details
+      tags:
+      - brands
+  /api/v1/vehicles/brands/{id}/models:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of vehicle models for a specific vehicle brand
+      parameters:
+      - description: Vehicle Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListVehicleModelsResponse'
+      summary: List vehicle models by brand
+      tags:
+      - models
+  /api/v1/vehicles/generations:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all available vehicle generations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListVehicleGenerationsResponse'
+      summary: List all vehicle generations
+      tags:
+      - generations
+  /api/v1/vehicles/generations/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific vehicle generation
+      parameters:
+      - description: Vehicle Generation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleGenerationResponse'
+      summary: Get vehicle generation details
+      tags:
+      - generations
+  /api/v1/vehicles/models:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all available vehicle models
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListVehicleModelsResponse'
+      summary: List all vehicle models
+      tags:
+      - models
+  /api/v1/vehicles/models/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific vehicle model
+      parameters:
+      - description: Vehicle Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleModelResponse'
+      summary: Get vehicle model details
+      tags:
+      - models
+  /api/v1/vehicles/models/{id}/generations:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of vehicle generations for a specific vehicle model
+      parameters:
+      - description: Vehicle Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListVehicleGenerationsResponse'
+      summary: List vehicle generations by model
+      tags:
+      - generations
+  /api/v1/vehicles/types:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all available vehicle types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListVehicleTypesResponse'
+      summary: List all vehicle types
+      tags:
+      - types
+  /api/v1/vehicles/types/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific vehicle type
+      parameters:
+      - description: Vehicle Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleTypeResponse'
+      summary: Get vehicle type details
+      tags:
+      - types
+  /api/v1/vehicles/types/{id}/brands:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of vehicle brands for a specific vehicle type
+      parameters:
+      - description: Vehicle Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListVehicleBrandsResponse'
+      summary: List vehicle brands by type
+      tags:
+      - brands
 schemes:
 - http
 - https

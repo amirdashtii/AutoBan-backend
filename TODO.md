@@ -35,3 +35,28 @@
 21. [x] Create endpoints for user login
 22. [x] Create endpoints for user management 
 23. [x] Create endpoints for admin management 
+
+## Vehicle Management
+1. [ ] Implement vehicle type management
+   - [ ] Add vehicle types API
+   - [ ] List vehicle types API
+2. [ ] Implement vehicle brand management
+   - [ ] Add vehicle brands API
+   - [ ] List vehicle brands API
+   - [ ] Filter brands by type API
+3. [ ] Implement vehicle model management
+   - [ ] Add vehicle models API
+   - [ ] List vehicle models API
+   - [ ] Filter models by brand API
+4. [ ] Implement vehicle generation management
+   - [ ] Add vehicle generations API
+   - [ ] List vehicle generations API
+   - [ ] Filter generations by model API
+5. [ ] Implement user vehicle management
+   - [ ] Add user vehicle API
+   - [ ] List user vehicles API
+   - [ ] Update user vehicle API
+   - [ ] Delete user vehicle API
+6. [ ] Add initial data for common vehicle types, brands, and models
+   - [ ] Add Iranian manufacturers and models
+   - [ ] Add common foreign manufacturers and models

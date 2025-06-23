@@ -62,7 +62,15 @@ func ConnectDatabase() *gorm.DB {
 		}
 
 		// Perform migrations
-		err = db.AutoMigrate(&entity.User{}) // Add other models as needed
+		err = db.AutoMigrate(
+			&entity.User{},
+			&entity.VehicleType{},
+			&entity.VehicleBrand{},
+			&entity.VehicleModel{},
+			&entity.VehicleGeneration{},
+			&entity.UserVehicle{},
+		// Add other models as needed
+		)
 		if err != nil {
 			logger.Error(err, "failed to migrate database")
 		}
