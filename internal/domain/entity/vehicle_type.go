@@ -62,6 +62,7 @@ type UserVehicle struct {
 	gorm.Model
 
 	UserID         string            `json:"user_id" gorm:"type:uuid;not null"`
+	Name           string            `json:"name" gorm:"not null"`
 	GenerationID   string            `json:"generation_id" gorm:"type:uuid;not null"`
 	Generation     VehicleGeneration `json:"generation" gorm:"foreignKey:GenerationID"`
 	ProductionYear int               `json:"production_year" gorm:"not null"`

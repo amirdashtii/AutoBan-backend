@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
@@ -24,31 +23,31 @@ type VehicleUseCase interface {
 	ListBrands(ctx context.Context) (*dto.ListVehicleBrandsResponse, error)
 	GetBrand(ctx context.Context, id string) (*dto.VehicleBrandResponse, error)
 	ListBrandsByType(ctx context.Context, typeID string) (*dto.ListVehicleBrandsResponse, error)
-	CreateBrand(ctx context.Context, request dto.VehicleBrandRequest) (*dto.VehicleBrandResponse, error)
-	UpdateBrand(ctx context.Context, id string, request dto.VehicleBrandRequest) (*dto.VehicleBrandResponse, error)
+	CreateBrand(ctx context.Context, request dto.CreateVehicleBrandRequest) (*dto.VehicleBrandResponse, error)
+	UpdateBrand(ctx context.Context, id string, request dto.UpdateVehicleBrandRequest) (*dto.VehicleBrandResponse, error)
 	DeleteBrand(ctx context.Context, id string) error
 
 	// Models
 	ListModels(ctx context.Context) (*dto.ListVehicleModelsResponse, error)
 	GetModel(ctx context.Context, id string) (*dto.VehicleModelResponse, error)
 	ListModelsByBrand(ctx context.Context, brandID string) (*dto.ListVehicleModelsResponse, error)
-	CreateModel(ctx context.Context, request dto.VehicleModelRequest) (*dto.VehicleModelResponse, error)
-	UpdateModel(ctx context.Context, id string, request dto.VehicleModelRequest) (*dto.VehicleModelResponse, error)
+	CreateModel(ctx context.Context, request dto.CreateVehicleModelRequest) (*dto.VehicleModelResponse, error)
+	UpdateModel(ctx context.Context, id string, request dto.UpdateVehicleModelRequest) (*dto.VehicleModelResponse, error)
 	DeleteModel(ctx context.Context, id string) error
 
 	// Generations
 	ListGenerations(ctx context.Context) (*dto.ListVehicleGenerationsResponse, error)
 	GetGeneration(ctx context.Context, id string) (*dto.VehicleGenerationResponse, error)
 	ListGenerationsByModel(ctx context.Context, modelID string) (*dto.ListVehicleGenerationsResponse, error)
-	CreateGeneration(ctx context.Context, request dto.VehicleGenerationRequest) (*dto.VehicleGenerationResponse, error)
-	UpdateGeneration(ctx context.Context, id string, request dto.VehicleGenerationRequest) (*dto.VehicleGenerationResponse, error)
+	CreateGeneration(ctx context.Context, request dto.CreateVehicleGenerationRequest) (*dto.VehicleGenerationResponse, error)
+	UpdateGeneration(ctx context.Context, id string, request dto.UpdateVehicleGenerationRequest) (*dto.VehicleGenerationResponse, error)
 	DeleteGeneration(ctx context.Context, id string) error
 
 	// User Vehicles
-	AddUserVehicle(ctx context.Context, userID string, request *dto.UserVehicleRequest) (*dto.UserVehicleResponse, error)
+	AddUserVehicle(ctx context.Context, userID string, request *dto.CreateUserVehicleRequest) (*dto.UserVehicleResponse, error)
 	ListUserVehicles(ctx context.Context, userID string) (*dto.ListUserVehiclesResponse, error)
 	GetUserVehicle(ctx context.Context, userID, vehicleID string) (*dto.UserVehicleResponse, error)
-	UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UserVehicleRequest) (*dto.UserVehicleResponse, error)
+	UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UpdateUserVehicleRequest) (*dto.UserVehicleResponse, error)
 	DeleteUserVehicle(ctx context.Context, userID, vehicleID string) error
 }
 
@@ -64,9 +63,7 @@ func NewVehicleUseCase() VehicleUseCase {
 // Vehicle Types
 func (uc *vehicleUseCase) ListVehicleTypes(ctx context.Context) (*dto.ListVehicleTypesResponse, error) {
 	vehicleTypes := []entity.VehicleType{}
-	fmt.Println("vehicleTypes")
 	err := uc.vehicleRepository.ListVehicleTypes(ctx, &vehicleTypes)
-	fmt.Println(vehicleTypes)
 	if err != nil {
 		logger.Error(err, "Failed to list vehicle types")
 		return nil, errors.ErrFailedToListVehicleTypes
@@ -124,16 +121,21 @@ func (uc *vehicleUseCase) CreateVehicleType(ctx context.Context, request dto.Cre
 }
 
 func (uc *vehicleUseCase) UpdateVehicleType(ctx context.Context, id string, request dto.UpdateVehicleTypeRequest) (*dto.VehicleTypeResponse, error) {
-	vehicleType := entity.VehicleType{
-		Name:        *request.Name,
-		Description: *request.Description,
-	}
+	vehicleType := entity.VehicleType{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse vehicle type id")
 		return nil, errors.ErrInvalidVehicleTypeID
 	}
 	vehicleType.ID = uint(uintID)
+
+	if request.Name != nil {
+		vehicleType.Name = *request.Name
+	}
+	if request.Description != nil {
+		vehicleType.Description = *request.Description
+	}
+
 	err = uc.vehicleRepository.UpdateVehicleType(ctx, &vehicleType)
 	if err != nil {
 		logger.Error(err, "Failed to update vehicle type")
@@ -222,7 +224,7 @@ func (uc *vehicleUseCase) ListBrandsByType(ctx context.Context, typeID string) (
 	return &dto.ListVehicleBrandsResponse{Brands: brandsResponse}, nil
 }
 
-func (uc *vehicleUseCase) CreateBrand(ctx context.Context, request dto.VehicleBrandRequest) (*dto.VehicleBrandResponse, error) {
+func (uc *vehicleUseCase) CreateBrand(ctx context.Context, request dto.CreateVehicleBrandRequest) (*dto.VehicleBrandResponse, error) {
 	brand := entity.VehicleBrand{
 		Name:          request.Name,
 		Description:   request.Description,
@@ -241,23 +243,31 @@ func (uc *vehicleUseCase) CreateBrand(ctx context.Context, request dto.VehicleBr
 	}, nil
 }
 
-func (uc *vehicleUseCase) UpdateBrand(ctx context.Context, id string, request dto.VehicleBrandRequest) (*dto.VehicleBrandResponse, error) {
-	brand := entity.VehicleBrand{
-		Name:          request.Name,
-		Description:   request.Description,
-		VehicleTypeID: request.VehicleTypeID,
-	}
+func (uc *vehicleUseCase) UpdateBrand(ctx context.Context, id string, request dto.UpdateVehicleBrandRequest) (*dto.VehicleBrandResponse, error) {
+	brand := entity.VehicleBrand{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse vehicle brand id")
 		return nil, errors.ErrInvalidVehicleBrandID
 	}
 	brand.ID = uint(uintID)
+
+	if request.Name != nil {
+		brand.Name = *request.Name
+	}
+	if request.Description != nil {
+		brand.Description = *request.Description
+	}
+	if request.VehicleTypeID != nil {
+		brand.VehicleTypeID = *request.VehicleTypeID
+	}
+
 	err = uc.vehicleRepository.UpdateBrand(ctx, &brand)
 	if err != nil {
 		logger.Error(err, "Failed to update vehicle brand")
 		return nil, errors.ErrFailedToUpdateVehicleBrand
 	}
+
 	return &dto.VehicleBrandResponse{
 		ID:          brand.ID,
 		Name:        brand.Name,
@@ -348,7 +358,7 @@ func (uc *vehicleUseCase) GetModel(ctx context.Context, id string) (*dto.Vehicle
 	}, nil
 }
 
-func (uc *vehicleUseCase) CreateModel(ctx context.Context, request dto.VehicleModelRequest) (*dto.VehicleModelResponse, error) {
+func (uc *vehicleUseCase) CreateModel(ctx context.Context, request dto.CreateVehicleModelRequest) (*dto.VehicleModelResponse, error) {
 	model := entity.VehicleModel{
 		Name:        request.Name,
 		Description: request.Description,
@@ -371,17 +381,33 @@ func (uc *vehicleUseCase) CreateModel(ctx context.Context, request dto.VehicleMo
 	}, nil
 }
 
-func (uc *vehicleUseCase) UpdateModel(ctx context.Context, id string, request dto.VehicleModelRequest) (*dto.VehicleModelResponse, error) {
-	model := entity.VehicleModel{
-		Name:        request.Name,
-		Description: request.Description,
-		BrandID:     request.BrandID,
-		StartYear:   request.StartYear,
-		EndYear:     request.EndYear,
-	}
+func (uc *vehicleUseCase) UpdateModel(ctx context.Context, id string, request dto.UpdateVehicleModelRequest) (*dto.VehicleModelResponse, error) {
+	model := entity.VehicleModel{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse vehicle model id")
+		return nil, errors.ErrInvalidVehicleModelID
+	}
+	model.ID = uint(uintID)
+
+	if request.Name != nil {
+		model.Name = *request.Name
+	}
+	if request.Description != nil {
+		model.Description = *request.Description
+	}
+	if request.BrandID != nil {
+		model.BrandID = *request.BrandID
+	}
+	if request.StartYear != nil {
+		model.StartYear = *request.StartYear
+	}
+	if request.EndYear != nil {
+		model.EndYear = *request.EndYear
+	}
+
+	err = uc.vehicleRepository.UpdateModel(ctx, &model)
+	if err != nil {
 		return nil, errors.ErrInvalidVehicleModelID
 	}
 	model.ID = uint(uintID)
@@ -504,7 +530,7 @@ func (uc *vehicleUseCase) ListGenerationsByModel(ctx context.Context, modelID st
 	return &dto.ListVehicleGenerationsResponse{Generations: generationsResponse}, nil
 }
 
-func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, request dto.VehicleGenerationRequest) (*dto.VehicleGenerationResponse, error) {
+func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, request dto.CreateVehicleGenerationRequest) (*dto.VehicleGenerationResponse, error) {
 	generation := entity.VehicleGeneration{
 		Name:            request.Name,
 		Description:     request.Description,
@@ -541,27 +567,52 @@ func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, request dto.Vehi
 	}, nil
 }
 
-func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, id string, request dto.VehicleGenerationRequest) (*dto.VehicleGenerationResponse, error) {
-	generation := entity.VehicleGeneration{
-		Name:            request.Name,
-		Description:     request.Description,
-		ModelID:         request.ModelID,
-		StartYear:       request.StartYear,
-		EndYear:         request.EndYear,
-		EngineType:      request.EngineType,
-		AssemblyType:    request.AssemblyType,
-		Assembler:       request.Assembler,
-		Transmission:    request.Transmission,
-		EngineSize:      request.EngineSize,
-		BodyStyle:       request.BodyStyle,
-		SpecialFeatures: request.SpecialFeatures,
-	}
+func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, id string, request dto.UpdateVehicleGenerationRequest) (*dto.VehicleGenerationResponse, error) {
+	generation := entity.VehicleGeneration{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse vehicle generation id")
 		return nil, errors.ErrInvalidVehicleGenerationID
 	}
 	generation.ID = uint(uintID)
+
+	if request.Name != nil {
+		generation.Name = *request.Name
+	}
+	if request.Description != nil {
+		generation.Description = *request.Description
+	}
+	if request.ModelID != nil {
+		generation.ModelID = *request.ModelID
+	}
+	if request.StartYear != nil {
+		generation.StartYear = *request.StartYear
+	}
+	if request.EndYear != nil {
+		generation.EndYear = *request.EndYear
+	}
+	if request.EngineType != nil {
+		generation.EngineType = *request.EngineType
+	}
+	if request.AssemblyType != nil {
+		generation.AssemblyType = *request.AssemblyType
+	}
+	if request.Assembler != nil {
+		generation.Assembler = *request.Assembler
+	}
+	if request.Transmission != nil {
+		generation.Transmission = *request.Transmission
+	}
+	if request.EngineSize != nil {
+		generation.EngineSize = *request.EngineSize
+	}
+	if request.BodyStyle != nil {
+		generation.BodyStyle = *request.BodyStyle
+	}
+	if request.SpecialFeatures != nil {
+		generation.SpecialFeatures = *request.SpecialFeatures
+	}
+
 	err = uc.vehicleRepository.UpdateGeneration(ctx, &generation)
 	if err != nil {
 		logger.Error(err, "Failed to update vehicle generation")
@@ -601,10 +652,11 @@ func (uc *vehicleUseCase) DeleteGeneration(ctx context.Context, id string) error
 }
 
 // User Vehicles
-func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, request *dto.UserVehicleRequest) (*dto.UserVehicleResponse, error) {
+func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, request *dto.CreateUserVehicleRequest) (*dto.UserVehicleResponse, error) {
 	userVehicle := entity.UserVehicle{
 		UserID:         userID,
 		GenerationID:   request.GenerationID,
+		Name:           request.Name,
 		ProductionYear: request.ProductionYear,
 		Color:          request.Color,
 		LicensePlate:   request.LicensePlate,
@@ -621,6 +673,7 @@ func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, req
 		ID:             userVehicle.ID,
 		UserID:         userVehicle.UserID,
 		GenerationID:   userVehicle.GenerationID,
+		Name:           userVehicle.Name,
 		ProductionYear: userVehicle.ProductionYear,
 		Color:          userVehicle.Color,
 		LicensePlate:   userVehicle.LicensePlate,
@@ -643,6 +696,7 @@ func (uc *vehicleUseCase) ListUserVehicles(ctx context.Context, userID string) (
 			ID:             userVehicle.ID,
 			UserID:         userVehicle.UserID,
 			GenerationID:   userVehicle.GenerationID,
+			Name:           userVehicle.Name,
 			ProductionYear: userVehicle.ProductionYear,
 			Color:          userVehicle.Color,
 			LicensePlate:   userVehicle.LicensePlate,
@@ -665,6 +719,7 @@ func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID 
 		ID:             userVehicle.ID,
 		UserID:         userVehicle.UserID,
 		GenerationID:   userVehicle.GenerationID,
+		Name:           userVehicle.Name,
 		ProductionYear: userVehicle.ProductionYear,
 		Color:          userVehicle.Color,
 		LicensePlate:   userVehicle.LicensePlate,
@@ -674,17 +729,37 @@ func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID 
 	}, nil
 }
 
-func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UserVehicleRequest) (*dto.UserVehicleResponse, error) {
+func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UpdateUserVehicleRequest) (*dto.UserVehicleResponse, error) {
 	userVehicle := entity.UserVehicle{
 		UserID:         userID,
-		GenerationID:   request.GenerationID,
-		ProductionYear: request.ProductionYear,
-		Color:          request.Color,
-		LicensePlate:   request.LicensePlate,
-		VIN:            request.VIN,
-		CurrentMileage: request.CurrentMileage,
-		PurchaseDate:   request.PurchaseDate,
 	}
+
+	// Validate and assign optional fields
+	if request.Name != nil {
+		userVehicle.Name = *request.Name
+	}
+	if request.GenerationID != nil {
+		userVehicle.GenerationID = *request.GenerationID
+	}
+	if request.ProductionYear != nil {
+		userVehicle.ProductionYear = *request.ProductionYear
+	}
+	if request.Color != nil {
+		userVehicle.Color = *request.Color
+	}
+	if request.LicensePlate != nil {
+		userVehicle.LicensePlate = *request.LicensePlate
+	}
+	if request.VIN != nil {
+		userVehicle.VIN = *request.VIN
+	}
+	if request.CurrentMileage != nil {
+		userVehicle.CurrentMileage = *request.CurrentMileage
+	}
+	if request.PurchaseDate != nil {
+		userVehicle.PurchaseDate = *request.PurchaseDate
+	}
+
 	uintUserVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse user vehicle id")
@@ -700,6 +775,7 @@ func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicle
 		ID:             userVehicle.ID,
 		UserID:         userVehicle.UserID,
 		GenerationID:   userVehicle.GenerationID,
+		Name:           userVehicle.Name,
 		ProductionYear: userVehicle.ProductionYear,
 		Color:          userVehicle.Color,
 		LicensePlate:   userVehicle.LicensePlate,

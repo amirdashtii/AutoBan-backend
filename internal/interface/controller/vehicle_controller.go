@@ -286,12 +286,12 @@ func (c *VehicleController) ListGenerationsByModel(ctx *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
-// @Param       vehicleType body dto.UserVehicleRequest true "UserVehicle Type"
+// @Param       vehicleType body dto.CreateUserVehicleRequest true "UserVehicle Type"
 // @Success     201 {object} dto.UserVehicleResponse
 // @Router      /api/v1/user/vehicles [post]
 func (c *VehicleController) AddUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
-	var userVehicle dto.UserVehicleRequest
+	var userVehicle dto.CreateUserVehicleRequest
 	if err := ctx.ShouldBindJSON(&userVehicle); err != nil {
 		logger.Error(err, "Failed to bind user vehicle request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
@@ -350,13 +350,13 @@ func (c *VehicleController) GetUserVehicle(ctx *gin.Context) {
 // @Produce     json
 // @Security    BearerAuth
 // @Param       id path string true "User Vehicle ID"
-// @Param       userVehicle body dto.UserVehicleRequest true "User Vehicle"
-// @Success     200 {object} dto.UserVehicleResponse
+// @Param       userVehicle body dto.UpdateUserVehicleRequest true "User Vehicle"
+// @Success     200 {object} dto.UpdateUserVehicleRequest
 // @Router      /api/v1/user/vehicles/{id} [put]
 func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	vehicleID := ctx.Param("id")
-	var userVehicle dto.UserVehicleRequest
+	var userVehicle dto.UpdateUserVehicleRequest
 	if err := ctx.ShouldBindJSON(&userVehicle); err != nil {
 		logger.Error(err, "Failed to bind user vehicle request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
@@ -400,8 +400,8 @@ func (c *VehicleController) DeleteUserVehicle(ctx *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
-// @Param       vehicleType body dto.VehicleTypeRequest true "Vehicle Type"
-// @Success     201 {object} dto.CreateVehicleTypeRequest
+// @Param       vehicleType body dto.CreateVehicleTypeRequest true "Vehicle Type"
+// @Success     201 {object} dto.VehicleTypeResponse
 // @Router      /api/v1/admin/vehicles/types [post]
 func (c *VehicleController) CreateVehicleType(ctx *gin.Context) {
 	var vehicleType dto.CreateVehicleTypeRequest
@@ -466,11 +466,11 @@ func (c *VehicleController) DeleteVehicleType(ctx *gin.Context) {
 // @Tags        brands
 // @Accept      json
 // @Security    BearerAuth
-// @Param       brand body dto.VehicleBrandRequest true "Vehicle Brand"
+// @Param       brand body dto.CreateVehicleBrandRequest true "Vehicle Brand"
 // @Success     201 {object} dto.VehicleBrandResponse
 // @Router      /api/v1/admin/vehicles/brands [post]
 func (c *VehicleController) CreateBrand(ctx *gin.Context) {
-	var brand dto.VehicleBrandRequest
+	var brand dto.CreateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&brand); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
@@ -490,12 +490,12 @@ func (c *VehicleController) CreateBrand(ctx *gin.Context) {
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Brand ID"
-// @Param       brand body dto.VehicleBrandRequest true "Vehicle Brand"
+// @Param       brand body dto.UpdateVehicleBrandRequest true "Vehicle Brand"
 // @Success     200 {object} dto.VehicleBrandResponse
 // @Router      /api/v1/admin/vehicles/brands/{id} [put]
 func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 	id := ctx.Param("id")
-	var brand dto.VehicleBrandRequest
+	var brand dto.UpdateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&brand); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
@@ -532,11 +532,11 @@ func (c *VehicleController) DeleteBrand(ctx *gin.Context) {
 // @Tags        models
 // @Accept      json
 // @Security    BearerAuth
-// @Param       model body dto.VehicleModelRequest true "Vehicle Model"
+// @Param       model body dto.CreateVehicleModelRequest true "Vehicle Model"
 // @Success     201 {object} dto.VehicleModelResponse
 // @Router      /api/v1/admin/vehicles/brands/{brandId}/models [post]
 func (c *VehicleController) CreateModel(ctx *gin.Context) {
-	var model dto.VehicleModelRequest
+	var model dto.CreateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&model); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
@@ -556,12 +556,12 @@ func (c *VehicleController) CreateModel(ctx *gin.Context) {
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Model ID"
-// @Param       model body dto.VehicleModelRequest true "Vehicle Model"
+// @Param       model body dto.UpdateVehicleModelRequest true "Vehicle Model"
 // @Success     200 {object} dto.VehicleModelResponse
 // @Router      /api/v1/admin/vehicles/models/{id} [put]
 func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 	id := ctx.Param("id")
-	var model dto.VehicleModelRequest
+	var model dto.UpdateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&model); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
@@ -598,11 +598,11 @@ func (c *VehicleController) DeleteModel(ctx *gin.Context) {
 // @Tags        generations
 // @Accept      json
 // @Security    BearerAuth
-// @Param       generation body dto.VehicleGenerationRequest true "Vehicle Generation"
+// @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     201 {object} dto.VehicleGenerationResponse
 // @Router      /api/v1/admin/vehicles/generations [post]
 func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
-	var generation dto.VehicleGenerationRequest
+	var generation dto.CreateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&generation); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
@@ -622,12 +622,12 @@ func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle generation ID"
-// @Param       generation body dto.VehicleGenerationRequest true "Vehicle Generation"
+// @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     200 {object} dto.VehicleGenerationResponse
 // @Router      /api/v1/admin/vehicles/generations/{id} [put]
 func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 	id := ctx.Param("id")
-	var generation dto.VehicleGenerationRequest
+	var generation dto.UpdateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&generation); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
