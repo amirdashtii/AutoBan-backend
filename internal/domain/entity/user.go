@@ -78,12 +78,12 @@ func ParseStatusType(s string) StatusType {
 type User struct {
 	BaseEntity
 
-	PhoneNumber string     `gorm:"index;unique" json:"phone_number"`
-	Password    string     `json:"password"`
-	FirstName   *string    `json:"first_name"`
-	LastName    *string    `json:"last_name"`
-	Birthday    *time.Time `json:"birthday"`
-	Email       *string    `gorm:"unique" json:"email"`
+	PhoneNumber string     `gorm:"index;unique" json:"phone_number" gorm:"not null"`
+	Password    string     `json:"password" gorm:"not null"`
+	FirstName   string    `json:"first_name"`
+	LastName    string    `json:"last_name"`
+	Birthday    time.Time `json:"birthday"`
+	Email       string    `gorm:"unique" json:"email"`
 	Status      StatusType `json:"status"`
 	Role        RoleType   `json:"role"`
 }
@@ -103,9 +103,9 @@ func NewUser(phoneNumber, password string) *User {
 
 // UpdateProfile updates the user's profile information
 func (u *User) UpdateProfile(firstName, lastName, email string) {
-	u.FirstName = &firstName
-	u.LastName = &lastName
-	u.Email = &email
+	u.FirstName = firstName
+	u.LastName = lastName
+	u.Email = email
 }
 
 // ChangePassword changes the user's password

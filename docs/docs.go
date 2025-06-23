@@ -46,7 +46,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleBrandRequest"
+                            "$ref": "#/definitions/dto.CreateVehicleBrandRequest"
                         }
                     }
                 ],
@@ -82,7 +82,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleModelRequest"
+                            "$ref": "#/definitions/dto.CreateVehicleModelRequest"
                         }
                     }
                 ],
@@ -125,7 +125,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleBrandRequest"
+                            "$ref": "#/definitions/dto.UpdateVehicleBrandRequest"
                         }
                     }
                 ],
@@ -190,7 +190,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleGenerationRequest"
+                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
                         }
                     }
                 ],
@@ -233,7 +233,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleGenerationRequest"
+                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
                         }
                     }
                 ],
@@ -305,7 +305,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleModelRequest"
+                            "$ref": "#/definitions/dto.UpdateVehicleModelRequest"
                         }
                     }
                 ],
@@ -373,7 +373,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleTypeRequest"
+                            "$ref": "#/definitions/dto.CreateVehicleTypeRequest"
                         }
                     }
                 ],
@@ -416,7 +416,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleTypeRequest"
+                            "$ref": "#/definitions/dto.UpdateVehicleTypeRequest"
                         }
                     }
                 ],
@@ -842,7 +842,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UserVehicleRequest"
+                            "$ref": "#/definitions/dto.CreateUserVehicleRequest"
                         }
                     }
                 ],
@@ -923,7 +923,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UserVehicleRequest"
+                            "$ref": "#/definitions/dto.UpdateUserVehicleRequest"
                         }
                     }
                 ],
@@ -931,7 +931,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserVehicleResponse"
+                            "$ref": "#/definitions/dto.UpdateUserVehicleRequest"
                         }
                     }
                 }
@@ -2135,6 +2135,181 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateUserVehicleRequest": {
+            "description": "User vehicle creation request",
+            "type": "object",
+            "required": [
+                "color",
+                "current_mileage",
+                "generation_id",
+                "license_plate",
+                "name",
+                "production_year",
+                "purchase_date",
+                "vin"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string",
+                    "example": "Red"
+                },
+                "current_mileage": {
+                    "type": "integer",
+                    "example": 15000
+                },
+                "generation_id": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "license_plate": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "My Car"
+                },
+                "production_year": {
+                    "type": "integer",
+                    "example": 2020
+                },
+                "purchase_date": {
+                    "type": "string",
+                    "example": "2020-01-01"
+                },
+                "vin": {
+                    "type": "string",
+                    "example": "1HGCM82633A123456"
+                }
+            }
+        },
+        "dto.CreateVehicleBrandRequest": {
+            "description": "Vehicle brand creation request",
+            "type": "object",
+            "required": [
+                "name",
+                "vehicle_type_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "A popular Japanese car brand"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Toyota"
+                },
+                "vehicle_type_id": {
+                    "type": "string",
+                    "example": "1"
+                }
+            }
+        },
+        "dto.CreateVehicleGenerationRequest": {
+            "description": "Vehicle generation creation request",
+            "type": "object",
+            "required": [
+                "model_id",
+                "name"
+            ],
+            "properties": {
+                "assembler": {
+                    "type": "string",
+                    "example": "Toyota"
+                },
+                "assembly_type": {
+                    "type": "string",
+                    "example": "CKD"
+                },
+                "body_style": {
+                    "type": "string",
+                    "example": "Sedan"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "A brief description of the generation"
+                },
+                "end_year": {
+                    "type": "integer",
+                    "example": 2022
+                },
+                "engine_size": {
+                    "type": "integer",
+                    "example": 3000
+                },
+                "engine_type": {
+                    "type": "string",
+                    "example": "V6"
+                },
+                "model_id": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Generation Name"
+                },
+                "special_features": {
+                    "type": "string",
+                    "example": "Leather seats, Sunroof"
+                },
+                "start_year": {
+                    "type": "integer",
+                    "example": 2020
+                },
+                "transmission": {
+                    "type": "string",
+                    "example": "Automatic"
+                }
+            }
+        },
+        "dto.CreateVehicleModelRequest": {
+            "description": "Vehicle model creation request",
+            "type": "object",
+            "required": [
+                "brand_id",
+                "name"
+            ],
+            "properties": {
+                "brand_id": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "A mid-size sedan"
+                },
+                "end_year": {
+                    "type": "integer",
+                    "example": 2022
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Camry"
+                },
+                "start_year": {
+                    "type": "integer",
+                    "example": 2020
+                }
+            }
+        },
+        "dto.CreateVehicleTypeRequest": {
+            "description": "Vehicle type creation request",
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "A standard passenger car"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "sedan"
+                }
+            }
+        },
         "dto.GetProfileResponse": {
             "description": "User profile information response",
             "type": "object",
@@ -2412,6 +2587,102 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UpdateUserVehicleRequest": {
+            "description": "User vehicle update request",
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string",
+                    "example": "Red"
+                },
+                "current_mileage": {
+                    "type": "integer",
+                    "example": 15000
+                },
+                "generation_id": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "license_plate": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "My Car"
+                },
+                "production_year": {
+                    "type": "integer",
+                    "example": 2020
+                },
+                "purchase_date": {
+                    "type": "string",
+                    "example": "2020-01-01"
+                },
+                "vin": {
+                    "type": "string",
+                    "example": "1HGCM82633A123456"
+                }
+            }
+        },
+        "dto.UpdateVehicleBrandRequest": {
+            "description": "Vehicle brand update request",
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "A popular Japanese car brand"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Toyota"
+                },
+                "vehicle_type_id": {
+                    "type": "string",
+                    "example": "1"
+                }
+            }
+        },
+        "dto.UpdateVehicleModelRequest": {
+            "description": "Vehicle model update request",
+            "type": "object",
+            "properties": {
+                "brand_id": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "A mid-size sedan"
+                },
+                "end_year": {
+                    "type": "integer",
+                    "example": 2022
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Camry"
+                },
+                "start_year": {
+                    "type": "integer",
+                    "example": 2020
+                }
+            }
+        },
+        "dto.UpdateVehicleTypeRequest": {
+            "description": "Vehicle type update request",
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "A standard passenger car"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "sedan"
+                }
+            }
+        },
         "dto.User": {
             "description": "User information model",
             "type": "object",
@@ -2458,62 +2729,17 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserVehicleRequest": {
-            "type": "object",
-            "required": [
-                "generation_id",
-                "production_year"
-            ],
-            "properties": {
-                "color": {
-                    "type": "string"
-                },
-                "current_mileage": {
-                    "type": "integer"
-                },
-                "generation_id": {
-                    "type": "string"
-                },
-                "license_plate": {
-                    "type": "string"
-                },
-                "production_year": {
-                    "type": "integer"
-                },
-                "purchase_date": {
-                    "type": "string"
-                },
-                "vin": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.UserVehicleResponse": {
+            "description": "User vehicle response",
             "type": "object",
             "properties": {
-                "assembler": {
-                    "type": "string"
-                },
-                "assembly_type": {
-                    "type": "string"
-                },
-                "body_style": {
-                    "type": "string"
-                },
                 "color": {
                     "type": "string"
                 },
                 "current_mileage": {
                     "type": "integer"
                 },
-                "engine_size": {
-                    "type": "integer"
-                },
-                "engine_type": {
-                    "type": "string"
-                },
                 "generation_id": {
-                    "description": "VehicleType    string    ` + "`" + `json:\"vehicle_type\"` + "`" + `\nBrand          string    ` + "`" + `json:\"brand\"` + "`" + `\nModel          string    ` + "`" + `json:\"model\"` + "`" + `\nGeneration     string    ` + "`" + `json:\"generation\"` + "`" + `",
                     "type": "string"
                 },
                 "id": {
@@ -2522,17 +2748,13 @@ const docTemplate = `{
                 "license_plate": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "production_year": {
                     "type": "integer"
                 },
                 "purchase_date": {
-                    "type": "string"
-                },
-                "special_features": {
-                    "type": "string"
-                },
-                "transmission": {
-                    "description": "Technical specifications from generation",
                     "type": "string"
                 },
                 "user_id": {
@@ -2543,32 +2765,8 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VehicleBrandRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "name",
-                "vehicle_type_id"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "end_year": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "start_year": {
-                    "type": "integer"
-                },
-                "vehicle_type_id": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.VehicleBrandResponse": {
+            "description": "Vehicle brand response",
             "type": "object",
             "properties": {
                 "description": {
@@ -2585,48 +2783,8 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VehicleGenerationRequest": {
-            "type": "object",
-            "properties": {
-                "assembler": {
-                    "type": "string"
-                },
-                "assembly_type": {
-                    "type": "string"
-                },
-                "body_style": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "end_year": {
-                    "type": "integer"
-                },
-                "engine_size": {
-                    "type": "integer"
-                },
-                "engine_type": {
-                    "type": "string"
-                },
-                "model_id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "special_features": {
-                    "type": "string"
-                },
-                "start_year": {
-                    "type": "integer"
-                },
-                "transmission": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.VehicleGenerationResponse": {
+            "description": "Vehicle generation response",
             "type": "object",
             "properties": {
                 "assembler": {
@@ -2667,35 +2825,11 @@ const docTemplate = `{
                 },
                 "transmission": {
                     "type": "string"
-                }
-            }
-        },
-        "dto.VehicleModelRequest": {
-            "type": "object",
-            "required": [
-                "brand_id",
-                "description",
-                "name"
-            ],
-            "properties": {
-                "brand_id": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "end_year": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "start_year": {
-                    "type": "integer"
                 }
             }
         },
         "dto.VehicleModelResponse": {
+            "description": "Vehicle model response",
             "type": "object",
             "properties": {
                 "brand_id": {
@@ -2718,22 +2852,8 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VehicleTypeRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.VehicleTypeResponse": {
+            "description": "Vehicle type response",
             "type": "object",
             "properties": {
                 "description": {

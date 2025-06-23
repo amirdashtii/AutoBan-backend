@@ -42,15 +42,12 @@ func (u *userUseCase) GetProfile(ctx context.Context, userID string) (*dto.GetPr
 		logger.Error(err, "Failed to get profile")
 		return nil, errors.ErrFailedToGetProfile
 	}
-	birthday := ""
-	if user.Birthday != nil {
-		birthday = user.Birthday.Format("2006-01-02")
-	}
+
 	return &dto.GetProfileResponse{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
-		Birthday:  &birthday,
+		Birthday:  user.Birthday.Format("2006-01-02"),
 	}, nil
 }
 
@@ -77,13 +74,21 @@ func (u *userUseCase) UpdateProfile(ctx context.Context, userID string, request 
 		return nil, errors.ErrInvalidUserID
 	}
 
-	user := entity.User{
-		FirstName: request.FirstName,
-		LastName:  request.LastName,
-		Email:     request.Email,
-		Birthday:  birthday,
-	}
+	user := entity.User{}
 	user.ID = userUUID
+
+	if request.FirstName != nil {
+		user.FirstName = *request.FirstName
+	}
+	if request.LastName != nil {
+		user.LastName = *request.LastName
+	}
+	if request.Email != nil {
+		user.Email = *request.Email
+	}
+	if request.Birthday != nil {
+		user.Birthday = *birthday
+	}
 
 	err = u.userRepository.UpdateProfile(ctx, &user)
 	if err != nil {
@@ -91,15 +96,11 @@ func (u *userUseCase) UpdateProfile(ctx context.Context, userID string, request 
 		return nil, errors.ErrFailedToUpdateProfile
 	}
 
-	responseBirthday := ""
-	if user.Birthday != nil {
-		responseBirthday = user.Birthday.Format("2006-01-02")
-	}
 	return &dto.UpdateProfileResponse{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
-		Birthday:  &responseBirthday,
+		Birthday:  user.Birthday.Format("2006-01-02"),
 	}, nil
 }
 
@@ -109,7 +110,7 @@ func (u *userUseCase) ChangePassword(ctx context.Context, userID string, request
 		logger.Error(err, "Failed to validate update password request")
 		return err
 	}
-	
+
 	user := entity.User{
 		Password: request.Password,
 	}
@@ -137,7 +138,7 @@ func (u *userUseCase) DeleteUser(ctx context.Context, userID string) error {
 		return errors.ErrInvalidUserID
 	}
 	user.ID = userUUID
-	
+
 	err = u.userRepository.DeleteUser(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to delete user")

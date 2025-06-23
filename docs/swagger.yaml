@@ -39,6 +39,136 @@ definitions:
         example: Active
         type: string
     type: object
+  dto.CreateUserVehicleRequest:
+    description: User vehicle creation request
+    properties:
+      color:
+        example: Red
+        type: string
+      current_mileage:
+        example: 15000
+        type: integer
+      generation_id:
+        example: "1"
+        type: string
+      license_plate:
+        example: ABC123
+        type: string
+      name:
+        example: My Car
+        type: string
+      production_year:
+        example: 2020
+        type: integer
+      purchase_date:
+        example: "2020-01-01"
+        type: string
+      vin:
+        example: 1HGCM82633A123456
+        type: string
+    required:
+    - color
+    - current_mileage
+    - generation_id
+    - license_plate
+    - name
+    - production_year
+    - purchase_date
+    - vin
+    type: object
+  dto.CreateVehicleBrandRequest:
+    description: Vehicle brand creation request
+    properties:
+      description:
+        example: A popular Japanese car brand
+        type: string
+      name:
+        example: Toyota
+        type: string
+      vehicle_type_id:
+        example: "1"
+        type: string
+    required:
+    - name
+    - vehicle_type_id
+    type: object
+  dto.CreateVehicleGenerationRequest:
+    description: Vehicle generation creation request
+    properties:
+      assembler:
+        example: Toyota
+        type: string
+      assembly_type:
+        example: CKD
+        type: string
+      body_style:
+        example: Sedan
+        type: string
+      description:
+        example: A brief description of the generation
+        type: string
+      end_year:
+        example: 2022
+        type: integer
+      engine_size:
+        example: 3000
+        type: integer
+      engine_type:
+        example: V6
+        type: string
+      model_id:
+        example: "1"
+        type: string
+      name:
+        example: Generation Name
+        type: string
+      special_features:
+        example: Leather seats, Sunroof
+        type: string
+      start_year:
+        example: 2020
+        type: integer
+      transmission:
+        example: Automatic
+        type: string
+    required:
+    - model_id
+    - name
+    type: object
+  dto.CreateVehicleModelRequest:
+    description: Vehicle model creation request
+    properties:
+      brand_id:
+        example: "1"
+        type: string
+      description:
+        example: A mid-size sedan
+        type: string
+      end_year:
+        example: 2022
+        type: integer
+      name:
+        example: Camry
+        type: string
+      start_year:
+        example: 2020
+        type: integer
+    required:
+    - brand_id
+    - name
+    type: object
+  dto.CreateVehicleTypeRequest:
+    description: Vehicle type creation request
+    properties:
+      description:
+        example: A standard passenger car
+        type: string
+      name:
+        example: sedan
+        type: string
+    required:
+    - name
+    type: object
   dto.GetProfileResponse:
     description: User profile information response
     properties:
@@ -281,6 +411,76 @@ definitions:
         example: "09123456789"
         type: string
     type: object
+  dto.UpdateUserVehicleRequest:
+    description: User vehicle update request
+    properties:
+      color:
+        example: Red
+        type: string
+      current_mileage:
+        example: 15000
+        type: integer
+      generation_id:
+        example: "1"
+        type: string
+      license_plate:
+        example: ABC123
+        type: string
+      name:
+        example: My Car
+        type: string
+      production_year:
+        example: 2020
+        type: integer
+      purchase_date:
+        example: "2020-01-01"
+        type: string
+      vin:
+        example: 1HGCM82633A123456
+        type: string
+    type: object
+  dto.UpdateVehicleBrandRequest:
+    description: Vehicle brand update request
+    properties:
+      description:
+        example: A popular Japanese car brand
+        type: string
+      name:
+        example: Toyota
+        type: string
+      vehicle_type_id:
+        example: "1"
+        type: string
+    type: object
+  dto.UpdateVehicleModelRequest:
+    description: Vehicle model update request
+    properties:
+      brand_id:
+        example: "1"
+        type: string
+      description:
+        example: A mid-size sedan
+        type: string
+      end_year:
+        example: 2022
+        type: integer
+      name:
+        example: Camry
+        type: string
+      start_year:
+        example: 2020
+        type: integer
+    type: object
+  dto.UpdateVehicleTypeRequest:
+    description: Vehicle type update request
+    properties:
+      description:
+        example: A standard passenger car
+        type: string
+      name:
+        example: sedan
+        type: string
+    type: object
   dto.User:
     description: User information model
     properties:
@@ -333,85 +533,32 @@ definitions:
         example: Active
         type: string
     type: object
-  dto.UserVehicleRequest:
-    properties:
-      color:
-        type: string
-      current_mileage:
-        type: integer
-      generation_id:
-        type: string
-      license_plate:
-        type: string
-      production_year:
-        type: integer
-      purchase_date:
-        type: string
-      vin:
-        type: string
-    required:
-    - generation_id
-    - production_year
-    type: object
   dto.UserVehicleResponse:
+    description: User vehicle response
     properties:
-      assembler:
-        type: string
-      assembly_type:
-        type: string
-      body_style:
-        type: string
       color:
         type: string
       current_mileage:
         type: integer
-      engine_size:
-        type: integer
-      engine_type:
-        type: string
       generation_id:
-        description: |-
-          VehicleType    string    `json:"vehicle_type"`
-          Brand          string    `json:"brand"`
-          Model          string    `json:"model"`
-          Generation     string    `json:"generation"`
         type: string
       id:
         type: integer
       license_plate:
         type: string
+      name:
+        type: string
       production_year:
         type: integer
       purchase_date:
-        type: string
-      special_features:
-        type: string
-      transmission:
-        description: Technical specifications from generation
         type: string
       user_id:
         type: string
       vin:
         type: string
     type: object
-  dto.VehicleBrandRequest:
-    properties:
-      description:
-        type: string
-      end_year:
-        type: integer
-      name:
-        type: string
-      start_year:
-        type: integer
-      vehicle_type_id:
-        type: string
-    required:
-    - description
-    - name
-    - vehicle_type_id
-    type: object
   dto.VehicleBrandResponse:
+    description: Vehicle brand response
     properties:
       description:
         type: string
@@ -422,34 +569,8 @@ definitions:
       vehicle_type:
         type: string
     type: object
-  dto.VehicleGenerationRequest:
-    properties:
-      assembler:
-        type: string
-      assembly_type:
-        type: string
-      body_style:
-        type: string
-      description:
-        type: string
-      end_year:
-        type: integer
-      engine_size:
-        type: integer
-      engine_type:
-        type: string
-      model_id:
-        type: string
-      name:
-        type: string
-      special_features:
-        type: string
-      start_year:
-        type: integer
-      transmission:
-        type: string
-    type: object
   dto.VehicleGenerationResponse:
+    description: Vehicle generation response
     properties:
       assembler:
         type: string
@@ -477,25 +598,9 @@ definitions:
         type: integer
       transmission:
         type: string
-    type: object
-  dto.VehicleModelRequest:
-    properties:
-      brand_id:
-        type: string
-      description:
-        type: string
-      end_year:
-        type: integer
-      name:
-        type: string
-      start_year:
-        type: integer
-    required:
-    - brand_id
-    - description
-    - name
     type: object
   dto.VehicleModelResponse:
+    description: Vehicle model response
     properties:
       brand_id:
         type: string
@@ -510,17 +615,8 @@ definitions:
       start_year:
         type: integer
     type: object
-  dto.VehicleTypeRequest:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-    required:
-    - description
-    - name
-    type: object
   dto.VehicleTypeResponse:
+    description: Vehicle type response
     properties:
       description:
         type: string
@@ -554,7 +650,7 @@ paths:
         name: brand
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleBrandRequest'
+          $ref: '#/definitions/dto.CreateVehicleBrandRequest'
       responses:
         "201":
           description: Created
@@ -576,7 +672,7 @@ paths:
         name: model
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleModelRequest'
+          $ref: '#/definitions/dto.CreateVehicleModelRequest'
       responses:
         "201":
           description: Created
@@ -621,7 +717,7 @@ paths:
         name: brand
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleBrandRequest'
+          $ref: '#/definitions/dto.UpdateVehicleBrandRequest'
       responses:
         "200":
           description: OK
@@ -643,7 +739,7 @@ paths:
         name: generation
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleGenerationRequest'
+          $ref: '#/definitions/dto.CreateVehicleGenerationRequest'
       responses:
         "201":
           description: Created
@@ -688,7 +784,7 @@ paths:
         name: generation
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleGenerationRequest'
+          $ref: '#/definitions/dto.CreateVehicleGenerationRequest'
       responses:
         "200":
           description: OK
@@ -733,7 +829,7 @@ paths:
         name: model
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleModelRequest'
+          $ref: '#/definitions/dto.UpdateVehicleModelRequest'
       responses:
         "200":
           description: OK
@@ -755,7 +851,7 @@ paths:
         name: vehicleType
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleTypeRequest'
+          $ref: '#/definitions/dto.CreateVehicleTypeRequest'
       produces:
       - application/json
       responses:
@@ -802,7 +898,7 @@ paths:
         name: vehicleType
         required: true
         schema:
-          $ref: '#/definitions/dto.VehicleTypeRequest'
+          $ref: '#/definitions/dto.UpdateVehicleTypeRequest'
       responses:
         "200":
           description: OK
@@ -1055,7 +1151,7 @@ paths:
         name: vehicleType
         required: true
         schema:
-          $ref: '#/definitions/dto.UserVehicleRequest'
+          $ref: '#/definitions/dto.CreateUserVehicleRequest'
       produces:
       - application/json
       responses:
@@ -1126,14 +1222,14 @@ paths:
         name: userVehicle
         required: true
         schema:
-          $ref: '#/definitions/dto.UserVehicleRequest'
+          $ref: '#/definitions/dto.UpdateUserVehicleRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.UserVehicleResponse'
+            $ref: '#/definitions/dto.UpdateUserVehicleRequest'
       security:
       - BearerAuth: []
       summary: Update user vehicle details

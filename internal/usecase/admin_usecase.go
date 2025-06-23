@@ -15,7 +15,7 @@ import (
 )
 
 type AdminUseCase interface {
-	ListUsers(ctx context.Context) ([]dto.User, error)
+	ListUsers(ctx context.Context) (*dto.ListUserResponse, error)
 	GetUserById(ctx context.Context, userID string) (*dto.User, error)
 	UpdateUser(ctx context.Context, userID string, request dto.UpdateUserRequest) error
 	ChangeUserRole(ctx context.Context, userID string, request dto.ChangeUserRoleRequest) error
@@ -35,48 +35,28 @@ func NewAdminUseCase() AdminUseCase {
 	}
 }
 
-func (u *adminUseCase) ListUsers(ctx context.Context) ([]dto.User, error) {
+func (u *adminUseCase) ListUsers(ctx context.Context) (*dto.ListUserResponse, error) {
 	users, err := u.adminRepository.ListUsers(ctx)
 	if err != nil {
 		logger.Error(err, "Failed to list users")
 		return nil, errors.ErrFailedToListUsers
 	}
 
-	userDtos := []dto.User{}
+	userResponse := []dto.User{}
 	for _, user := range users {
-		firstName := ""
-		if user.FirstName != nil {
-			firstName = *user.FirstName
-		}
-
-		lastName := ""
-		if user.LastName != nil {
-			lastName = *user.LastName
-		}
-
-		email := ""
-		if user.Email != nil {
-			email = *user.Email
-		}
-
-		birthday := ""
-		if user.Birthday != nil {
-			birthday = user.Birthday.Format("2006-01-02")
-		}
-
-		userDtos = append(userDtos, dto.User{
+		userResponse = append(userResponse, dto.User{
 			ID:        user.ID.String(),
-			FirstName: firstName,
-			LastName:  lastName,
-			Email:     email,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Email:     user.Email,
 			Phone:     user.PhoneNumber,
 			Role:      user.Role.String(),
 			Status:    user.Status.String(),
-			Birthday:  birthday,
+			Birthday:  user.Birthday.Format("2006-01-02"),
 		})
 	}
 
-	return userDtos, nil
+	return &dto.ListUserResponse{Users: userResponse}, nil
 }
 
 func (u *adminUseCase) GetUserById(ctx context.Context, userID string) (*dto.User, error) {
@@ -95,35 +75,15 @@ func (u *adminUseCase) GetUserById(ctx context.Context, userID string) (*dto.Use
 		return nil, errors.ErrFailedToGetUserById
 	}
 
-	firstName := ""
-	if user.FirstName != nil {
-		firstName = *user.FirstName
-	}
-
-	lastName := ""
-	if user.LastName != nil {
-		lastName = *user.LastName
-	}
-
-	email := ""
-	if user.Email != nil {
-		email = *user.Email
-	}
-
-	birthday := ""
-	if user.Birthday != nil {
-		birthday = user.Birthday.Format("2006-01-02")
-	}
-
 	return &dto.User{
 		ID:        user.ID.String(),
-		FirstName: firstName,
-		LastName:  lastName,
-		Email:     email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
 		Phone:     user.PhoneNumber,
 		Role:      user.Role.String(),
 		Status:    user.Status.String(),
-		Birthday:  birthday,
+		Birthday:  user.Birthday.Format("2006-01-02"),
 	}, nil
 }
 
@@ -140,8 +100,8 @@ func (u *adminUseCase) UpdateUser(ctx context.Context, userID string, request dt
 	}
 
 	var birthday *time.Time
-	if request.Birthday != "" {
-		parsedTime, err := time.Parse("2006-01-02", request.Birthday)
+	if request.Birthday != nil {
+		parsedTime, err := time.Parse("2006-01-02", *request.Birthday)
 		if err != nil {
 			logger.Error(err, "Failed to parse birthday")
 			return errors.ErrInvalidBirthday
@@ -151,11 +111,22 @@ func (u *adminUseCase) UpdateUser(ctx context.Context, userID string, request dt
 
 	var user entity.User
 	user.ID = userUUID
-	user.FirstName = &request.FirstName
-	user.LastName = &request.LastName
-	user.Email = &request.Email
-	user.PhoneNumber = request.Phone
-	user.Birthday = birthday
+
+	if request.FirstName != nil {
+		user.FirstName = *request.FirstName
+	}
+	if request.LastName != nil {
+		user.LastName = *request.LastName
+	}
+	if request.Email != nil {
+		user.Email = *request.Email
+	}
+	if request.Phone != nil {
+		user.PhoneNumber = *request.Phone
+	}
+	if birthday != nil {
+		user.Birthday = *birthday
+	}
 
 	err = u.adminRepository.UpdateUser(ctx, &user)
 	if err != nil {

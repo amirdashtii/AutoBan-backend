@@ -48,19 +48,19 @@ type GetUserByIdResponse struct {
 type UpdateUserRequest struct {
 	// User's first name
 	// @Example John
-	FirstName string `json:"first_name" example:"John"`
+	FirstName *string `json:"first_name" example:"John"`
 	// User's last name
 	// @Example Doe
-	LastName string `json:"last_name" example:"Doe"`
+	LastName *string `json:"last_name" example:"Doe"`
 	// User's email address
 	// @Example john.doe@example.com
-	Email string `validate:"email" json:"email" example:"john.doe@example.com"`
+	Email *string `validate:"email" json:"email" example:"john.doe@example.com"`
 	// User's phone number
 	// @Example 09123456789
-	Phone string `validate:"phone" json:"phone" example:"09123456789"`
+	Phone *string `validate:"phone" json:"phone" example:"09123456789"`
 	// User's birthday in YYYY-MM-DD format
 	// @Example 1990-01-01
-	Birthday string `validate:"datetime" json:"birthday" example:"1990-01-01"`
+	Birthday *string `validate:"datetime" json:"birthday" example:"1990-01-01"`
 }
 
 // ChangeUserRoleRequest represents the request for changing user role
@@ -85,4 +85,8 @@ type ChangeUserPasswordRequest struct {
 	// New password for the user (minimum 8 characters)
 	// @Example NewPassword123
 	NewPassword string `validate:"password" json:"new_password" example:"NewPassword123" minLength:"8"`
+}
+
+type ListUserResponse struct {
+	Users []User `json:"users"`
 }
