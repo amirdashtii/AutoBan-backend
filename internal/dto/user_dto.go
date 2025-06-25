@@ -4,16 +4,12 @@ package dto
 // @Description User profile information response
 type GetProfileResponse struct {
 	// User's first name (optional)
-	// @Example John
 	FirstName string `json:"first_name" example:"John"`
 	// User's last name (optional)
-	// @Example Doe
 	LastName string `json:"last_name" example:"Doe"`
 	// User's email address (optional)
-	// @Example john.doe@example.com
 	Email string `json:"email" example:"john.doe@example.com"`
 	// User's birthday (optional)
-	// @Example 1990-01-01
 	Birthday string `json:"birthday" example:"1990-01-01"`
 }
 
@@ -21,16 +17,12 @@ type GetProfileResponse struct {
 // @Description User profile update request
 type UpdateProfileRequest struct {
 	// User's first name (optional)
-	// @Example John
 	FirstName *string `json:"first_name" example:"John"`
 	// User's last name (optional)
-	// @Example Doe
 	LastName *string `json:"last_name" example:"Doe"`
 	// User's email address (optional)
-	// @Example john.doe@example.com
 	Email *string `validate:"email" json:"email" example:"john.doe@example.com"`
 	// User's birthday (optional)
-	// @Example 1990-01-01
 	Birthday *string `validate:"datetime" json:"birthday" example:"1990-01-01"`
 }
 
@@ -38,16 +30,12 @@ type UpdateProfileRequest struct {
 // @Description User profile update response
 type UpdateProfileResponse struct {
 	// User's first name (optional)
-	// @Example John
 	FirstName string `json:"first_name" example:"John"`
 	// User's last name (optional)
-	// @Example Doe
 	LastName string `json:"last_name" example:"Doe"`
 	// User's email address (optional)
-	// @Example john.doe@example.com
 	Email string `json:"email" example:"john.doe@example.com"`
 	// User's birthday (optional)
-	// @Example 1990-01-01
 	Birthday string `json:"birthday" example:"1990-01-01"`
 }
 

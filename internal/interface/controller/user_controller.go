@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @tag.name     users
+// @tag.name     Users
 // @tag.description Protected user endpoints - valid token required
 // @tag.x-order  3
 
@@ -27,7 +27,7 @@ func NewUserController() *UserController {
 func UserRoutes(router *gin.Engine) {
 	c := NewUserController()
 
-	userGroup := router.Group("/api/v1/users")
+	userGroup := router.Group("/users")
 	{
 		protected := userGroup.Use(middleware.AuthMiddleware())
 		{
@@ -41,14 +41,14 @@ func UserRoutes(router *gin.Engine) {
 
 // @Summary     Get user profile
 // @Description Get the profile information of the authenticated user
-// @Tags        users
+// @Tags        Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
 // @Success     200 {object} dto.GetProfileResponse
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/me [get]
+// @Router      /users/me [get]
 func (c *UserController) GetProfile(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	user, err := c.userUseCase.GetProfile(ctx, userID)
@@ -62,7 +62,7 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 
 // @Summary     Update user profile
 // @Description Update the profile information of the authenticated user
-// @Tags        users
+// @Tags        Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -71,7 +71,7 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 // @Failure     400 {object} map[string]string "Bad Request"
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/me [put]
+// @Router      /users/me [put]
 func (c *UserController) UpdateProfile(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	var request dto.UpdateProfileRequest
@@ -91,7 +91,7 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 
 // @Summary     Update user password
 // @Description Update the password of the authenticated user
-// @Tags        users
+// @Tags        Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -100,7 +100,7 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 // @Failure     400 {object} map[string]string "Bad Request"
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/me/change-password [put]	
+// @Router      /users/me/change-password [put]	
 func (c *UserController) ChangePassword(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	var request dto.UpdatePasswordRequest
@@ -120,7 +120,7 @@ func (c *UserController) ChangePassword(ctx *gin.Context) {
 
 // @Summary     Delete user
 // @Description Delete the authenticated user
-// @Tags        users
+// @Tags        Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -128,7 +128,7 @@ func (c *UserController) ChangePassword(ctx *gin.Context) {
 // @Failure     400 {object} map[string]string "Bad Request"
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/me [delete]	
+// @Router      /users/me [delete]	
 func (c *UserController) DeleteUser(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	err := c.userUseCase.DeleteUser(ctx, userID)

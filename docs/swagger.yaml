@@ -1,12 +1,10 @@
-basePath: /
+basePath: /api/v1
 definitions:
   dto.ChangeUserPasswordRequest:
     description: Request to change user password
     properties:
       new_password:
-        description: |-
-          New password for the user (minimum 8 characters)
-          @Example NewPassword123
+        description: New password for the user (minimum 8 characters)
         example: NewPassword123
         minLength: 8
         type: string
@@ -15,9 +13,7 @@ definitions:
     description: Request to change user role
     properties:
       role:
-        description: |-
-          New role for the user (User, Admin, SuperAdmin)
-          @Example Admin
+        description: New role for the user (User, Admin, SuperAdmin)
         enum:
         - User
         - Admin
@@ -29,9 +25,7 @@ definitions:
     description: Request to change user status
     properties:
       status:
-        description: |-
-          New status for the user (Active, Deactivated, Deleted)
-          @Example Active
+        description: New status for the user (Active, Deactivated, Deleted)
         enum:
         - Active
         - Deactivated
@@ -43,49 +37,56 @@ definitions:
     description: User vehicle creation request
     properties:
       color:
+        description: Color of the user vehicle
         example: Red
         type: string
       current_mileage:
+        description: Current mileage of the user vehicle
         example: 15000
         type: integer
       generation_id:
+        description: ID of the vehicle generation
         example: "1"
         type: string
       license_plate:
+        description: License plate of the user vehicle
         example: ABC123
         type: string
       name:
+        description: Name of the user vehicle
         example: My Car
         type: string
       production_year:
+        description: Production year of the user vehicle
         example: 2020
         type: integer
       purchase_date:
+        description: Purchase date of the user vehicle
         example: "2020-01-01"
         type: string
       vin:
+        description: VIN of the user vehicle
         example: 1HGCM82633A123456
         type: string
     required:
-    - color
     - current_mileage
     - generation_id
-    - license_plate
     - name
-    - production_year
     - purchase_date
-    - vin
     type: object
   dto.CreateVehicleBrandRequest:
     description: Vehicle brand creation request
     properties:
       description:
+        description: Description of the vehicle brand
         example: A popular Japanese car brand
         type: string
       name:
+        description: Name of the vehicle brand
         example: Toyota
         type: string
       vehicle_type_id:
+        description: ID of the vehicle type
         example: "1"
         type: string
     required:
@@ -96,39 +97,51 @@ definitions:
     description: Vehicle generation creation request
     properties:
       assembler:
+        description: Assembler of the vehicle generation
         example: Toyota
         type: string
       assembly_type:
+        description: Assembly type of the vehicle generation
         example: CKD
         type: string
       body_style:
+        description: Body style of the vehicle generation
         example: Sedan
         type: string
       description:
+        description: Description of the vehicle generation
         example: A brief description of the generation
         type: string
       end_year:
+        description: End year of the vehicle generation
         example: 2022
         type: integer
       engine_size:
+        description: Engine size of the vehicle generation
         example: 3000
         type: integer
       engine_type:
+        description: Engine type of the vehicle generation
         example: V6
         type: string
       model_id:
+        description: ID of the vehicle model
         example: "1"
         type: string
       name:
+        description: Name of the vehicle generation
         example: Generation Name
         type: string
       special_features:
+        description: Special features of the vehicle generation
         example: Leather seats, Sunroof
         type: string
       start_year:
+        description: Start year of the vehicle generation
         example: 2020
         type: integer
       transmission:
+        description: Transmission of the vehicle generation
         example: Automatic
         type: string
     required:
@@ -139,18 +152,23 @@ definitions:
     description: Vehicle model creation request
     properties:
       brand_id:
+        description: ID of the vehicle brand
         example: "1"
         type: string
       description:
+        description: Description of the vehicle model
         example: A mid-size sedan
         type: string
       end_year:
+        description: End year of the vehicle model
         example: 2022
         type: integer
       name:
+        description: Name of the vehicle model
         example: Camry
         type: string
       start_year:
+        description: Start year of the vehicle model
         example: 2020
         type: integer
     required:
@@ -161,10 +179,12 @@ definitions:
     description: Vehicle type creation request
     properties:
       description:
+        description: Description of the vehicle type
         example: A standard passenger car
         type: string
       name:
-        example: sedan
+        description: Name of the vehicle type
+        example: car
         type: string
     required:
     - name
@@ -173,27 +193,19 @@ definitions:
     description: User profile information response
     properties:
       birthday:
-        description: |-
-          User's birthday (optional)
-          @Example 1990-01-01
+        description: User's birthday (optional)
         example: "1990-01-01"
         type: string
       email:
-        description: |-
-          User's email address (optional)
-          @Example john.doe@example.com
+        description: User's email address (optional)
         example: john.doe@example.com
         type: string
       first_name:
-        description: |-
-          User's first name (optional)
-          @Example John
+        description: User's first name (optional)
         example: John
         type: string
       last_name:
-        description: |-
-          User's last name (optional)
-          @Example Doe
+        description: User's last name (optional)
         example: Doe
         type: string
     type: object
@@ -201,13 +213,16 @@ definitions:
     description: Response containing list of user sessions
     properties:
       sessions:
+        description: List of user sessions
         items:
           $ref: '#/definitions/dto.SessionResponse'
         type: array
     type: object
   dto.ListUserVehiclesResponse:
+    description: List of user vehicles
     properties:
       vehicles:
+        description: List of user vehicles
         items:
           $ref: '#/definitions/dto.UserVehicleResponse'
         type: array
@@ -222,29 +237,37 @@ definitions:
         type: array
     type: object
   dto.ListVehicleBrandsResponse:
+    description: List of vehicle brands
     properties:
       brands:
+        description: List of vehicle brands
         items:
           $ref: '#/definitions/dto.VehicleBrandResponse'
         type: array
     type: object
   dto.ListVehicleGenerationsResponse:
+    description: List of vehicle generations
     properties:
       generations:
+        description: List of vehicle generations
         items:
           $ref: '#/definitions/dto.VehicleGenerationResponse'
         type: array
     type: object
   dto.ListVehicleModelsResponse:
+    description: List of vehicle models
     properties:
       models:
+        description: List of vehicle models
         items:
           $ref: '#/definitions/dto.VehicleModelResponse'
         type: array
     type: object
   dto.ListVehicleTypesResponse:
+    description: List of vehicle types
     properties:
       types:
+        description: List of vehicle types
         items:
           $ref: '#/definitions/dto.VehicleTypeResponse'
         type: array
@@ -253,16 +276,13 @@ definitions:
     description: User login request
     properties:
       password:
-        description: |-
-          Password must be at least 8 characters long and include uppercase, lowercase, and numbers
-          @Example Password123
+        description: Password must be at least 8 characters long and include uppercase,
+          lowercase, and numbers
         example: Password123
         minLength: 8
         type: string
       phone_number:
-        description: |-
-          Iranian phone number in format 09XXXXXXXXX
-          @Example 09123456789
+        description: Iranian phone number in format 09XXXXXXXXX
         example: "09123456789"
         type: string
     required:
@@ -273,9 +293,7 @@ definitions:
     description: User logout request
     properties:
       refresh_token:
-        description: |-
-          JWT refresh token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        description: JWT refresh token
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
     required:
@@ -285,9 +303,7 @@ definitions:
     description: Token refresh request
     properties:
       refresh_token:
-        description: |-
-          JWT refresh token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        description: JWT refresh token
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
     required:
@@ -297,16 +313,13 @@ definitions:
     description: User registration request
     properties:
       password:
-        description: |-
-          Password must be at least 8 characters long and include uppercase, lowercase, and numbers
-          @Example Password123
+        description: Password must be at least 8 characters long and include uppercase,
+          lowercase, and numbers
         example: Password123
         minLength: 8
         type: string
       phone_number:
-        description: |-
-          Iranian phone number in format 09XXXXXXXXX
-          @Example 09123456789
+        description: Iranian phone number in format 09XXXXXXXXX
         example: "09123456789"
         type: string
     required:
@@ -317,12 +330,15 @@ definitions:
     description: User session information
     properties:
       device_id:
+        description: Device ID
         example: dev_1234567890
         type: string
       is_active:
+        description: Is active
         example: true
         type: boolean
       last_used:
+        description: Last used time
         example: "2024-03-15T14:30:00Z"
         type: string
     type: object
@@ -330,15 +346,11 @@ definitions:
     description: User login response containing access and refresh tokens
     properties:
       access_token:
-        description: |-
-          JWT access token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        description: JWT access token
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
       refresh_token:
-        description: |-
-          JWT refresh token
-          @Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        description: JWT refresh token
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
     type: object
@@ -353,27 +365,19 @@ definitions:
     description: User profile update request
     properties:
       birthday:
-        description: |-
-          User's birthday (optional)
-          @Example 1990-01-01
+        description: User's birthday (optional)
         example: "1990-01-01"
         type: string
       email:
-        description: |-
-          User's email address (optional)
-          @Example john.doe@example.com
+        description: User's email address (optional)
         example: john.doe@example.com
         type: string
       first_name:
-        description: |-
-          User's first name (optional)
-          @Example John
+        description: User's first name (optional)
         example: John
         type: string
       last_name:
-        description: |-
-          User's last name (optional)
-          @Example Doe
+        description: User's last name (optional)
         example: Doe
         type: string
     type: object
@@ -381,33 +385,23 @@ definitions:
     description: Request to update user details
     properties:
       birthday:
-        description: |-
-          User's birthday in YYYY-MM-DD format
-          @Example 1990-01-01
+        description: User's birthday in YYYY-MM-DD format
         example: "1990-01-01"
         type: string
       email:
-        description: |-
-          User's email address
-          @Example john.doe@example.com
+        description: User's email address
         example: john.doe@example.com
         type: string
       first_name:
-        description: |-
-          User's first name
-          @Example John
+        description: User's first name
         example: John
         type: string
       last_name:
-        description: |-
-          User's last name
-          @Example Doe
+        description: User's last name
         example: Doe
         type: string
       phone:
-        description: |-
-          User's phone number
-          @Example 09123456789
+        description: User's phone number
         example: "09123456789"
         type: string
     type: object
@@ -415,27 +409,35 @@ definitions:
     description: User vehicle update request
     properties:
       color:
+        description: Color of the user vehicle
         example: Red
         type: string
       current_mileage:
+        description: Current mileage of the user vehicle
         example: 15000
         type: integer
       generation_id:
+        description: ID of the vehicle generation
         example: "1"
         type: string
       license_plate:
+        description: License plate of the user vehicle
         example: ABC123
         type: string
       name:
+        description: Name of the user vehicle
         example: My Car
         type: string
       production_year:
+        description: Production year of the user vehicle
         example: 2020
         type: integer
       purchase_date:
+        description: Purchase date of the user vehicle
         example: "2020-01-01"
         type: string
       vin:
+        description: VIN of the user vehicle
         example: 1HGCM82633A123456
         type: string
     type: object
@@ -443,12 +445,15 @@ definitions:
     description: Vehicle brand update request
     properties:
       description:
+        description: Description of the vehicle brand
         example: A popular Japanese car brand
         type: string
       name:
+        description: Name of the vehicle brand
         example: Toyota
         type: string
       vehicle_type_id:
+        description: ID of the vehicle type
         example: "1"
         type: string
     type: object
@@ -456,18 +461,23 @@ definitions:
     description: Vehicle model update request
     properties:
       brand_id:
+        description: ID of the vehicle brand
         example: "1"
         type: string
       description:
+        description: Description of the vehicle model
         example: A mid-size sedan
         type: string
       end_year:
+        description: End year of the vehicle model
         example: 2022
         type: integer
       name:
+        description: Name of the vehicle model
         example: Camry
         type: string
       start_year:
+        description: Start year of the vehicle model
         example: 2020
         type: integer
     type: object
@@ -475,9 +485,11 @@ definitions:
     description: Vehicle type update request
     properties:
       description:
+        description: Description of the vehicle type
         example: A standard passenger car
         type: string
       name:
+        description: Name of the vehicle type
         example: sedan
         type: string
     type: object
@@ -485,51 +497,35 @@ definitions:
     description: User information model
     properties:
       birthday:
-        description: |-
-          User's birthday in YYYY-MM-DD format
-          @Example 1990-01-01
+        description: User's birthday in YYYY-MM-DD format
         example: "1990-01-01"
         type: string
       email:
-        description: |-
-          User's email address
-          @Example john.doe@example.com
+        description: User's email address
         example: john.doe@example.com
         type: string
       first_name:
-        description: |-
-          User's first name
-          @Example John
+        description: User's first name
         example: John
         type: string
       id:
-        description: |-
-          Unique identifier of the user
-          @Example 123e4567-e89b-12d3-a456-426614174000
+        description: Unique identifier of the user
         example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       last_name:
-        description: |-
-          User's last name
-          @Example Doe
+        description: User's last name
         example: Doe
         type: string
       phone:
-        description: |-
-          User's phone number
-          @Example 09123456789
+        description: User's phone number
         example: "09123456789"
         type: string
       role:
-        description: |-
-          User's role (User, Admin, SuperAdmin)
-          @Example Admin
+        description: User's role (User, Admin, SuperAdmin)
         example: Admin
         type: string
       status:
-        description: |-
-          User's status (Active, Deactivated, Deleted)
-          @Example Active
+        description: User's status (Active, Deactivated, Deleted)
         example: Active
         type: string
     type: object
@@ -537,705 +533,141 @@ definitions:
     description: User vehicle response
     properties:
       color:
+        description: Color of the user vehicle
         type: string
       current_mileage:
+        description: Current mileage of the user vehicle
         type: integer
       generation_id:
+        description: ID of the vehicle generation
         type: string
       id:
+        description: ID of the user vehicle
         type: integer
       license_plate:
+        description: License plate of the user vehicle
         type: string
       name:
+        description: Name of the user vehicle
         type: string
       production_year:
+        description: Production year of the user vehicle
         type: integer
       purchase_date:
+        description: Purchase date of the user vehicle
         type: string
       user_id:
+        description: ID of the user
         type: string
       vin:
+        description: VIN of the user vehicle
         type: string
     type: object
   dto.VehicleBrandResponse:
     description: Vehicle brand response
     properties:
       description:
+        description: Description of the vehicle brand
         type: string
       id:
+        description: ID of the vehicle brand
         type: integer
       name:
+        description: Name of the vehicle brand
         type: string
       vehicle_type:
+        description: ID of the vehicle type
         type: string
     type: object
   dto.VehicleGenerationResponse:
     description: Vehicle generation response
     properties:
       assembler:
+        description: Assembler of the vehicle generation
         type: string
       assembly_type:
+        description: Assembly type of the vehicle generation
         type: string
       body_style:
+        description: Body style of the vehicle generation
         type: string
       description:
+        description: Description of the vehicle generation
         type: string
       end_year:
+        description: End year of the vehicle generation
         type: integer
       engine_size:
+        description: Engine size of the vehicle generation
         type: integer
       engine_type:
+        description: Engine type of the vehicle generation
         type: string
       id:
+        description: ID of the vehicle generation
         type: integer
       model_id:
+        description: ID of the vehicle model
         type: string
       name:
+        description: Name of the vehicle generation
         type: string
       special_features:
+        description: Special features of the vehicle generation
         type: string
       start_year:
+        description: Start year of the vehicle generation
         type: integer
       transmission:
+        description: Transmission of the vehicle generation
         type: string
     type: object
   dto.VehicleModelResponse:
     description: Vehicle model response
     properties:
       brand_id:
+        description: ID of the vehicle brand
         type: string
       description:
+        description: Description of the vehicle model
         type: string
       end_year:
+        description: End year of the vehicle model
         type: integer
       id:
+        description: ID of the vehicle model
         type: integer
       name:
+        description: Name of the vehicle model
         type: string
       start_year:
+        description: Start year of the vehicle model
         type: integer
     type: object
   dto.VehicleTypeResponse:
     description: Vehicle type response
     properties:
       description:
+        description: Description of the vehicle type
         type: string
       id:
+        description: ID of the vehicle type
         type: integer
       name:
+        description: Name of the vehicle type
         type: string
     type: object
 host: localhost:8080
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
+  contact: {}
   description: This is a sample server for AutoBan.
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
+    name: GNU General Public License v3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
   title: AutoBan API
   version: "1.0"
 paths:
-  /api/v1/admin/vehicles/brands:
-    post:
-      consumes:
-      - application/json
-      description: Create a new vehicle brand
-      parameters:
-      - description: Vehicle Brand
-        in: body
-        name: brand
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateVehicleBrandRequest'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.VehicleBrandResponse'
-      security:
-      - BearerAuth: []
-      summary: Create a new vehicle brand
-      tags:
-      - brands
-  /api/v1/admin/vehicles/brands/{brandId}/models:
-    post:
-      consumes:
-      - application/json
-      description: Create a new vehicle model
-      parameters:
-      - description: Vehicle Model
-        in: body
-        name: model
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateVehicleModelRequest'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.VehicleModelResponse'
-      security:
-      - BearerAuth: []
-      summary: Create a new vehicle model
-      tags:
-      - models
-  /api/v1/admin/vehicles/brands/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a vehicle brand
-      parameters:
-      - description: Vehicle Brand ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-      security:
-      - BearerAuth: []
-      summary: Delete a vehicle brand
-      tags:
-      - brands
-    put:
-      consumes:
-      - application/json
-      description: Update a vehicle brand
-      parameters:
-      - description: Vehicle Brand ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Vehicle Brand
-        in: body
-        name: brand
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateVehicleBrandRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.VehicleBrandResponse'
-      security:
-      - BearerAuth: []
-      summary: Update a vehicle brand
-      tags:
-      - brands
-  /api/v1/admin/vehicles/generations:
-    post:
-      consumes:
-      - application/json
-      description: Create a new vehicle generation
-      parameters:
-      - description: Vehicle Generation
-        in: body
-        name: generation
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateVehicleGenerationRequest'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.VehicleGenerationResponse'
-      security:
-      - BearerAuth: []
-      summary: Create a new vehicle generation
-      tags:
-      - generations
-  /api/v1/admin/vehicles/generations/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a vehicle generation
-      parameters:
-      - description: Vehicle Generation ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-      security:
-      - BearerAuth: []
-      summary: Delete a vehicle generation
-      tags:
-      - generations
-    put:
-      consumes:
-      - application/json
-      description: Update a vehicle generation
-      parameters:
-      - description: Vehicle generation ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Vehicle Generation
-        in: body
-        name: generation
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateVehicleGenerationRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.VehicleGenerationResponse'
-      security:
-      - BearerAuth: []
-      summary: Update a vehicle generation
-      tags:
-      - generations
-  /api/v1/admin/vehicles/models/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a vehicle model
-      parameters:
-      - description: Vehicle Model ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-      security:
-      - BearerAuth: []
-      summary: Delete a vehicle model
-      tags:
-      - models
-    put:
-      consumes:
-      - application/json
-      description: Update a vehicle model
-      parameters:
-      - description: Vehicle Model ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Vehicle Model
-        in: body
-        name: model
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateVehicleModelRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.VehicleModelResponse'
-      security:
-      - BearerAuth: []
-      summary: Update a vehicle model
-      tags:
-      - models
-  /api/v1/admin/vehicles/types:
-    post:
-      consumes:
-      - application/json
-      description: Create a new vehicle type
-      parameters:
-      - description: Vehicle Type
-        in: body
-        name: vehicleType
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateVehicleTypeRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.VehicleTypeResponse'
-      security:
-      - BearerAuth: []
-      summary: Create a new vehicle type
-      tags:
-      - types
-  /api/v1/admin/vehicles/types/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a vehicle type
-      parameters:
-      - description: Vehicle Type ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-      security:
-      - BearerAuth: []
-      summary: Delete a vehicle type
-      tags:
-      - types
-    put:
-      consumes:
-      - application/json
-      description: Update a vehicle type
-      parameters:
-      - description: Vehicle Type ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Vehicle Type
-        in: body
-        name: vehicleType
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateVehicleTypeRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.VehicleTypeResponse'
-      security:
-      - BearerAuth: []
-      summary: Update a vehicle type
-      tags:
-      - types
-  /api/v1/auth/login:
-    post:
-      consumes:
-      - application/json
-      description: Login a user with phone number and password
-      parameters:
-      - description: User login details
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.TokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: User login
-      tags:
-      - auth-public
-  /api/v1/auth/logout:
-    post:
-      consumes:
-      - application/json
-      description: Logout a user by invalidating the refresh token
-      parameters:
-      - description: Refresh token to invalidate
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LogoutRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: User logout
-      tags:
-      - auth-protected
-  /api/v1/auth/logout-all:
-    post:
-      consumes:
-      - application/json
-      description: Logs out the user from all devices by invalidating all refresh
-        tokens
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Logout from all devices
-      tags:
-      - auth-protected
-  /api/v1/auth/refresh-token:
-    post:
-      consumes:
-      - application/json
-      description: Get new access and refresh tokens using a valid refresh token
-      parameters:
-      - description: Current refresh token
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.RefreshTokenRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.TokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Refresh access token
-      tags:
-      - auth-public
-  /api/v1/auth/register:
-    post:
-      consumes:
-      - application/json
-      description: Register a new user with phone number and password
-      parameters:
-      - description: User registration details
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.RegisterRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Register a new user
-      tags:
-      - auth-public
-  /api/v1/auth/sessions:
-    get:
-      consumes:
-      - application/json
-      description: Returns all active sessions for the authenticated user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GetSessionsResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Get user sessions
-      tags:
-      - auth-protected
-  /api/v1/user/vehicles:
-    get:
-      consumes:
-      - application/json
-      description: Get a list of all user vehicle
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ListUserVehiclesResponse'
-      security:
-      - BearerAuth: []
-      summary: List all user vehicles
-      tags:
-      - user-vehicles
-    post:
-      consumes:
-      - application/json
-      description: Add new vehicle to user
-      parameters:
-      - description: UserVehicle Type
-        in: body
-        name: vehicleType
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateUserVehicleRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.UserVehicleResponse'
-      security:
-      - BearerAuth: []
-      summary: Add new vehicle to
-      tags:
-      - user-vehicles
-  /api/v1/user/vehicles/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a user vehicle
-      parameters:
-      - description: User Vehicle ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - BearerAuth: []
-      summary: delete a user vehicle
-      tags:
-      - user-vehicles
-    get:
-      consumes:
-      - application/json
-      description: Get details of a specific user vehicle
-      parameters:
-      - description: User Vehicle ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.UserVehicleResponse'
-      security:
-      - BearerAuth: []
-      summary: Get user vehicle details
-      tags:
-      - user-vehicles
-    put:
-      consumes:
-      - application/json
-      description: Update the details of a specific user vehicle
-      parameters:
-      - description: User Vehicle ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: User Vehicle
-        in: body
-        name: userVehicle
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateUserVehicleRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.UpdateUserVehicleRequest'
-      security:
-      - BearerAuth: []
-      summary: Update user vehicle details
-      tags:
-      - user-vehicles
-  /api/v1/users:
+  /admin/users:
     get:
       consumes:
       - application/json
@@ -1269,8 +701,8 @@ paths:
       - BearerAuth: []
       summary: List all users
       tags:
-      - admin
-  /api/v1/users/{id}:
+      - Admin - Users
+  /admin/users/{id}:
     delete:
       consumes:
       - application/json
@@ -1318,7 +750,7 @@ paths:
       - BearerAuth: []
       summary: Delete user
       tags:
-      - admin
+      - Admin - Users
     get:
       consumes:
       - application/json
@@ -1364,7 +796,7 @@ paths:
       - BearerAuth: []
       summary: Get user details
       tags:
-      - admin
+      - Admin - Users
     put:
       consumes:
       - application/json
@@ -1424,8 +856,8 @@ paths:
       - BearerAuth: []
       summary: Update user
       tags:
-      - admin
-  /api/v1/users/{id}/change-password:
+      - Admin - Users
+  /admin/users/{id}/change-password:
     post:
       consumes:
       - application/json
@@ -1485,8 +917,8 @@ paths:
       - BearerAuth: []
       summary: Change user password
       tags:
-      - admin
-  /api/v1/users/{id}/role:
+      - Admin - Users
+  /admin/users/{id}/role:
     post:
       consumes:
       - application/json
@@ -1546,8 +978,8 @@ paths:
       - BearerAuth: []
       summary: Change user role
       tags:
-      - admin
-  /api/v1/users/{id}/status:
+      - Admin - Users
+  /admin/users/{id}/status:
     post:
       consumes:
       - application/json
@@ -1607,8 +1039,604 @@ paths:
       - BearerAuth: []
       summary: Change user status
       tags:
-      - admin
-  /api/v1/users/me:
+      - Admin - Users
+  /admin/vehicles/brands:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle brand
+      parameters:
+      - description: Vehicle Brand
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVehicleBrandRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleBrandResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle brand
+      tags:
+      - Admin - Brands
+  /admin/vehicles/brands/{brandId}/models:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle model
+      parameters:
+      - description: Vehicle Model
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVehicleModelRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleModelResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle model
+      tags:
+      - Admin - Models
+  /admin/vehicles/brands/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle brand
+      parameters:
+      - description: Vehicle Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle brand
+      tags:
+      - Admin - Brands
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle brand
+      parameters:
+      - description: Vehicle Brand ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Brand
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVehicleBrandRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleBrandResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle brand
+      tags:
+      - Admin - Brands
+  /admin/vehicles/generations:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle generation
+      parameters:
+      - description: Vehicle Generation
+        in: body
+        name: generation
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVehicleGenerationRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleGenerationResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle generation
+      tags:
+      - Admin - Generations
+  /admin/vehicles/generations/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle generation
+      parameters:
+      - description: Vehicle Generation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle generation
+      tags:
+      - Admin - Generations
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle generation
+      parameters:
+      - description: Vehicle generation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Generation
+        in: body
+        name: generation
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVehicleGenerationRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleGenerationResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle generation
+      tags:
+      - Admin - Generations
+  /admin/vehicles/models/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle model
+      parameters:
+      - description: Vehicle Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle model
+      tags:
+      - Admin - Models
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle model
+      parameters:
+      - description: Vehicle Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Model
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVehicleModelRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleModelResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle model
+      tags:
+      - Admin - Models
+  /admin/vehicles/types:
+    post:
+      consumes:
+      - application/json
+      description: Create a new vehicle type
+      parameters:
+      - description: Vehicle Type
+        in: body
+        name: vehicleType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVehicleTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleTypeResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle type
+      tags:
+      - Admin - Types
+  /admin/vehicles/types/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vehicle type
+      parameters:
+      - description: Vehicle Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a vehicle type
+      tags:
+      - Admin - Types
+    put:
+      consumes:
+      - application/json
+      description: Update a vehicle type
+      parameters:
+      - description: Vehicle Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Vehicle Type
+        in: body
+        name: vehicleType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVehicleTypeRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleTypeResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a vehicle type
+      tags:
+      - Admin - Types
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user with phone number and password
+      parameters:
+      - description: User login details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - Authentication
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout a user by invalidating the refresh token
+      parameters:
+      - description: Refresh token to invalidate
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: User logout
+      tags:
+      - Authentication
+  /auth/logout-all:
+    post:
+      consumes:
+      - application/json
+      description: Logs out the user from all devices by invalidating all refresh
+        tokens
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Logout from all devices
+      tags:
+      - Authentication
+  /auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Get new access and refresh tokens using a valid refresh token
+      parameters:
+      - description: Current refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Refresh access token
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with phone number and password
+      parameters:
+      - description: User registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - Authentication
+  /auth/sessions:
+    get:
+      consumes:
+      - application/json
+      description: Returns all active sessions for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetSessionsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user sessions
+      tags:
+      - Authentication
+  /user/vehicles:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all user vehicle
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListUserVehiclesResponse'
+      security:
+      - BearerAuth: []
+      summary: List all user vehicles
+      tags:
+      - User - Vehicles
+    post:
+      consumes:
+      - application/json
+      description: Add new vehicle to user
+      parameters:
+      - description: UserVehicle Type
+        in: body
+        name: vehicleType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.UserVehicleResponse'
+      security:
+      - BearerAuth: []
+      summary: Add new vehicle to
+      tags:
+      - User - Vehicles
+  /user/vehicles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user vehicle
+      parameters:
+      - description: User Vehicle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: delete a user vehicle
+      tags:
+      - User - Vehicles
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific user vehicle
+      parameters:
+      - description: User Vehicle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserVehicleResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user vehicle details
+      tags:
+      - User - Vehicles
+    put:
+      consumes:
+      - application/json
+      description: Update the details of a specific user vehicle
+      parameters:
+      - description: User Vehicle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User Vehicle
+        in: body
+        name: userVehicle
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateUserVehicleRequest'
+      security:
+      - BearerAuth: []
+      summary: Update user vehicle details
+      tags:
+      - User - Vehicles
+  /users/me:
     delete:
       consumes:
       - application/json
@@ -1644,7 +1672,7 @@ paths:
       - BearerAuth: []
       summary: Delete user
       tags:
-      - users
+      - Users
     get:
       consumes:
       - application/json
@@ -1672,7 +1700,7 @@ paths:
       - BearerAuth: []
       summary: Get user profile
       tags:
-      - users
+      - Users
     put:
       consumes:
       - application/json
@@ -1713,8 +1741,8 @@ paths:
       - BearerAuth: []
       summary: Update user profile
       tags:
-      - users
-  /api/v1/users/me/change-password:
+      - Users
+  /users/me/change-password:
     put:
       consumes:
       - application/json
@@ -1757,8 +1785,8 @@ paths:
       - BearerAuth: []
       summary: Update user password
       tags:
-      - users
-  /api/v1/vehicles/brands:
+      - Users
+  /vehicles/brands:
     get:
       consumes:
       - application/json
@@ -1768,8 +1796,8 @@ paths:
       responses: {}
       summary: List all vehicle brands
       tags:
-      - brands
-  /api/v1/vehicles/brands/{id}:
+      - Brands
+  /vehicles/brands/{id}:
     get:
       consumes:
       - application/json
@@ -1789,8 +1817,8 @@ paths:
             $ref: '#/definitions/dto.VehicleBrandResponse'
       summary: Get vehicle brand details
       tags:
-      - brands
-  /api/v1/vehicles/brands/{id}/models:
+      - Brands
+  /vehicles/brands/{id}/models:
     get:
       consumes:
       - application/json
@@ -1810,8 +1838,8 @@ paths:
             $ref: '#/definitions/dto.ListVehicleModelsResponse'
       summary: List vehicle models by brand
       tags:
-      - models
-  /api/v1/vehicles/generations:
+      - Models
+  /vehicles/generations:
     get:
       consumes:
       - application/json
@@ -1825,8 +1853,8 @@ paths:
             $ref: '#/definitions/dto.ListVehicleGenerationsResponse'
       summary: List all vehicle generations
       tags:
-      - generations
-  /api/v1/vehicles/generations/{id}:
+      - Generations
+  /vehicles/generations/{id}:
     get:
       consumes:
       - application/json
@@ -1846,8 +1874,8 @@ paths:
             $ref: '#/definitions/dto.VehicleGenerationResponse'
       summary: Get vehicle generation details
       tags:
-      - generations
-  /api/v1/vehicles/models:
+      - Generations
+  /vehicles/models:
     get:
       consumes:
       - application/json
@@ -1861,8 +1889,8 @@ paths:
             $ref: '#/definitions/dto.ListVehicleModelsResponse'
       summary: List all vehicle models
       tags:
-      - models
-  /api/v1/vehicles/models/{id}:
+      - Models
+  /vehicles/models/{id}:
     get:
       consumes:
       - application/json
@@ -1882,8 +1910,8 @@ paths:
             $ref: '#/definitions/dto.VehicleModelResponse'
       summary: Get vehicle model details
       tags:
-      - models
-  /api/v1/vehicles/models/{id}/generations:
+      - Models
+  /vehicles/models/{id}/generations:
     get:
       consumes:
       - application/json
@@ -1903,8 +1931,8 @@ paths:
             $ref: '#/definitions/dto.ListVehicleGenerationsResponse'
       summary: List vehicle generations by model
       tags:
-      - generations
-  /api/v1/vehicles/types:
+      - Generations
+  /vehicles/types:
     get:
       consumes:
       - application/json
@@ -1918,8 +1946,8 @@ paths:
             $ref: '#/definitions/dto.ListVehicleTypesResponse'
       summary: List all vehicle types
       tags:
-      - types
-  /api/v1/vehicles/types/{id}:
+      - Types
+  /vehicles/types/{id}:
     get:
       consumes:
       - application/json
@@ -1939,8 +1967,8 @@ paths:
             $ref: '#/definitions/dto.VehicleTypeResponse'
       summary: Get vehicle type details
       tags:
-      - types
-  /api/v1/vehicles/types/{id}/brands:
+      - Types
+  /vehicles/types/{id}/brands:
     get:
       consumes:
       - application/json
@@ -1960,7 +1988,7 @@ paths:
             $ref: '#/definitions/dto.ListVehicleBrandsResponse'
       summary: List vehicle brands by type
       tags:
-      - brands
+      - Brands
 schemes:
 - http
 - https
@@ -1971,3 +1999,30 @@ securityDefinitions:
     name: Authorization
     type: apiKey
 swagger: "2.0"
+tags:
+- description: Authentication operations
+  name: Authentication
+- description: User management operations
+  name: Users
+- description: User vehicle management
+  name: User - Vehicles
+- description: Vehicle types management
+  name: Types
+- description: Vehicle brands management
+  name: Brands
+- description: Vehicle models management
+  name: Models
+- description: Vehicle generations management
+  name: Generations
+- description: Admin user management operations
+  name: Admin - Users
+- description: Admin vehicle type management operations
+  name: Admin - Types
+- description: Admin vehicle brand management operations
+  name: Admin - Brands
+- description: Admin vehicle model management operations
+  name: Admin - Models
+- description: Admin vehicle generation management operations
+  name: Admin - Generations
+- description: Admin user vehicle management operations
+  name: Admin - UserVehicles

@@ -184,6 +184,7 @@ func (uc *vehicleUseCase) ListBrands(ctx context.Context) (*dto.ListVehicleBrand
 		logger.Error(err, "Failed to list vehicle brands")
 		return nil, errors.ErrFailedToListVehicleBrands
 	}
+	
 	brandsResponse := []dto.VehicleBrandResponse{}
 	for _, brand := range brands {
 		brandsResponse = append(brandsResponse, dto.VehicleBrandResponse{

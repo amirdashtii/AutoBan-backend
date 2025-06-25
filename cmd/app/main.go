@@ -15,24 +15,59 @@ import (
 // @title           AutoBan API
 // @version         1.0
 // @description     This is a sample server for AutoBan.
-// @termsOfService  http://swagger.io/terms/
 
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
-
-// @license.name   Apache 2.0
-// @license.url    http://www.apache.org/licenses/LICENSE-2.0.html
+// @license.name   GNU General Public License v3.0
+// @license.url    https://www.gnu.org/licenses/gpl-3.0.en.html
 
 // @host      localhost:8080
-// @BasePath  /
+// @BasePath  /api/v1
 
 // @securityDefinitions.apikey  BearerAuth
-// @in                         header
-// @name                       Authorization
-// @description               Type "Bearer" followed by a space and JWT token.
+// @in                          header
+// @name                        Authorization
+// @description                 Type "Bearer" followed by a space and JWT token.
 
 // @schemes http https
+
+// @tag.name        Authentication
+// @tag.description Authentication operations
+
+// @tag.name        Users
+// @tag.description User management operations
+
+// @tag.name        User - Vehicles
+// @tag.description User vehicle management
+
+// @tag.name        Types
+// @tag.description Vehicle types management
+
+// @tag.name        Brands
+// @tag.description Vehicle brands management
+
+// @tag.name        Models
+// @tag.description Vehicle models management
+
+// @tag.name        Generations
+// @tag.description Vehicle generations management
+
+// @tag.name        Admin - Users
+// @tag.description Admin user management operations
+
+// @tag.name        Admin - Types
+// @tag.description Admin vehicle type management operations
+
+// @tag.name        Admin - Brands
+// @tag.description Admin vehicle brand management operations
+
+// @tag.name        Admin - Models
+// @tag.description Admin vehicle model management operations
+
+// @tag.name        Admin - Generations
+// @tag.description Admin vehicle generation management operations
+
+// @tag.name        Admin - UserVehicles
+// @tag.description Admin user vehicle management operations
+
 func main() {
 	logger.InitLogger()
 	config, err := config.GetConfig()

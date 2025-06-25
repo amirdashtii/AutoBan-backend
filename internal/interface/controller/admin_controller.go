@@ -9,10 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @tag.name     admin
-// @tag.description Protected admin endpoints - requires admin privileges
-// @tag.x-order  4
-
 type AdminController struct {
 	adminUseCase usecase.AdminUseCase
 }
@@ -25,7 +21,7 @@ func NewAdminController() *AdminController {
 func AdminRoutes(router *gin.Engine) {
 	c := NewAdminController()
 
-	adminGroup := router.Group("/api/v1/users")
+	adminGroup := router.Group("/admin/users")
 	{
 		adminGroup.Use(middleware.AuthMiddleware())
 		adminGroup.Use(middleware.RequireAdmin())
@@ -42,7 +38,7 @@ func AdminRoutes(router *gin.Engine) {
 
 // @Summary     List all users
 // @Description Get a list of all users with pagination
-// @Tags        admin
+// @Tags        Admin - Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -50,7 +46,7 @@ func AdminRoutes(router *gin.Engine) {
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     403 {object} map[string]string "Forbidden - Admin access required"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users [get]
+// @Router      /admin/users [get]
 func (c *AdminController) ListUsers(ctx *gin.Context) {
 
 	users, err := c.adminUseCase.ListUsers(ctx)
@@ -64,7 +60,7 @@ func (c *AdminController) ListUsers(ctx *gin.Context) {
 
 // @Summary     Get user details
 // @Description Get detailed information about a specific user
-// @Tags        admin
+// @Tags        Admin - Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -74,7 +70,7 @@ func (c *AdminController) ListUsers(ctx *gin.Context) {
 // @Failure     403 {object} map[string]string "Forbidden - Admin access required"
 // @Failure     404 {object} map[string]string "User not found"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/{id} [get]
+// @Router      /admin/users/{id} [get]
 func (c *AdminController) GetUserById(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	user, err := c.adminUseCase.GetUserById(ctx, userID)
@@ -87,7 +83,7 @@ func (c *AdminController) GetUserById(ctx *gin.Context) {
 
 // @Summary     Update user
 // @Description Update user information
-// @Tags        admin
+// @Tags        Admin - Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -99,7 +95,7 @@ func (c *AdminController) GetUserById(ctx *gin.Context) {
 // @Failure     403 {object} map[string]string "Forbidden - Admin access required"
 // @Failure     404 {object} map[string]string "User not found"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/{id} [put]
+// @Router      /admin/users/{id} [put]
 func (c *AdminController) UpdateUser(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.UpdateUserRequest
@@ -117,7 +113,7 @@ func (c *AdminController) UpdateUser(ctx *gin.Context) {
 
 // @Summary     Change user role
 // @Description Change the role of a user
-// @Tags        admin
+// @Tags        Admin - Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -129,7 +125,7 @@ func (c *AdminController) UpdateUser(ctx *gin.Context) {
 // @Failure     403 {object} map[string]string "Forbidden - Admin access required"
 // @Failure     404 {object} map[string]string "User not found"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/{id}/role [post]
+// @Router      /admin/users/{id}/role [post]
 func (c *AdminController) ChangeUserRole(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.ChangeUserRoleRequest
@@ -147,7 +143,7 @@ func (c *AdminController) ChangeUserRole(ctx *gin.Context) {
 
 // @Summary     Change user status
 // @Description Change the status of a user
-// @Tags        admin
+// @Tags        Admin - Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -159,7 +155,7 @@ func (c *AdminController) ChangeUserRole(ctx *gin.Context) {
 // @Failure     403 {object} map[string]string "Forbidden - Admin access required"
 // @Failure     404 {object} map[string]string "User not found"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/{id}/status [post]
+// @Router      /admin/users/{id}/status [post]
 func (c *AdminController) ChangeUserStatus(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.ChangeUserStatusRequest
@@ -177,7 +173,7 @@ func (c *AdminController) ChangeUserStatus(ctx *gin.Context) {
 
 // @Summary     Change user password
 // @Description Change the password of a user
-// @Tags        admin
+// @Tags        Admin - Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -189,7 +185,7 @@ func (c *AdminController) ChangeUserStatus(ctx *gin.Context) {
 // @Failure     403 {object} map[string]string "Forbidden - Admin access required"
 // @Failure     404 {object} map[string]string "User not found"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/{id}/change-password [post]
+// @Router      /admin/users/{id}/change-password [post]
 func (c *AdminController) ChangeUserPassword(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.ChangeUserPasswordRequest
@@ -207,7 +203,7 @@ func (c *AdminController) ChangeUserPassword(ctx *gin.Context) {
 
 // @Summary     Delete user
 // @Description Delete a user from the system
-// @Tags        admin
+// @Tags        Admin - Users
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
@@ -217,7 +213,7 @@ func (c *AdminController) ChangeUserPassword(ctx *gin.Context) {
 // @Failure     403 {object} map[string]string "Forbidden - Admin access required"
 // @Failure     404 {object} map[string]string "User not found"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /api/v1/users/{id} [delete]
+// @Router      /admin/users/{id} [delete]
 func (c *AdminController) DeleteUser(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	err := c.adminUseCase.DeleteUser(ctx, userID)

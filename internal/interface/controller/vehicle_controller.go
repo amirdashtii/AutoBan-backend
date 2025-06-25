@@ -11,10 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @tag.name     vehicles
-// @tag.description Vehicle management endpoints
-// @tag.x-order  5
-
 type VehicleController struct {
 	vehicleUseCase usecase.VehicleUseCase
 }
@@ -28,7 +24,7 @@ func VehicleRoutes(router *gin.Engine) {
 	c := NewVehicleController()
 
 	// Public routes for vehicle catalog
-	vehicleGroup := router.Group("/api/v1/vehicles")
+	vehicleGroup := router.Group("/vehicles")
 	{
 		// Vehicle Types
 		vehicleGroup.GET("/types", c.ListVehicleTypes)
@@ -51,7 +47,7 @@ func VehicleRoutes(router *gin.Engine) {
 	}
 
 	// User vehicle management (requires authentication)
-	userVehicles := router.Group("/api/v1/user/vehicles")
+	userVehicles := router.Group("/user/vehicles")
 	userVehicles.Use(middleware.AuthMiddleware())
 	{
 		userVehicles.POST("", c.AddUserVehicle)
@@ -62,7 +58,7 @@ func VehicleRoutes(router *gin.Engine) {
 	}
 
 	// Admin routes for managing vehicle catalog
-	adminVehicles := router.Group("/api/v1/admin/vehicles")
+	adminVehicles := router.Group("/admin/vehicles")
 	adminVehicles.Use(middleware.AuthMiddleware(), middleware.RequireAdmin())
 	{
 		// Vehicle Types management
@@ -91,11 +87,12 @@ func VehicleRoutes(router *gin.Engine) {
 
 // @Summary     List all vehicle types
 // @Description Get a list of all available vehicle types
-// @Tags        types
+// @Tags        Types
 // @Accept      json
 // @Produce     json
+// @Order       1
 // @Success     200 {object} dto.ListVehicleTypesResponse
-// @Router      /api/v1/vehicles/types [get]
+// @Router      /vehicles/types [get]
 func (c *VehicleController) ListVehicleTypes(ctx *gin.Context) {
 	types, err := c.vehicleUseCase.ListVehicleTypes(ctx)
 	if err != nil {
@@ -107,12 +104,13 @@ func (c *VehicleController) ListVehicleTypes(ctx *gin.Context) {
 
 // @Summary     Get vehicle type details
 // @Description Get details of a specific vehicle type
-// @Tags        types
+// @Tags        Types
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "Vehicle Type ID"
+// @Order       2
 // @Success     200 {object} dto.VehicleTypeResponse
-// @Router      /api/v1/vehicles/types/{id} [get]
+// @Router      /vehicles/types/{id} [get]
 func (c *VehicleController) GetVehicleType(ctx *gin.Context) {
 	id := ctx.Param("id")
 	vehicleType, err := c.vehicleUseCase.GetVehicleType(ctx, id)
@@ -125,10 +123,11 @@ func (c *VehicleController) GetVehicleType(ctx *gin.Context) {
 
 // @Summary     List all vehicle brands
 // @Description Get a list of all available vehicle brands
-// @Tags        brands
+// @Tags        Brands
 // @Accept      json
 // @Produce     json
-// @Router      /api/v1/vehicles/brands [get]
+// @Order       1
+// @Router      /vehicles/brands [get]
 func (c *VehicleController) ListBrands(ctx *gin.Context) {
 	brands, err := c.vehicleUseCase.ListBrands(ctx)
 	if err != nil {
@@ -140,12 +139,12 @@ func (c *VehicleController) ListBrands(ctx *gin.Context) {
 
 // @Summary     List vehicle brands by type
 // @Description Get a list of vehicle brands for a specific vehicle type
-// @Tags        brands
+// @Tags        Brands
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "Vehicle Type ID"
 // @Success     200 {object} dto.ListVehicleBrandsResponse
-// @Router      /api/v1/vehicles/types/{id}/brands [get]
+// @Router      /vehicles/types/{id}/brands [get]
 func (c *VehicleController) ListBrandsByType(ctx *gin.Context) {
 	typeID := ctx.Param("id")
 	brands, err := c.vehicleUseCase.ListBrandsByType(ctx, typeID)
@@ -158,12 +157,12 @@ func (c *VehicleController) ListBrandsByType(ctx *gin.Context) {
 
 // @Summary     Get vehicle brand details
 // @Description Get details of a specific vehicle brand
-// @Tags        brands
+// @Tags        Brands
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "Vehicle Brand ID"
 // @Success     200 {object} dto.VehicleBrandResponse
-// @Router      /api/v1/vehicles/brands/{id} [get]
+// @Router      /vehicles/brands/{id} [get]
 func (c *VehicleController) GetBrand(ctx *gin.Context) {
 	id := ctx.Param("id")
 	brand, err := c.vehicleUseCase.GetBrand(ctx, id)
@@ -176,11 +175,11 @@ func (c *VehicleController) GetBrand(ctx *gin.Context) {
 
 // @Summary     List all vehicle models
 // @Description Get a list of all available vehicle models
-// @Tags        models
+// @Tags        Models
 // @Accept      json
 // @Produce     json
 // @Success     200 {object} dto.ListVehicleModelsResponse
-// @Router      /api/v1/vehicles/models [get]
+// @Router      /vehicles/models [get]
 func (c *VehicleController) ListModels(ctx *gin.Context) {
 	models, err := c.vehicleUseCase.ListModels(ctx)
 	if err != nil {
@@ -192,12 +191,12 @@ func (c *VehicleController) ListModels(ctx *gin.Context) {
 
 // @Summary     List vehicle models by brand
 // @Description Get a list of vehicle models for a specific vehicle brand
-// @Tags        models
+// @Tags        Models
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "Vehicle Brand ID"
 // @Success     200 {object} dto.ListVehicleModelsResponse
-// @Router      /api/v1/vehicles/brands/{id}/models [get]
+// @Router      /vehicles/brands/{id}/models [get]
 func (c *VehicleController) ListModelsByBrand(ctx *gin.Context) {
 	brandID := ctx.Param("id")
 	models, err := c.vehicleUseCase.ListModelsByBrand(ctx, brandID)
@@ -210,12 +209,12 @@ func (c *VehicleController) ListModelsByBrand(ctx *gin.Context) {
 
 // @Summary     Get vehicle model details
 // @Description Get details of a specific vehicle model
-// @Tags        models
+// @Tags        Models
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "Vehicle Model ID"
 // @Success     200 {object} dto.VehicleModelResponse
-// @Router      /api/v1/vehicles/models/{id} [get]
+// @Router      /vehicles/models/{id} [get]
 func (c *VehicleController) GetModel(ctx *gin.Context) {
 	id := ctx.Param("id")
 	model, err := c.vehicleUseCase.GetModel(ctx, id)
@@ -228,11 +227,11 @@ func (c *VehicleController) GetModel(ctx *gin.Context) {
 
 // @Summary     List all vehicle generations
 // @Description Get a list of all available vehicle generations
-// @Tags        generations
+// @Tags        Generations
 // @Accept      json
 // @Produce     json
 // @Success     200 {object} dto.ListVehicleGenerationsResponse
-// @Router      /api/v1/vehicles/generations [get]
+// @Router      /vehicles/generations [get]
 func (c *VehicleController) ListGenerations(ctx *gin.Context) {
 	generations, err := c.vehicleUseCase.ListGenerations(ctx)
 	if err != nil {
@@ -244,12 +243,12 @@ func (c *VehicleController) ListGenerations(ctx *gin.Context) {
 
 // @Summary     Get vehicle generation details
 // @Description Get details of a specific vehicle generation
-// @Tags        generations
+// @Tags        Generations
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "Vehicle Generation ID"
 // @Success     200 {object} dto.VehicleGenerationResponse
-// @Router      /api/v1/vehicles/generations/{id} [get]
+// @Router      /vehicles/generations/{id} [get]
 func (c *VehicleController) GetGeneration(ctx *gin.Context) {
 	id := ctx.Param("id")
 	generation, err := c.vehicleUseCase.GetGeneration(ctx, id)
@@ -262,12 +261,12 @@ func (c *VehicleController) GetGeneration(ctx *gin.Context) {
 
 // @Summary     List vehicle generations by model
 // @Description Get a list of vehicle generations for a specific vehicle model
-// @Tags        generations
+// @Tags        Generations
 // @Accept      json
 // @Produce     json
 // @Param       id path string true "Vehicle Model ID"
 // @Success     200 {object} dto.ListVehicleGenerationsResponse
-// @Router      /api/v1/vehicles/models/{id}/generations [get]
+// @Router      /vehicles/models/{id}/generations [get]
 func (c *VehicleController) ListGenerationsByModel(ctx *gin.Context) {
 	modelID := ctx.Param("id")
 	generations, err := c.vehicleUseCase.ListGenerationsByModel(ctx, modelID)
@@ -282,13 +281,13 @@ func (c *VehicleController) ListGenerationsByModel(ctx *gin.Context) {
 
 // @Summary     Add new vehicle to
 // @Description Add new vehicle to user
-// @Tags        user-vehicles
+// @Tags        User - Vehicles
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
 // @Param       vehicleType body dto.CreateUserVehicleRequest true "UserVehicle Type"
 // @Success     201 {object} dto.UserVehicleResponse
-// @Router      /api/v1/user/vehicles [post]
+// @Router      /user/vehicles [post]
 func (c *VehicleController) AddUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	var userVehicle dto.CreateUserVehicleRequest
@@ -307,12 +306,12 @@ func (c *VehicleController) AddUserVehicle(ctx *gin.Context) {
 
 // @Summary     List all user vehicles
 // @Description Get a list of all user vehicle
-// @Tags        user-vehicles
+// @Tags        User - Vehicles
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
 // @Success     200 {object} dto.ListUserVehiclesResponse
-// @Router      /api/v1/user/vehicles [get]
+// @Router      /user/vehicles [get]
 func (c *VehicleController) ListUserVehicles(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	userVehicles, err := c.vehicleUseCase.ListUserVehicles(ctx, userID)
@@ -325,13 +324,13 @@ func (c *VehicleController) ListUserVehicles(ctx *gin.Context) {
 
 // @Summary     Get user vehicle details
 // @Description Get details of a specific user vehicle
-// @Tags        user-vehicles
+// @Tags        User - Vehicles
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
 // @Param       id path string true "User Vehicle ID"
 // @Success     200 {object} dto.UserVehicleResponse
-// @Router      /api/v1/user/vehicles/{id} [get]
+// @Router      /user/vehicles/{id} [get]
 func (c *VehicleController) GetUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	vehicleID := ctx.Param("id")
@@ -345,14 +344,14 @@ func (c *VehicleController) GetUserVehicle(ctx *gin.Context) {
 
 // @Summary     Update user vehicle details
 // @Description Update the details of a specific user vehicle
-// @Tags        user-vehicles
+// @Tags        User - Vehicles
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
 // @Param       id path string true "User Vehicle ID"
 // @Param       userVehicle body dto.UpdateUserVehicleRequest true "User Vehicle"
 // @Success     200 {object} dto.UpdateUserVehicleRequest
-// @Router      /api/v1/user/vehicles/{id} [put]
+// @Router      /user/vehicles/{id} [put]
 func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	vehicleID := ctx.Param("id")
@@ -372,13 +371,13 @@ func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 
 // @Summary  delete a user vehicle
 // @Description Delete a user vehicle
-// @Tags        user-vehicles
+// @Tags        User - Vehicles
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
 // @Param       id path string true "User Vehicle ID"
 // @Success     204
-// @Router      /api/v1/user/vehicles/{id} [delete]
+// @Router      /user/vehicles/{id} [delete]
 func (c *VehicleController) DeleteUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	vehicleID := ctx.Param("id")
@@ -396,13 +395,13 @@ func (c *VehicleController) DeleteUserVehicle(ctx *gin.Context) {
 
 // @Summary     Create a new vehicle type
 // @Description Create a new vehicle type
-// @Tags        types
+// @Tags        Admin - Types
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
 // @Param       vehicleType body dto.CreateVehicleTypeRequest true "Vehicle Type"
 // @Success     201 {object} dto.VehicleTypeResponse
-// @Router      /api/v1/admin/vehicles/types [post]
+// @Router      /admin/vehicles/types [post]
 func (c *VehicleController) CreateVehicleType(ctx *gin.Context) {
 	var vehicleType dto.CreateVehicleTypeRequest
 	if err := ctx.ShouldBindJSON(&vehicleType); err != nil {
@@ -420,13 +419,13 @@ func (c *VehicleController) CreateVehicleType(ctx *gin.Context) {
 
 // @Summary     Update a vehicle type
 // @Description Update a vehicle type
-// @Tags        types
+// @Tags        Admin - Types
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Type ID"
 // @Param       vehicleType body dto.UpdateVehicleTypeRequest true "Vehicle Type"
 // @Success     200 {object} dto.VehicleTypeResponse
-// @Router      /api/v1/admin/vehicles/types/{id} [put]
+// @Router      /admin/vehicles/types/{id} [put]
 func (c *VehicleController) UpdateVehicleType(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var vehicleType dto.UpdateVehicleTypeRequest
@@ -445,12 +444,12 @@ func (c *VehicleController) UpdateVehicleType(ctx *gin.Context) {
 
 // @Summary     Delete a vehicle type
 // @Description Delete a vehicle type
-// @Tags        types
+// @Tags        Admin - Types
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Type ID"
 // @Success     204
-// @Router      /api/v1/admin/vehicles/types/{id} [delete]
+// @Router      /admin/vehicles/types/{id} [delete]
 func (c *VehicleController) DeleteVehicleType(ctx *gin.Context) {
 	id := ctx.Param("id")
 	err := c.vehicleUseCase.DeleteVehicleType(ctx, id)
@@ -463,12 +462,12 @@ func (c *VehicleController) DeleteVehicleType(ctx *gin.Context) {
 
 // @Summary     Create a new vehicle brand
 // @Description Create a new vehicle brand
-// @Tags        brands
+// @Tags        Admin - Brands
 // @Accept      json
 // @Security    BearerAuth
 // @Param       brand body dto.CreateVehicleBrandRequest true "Vehicle Brand"
 // @Success     201 {object} dto.VehicleBrandResponse
-// @Router      /api/v1/admin/vehicles/brands [post]
+// @Router      /admin/vehicles/brands [post]
 func (c *VehicleController) CreateBrand(ctx *gin.Context) {
 	var brand dto.CreateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&brand); err != nil {
@@ -486,13 +485,13 @@ func (c *VehicleController) CreateBrand(ctx *gin.Context) {
 
 // @Summary     Update a vehicle brand
 // @Description Update a vehicle brand
-// @Tags        brands
+// @Tags        Admin - Brands
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Brand ID"
 // @Param       brand body dto.UpdateVehicleBrandRequest true "Vehicle Brand"
 // @Success     200 {object} dto.VehicleBrandResponse
-// @Router      /api/v1/admin/vehicles/brands/{id} [put]
+// @Router      /admin/vehicles/brands/{id} [put]
 func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var brand dto.UpdateVehicleBrandRequest
@@ -511,12 +510,12 @@ func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 
 // @Summary     Delete a vehicle brand
 // @Description Delete a vehicle brand
-// @Tags        brands
+// @Tags        Admin - Brands
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Brand ID"
 // @Success     204
-// @Router      /api/v1/admin/vehicles/brands/{id} [delete]
+// @Router      /admin/vehicles/brands/{id} [delete]
 func (c *VehicleController) DeleteBrand(ctx *gin.Context) {
 	id := ctx.Param("id")
 	err := c.vehicleUseCase.DeleteBrand(ctx, id)
@@ -529,12 +528,12 @@ func (c *VehicleController) DeleteBrand(ctx *gin.Context) {
 
 // @Summary     Create a new vehicle model
 // @Description Create a new vehicle model
-// @Tags        models
+// @Tags        Admin - Models
 // @Accept      json
 // @Security    BearerAuth
 // @Param       model body dto.CreateVehicleModelRequest true "Vehicle Model"
 // @Success     201 {object} dto.VehicleModelResponse
-// @Router      /api/v1/admin/vehicles/brands/{brandId}/models [post]
+// @Router      /admin/vehicles/brands/{brandId}/models [post]
 func (c *VehicleController) CreateModel(ctx *gin.Context) {
 	var model dto.CreateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&model); err != nil {
@@ -552,13 +551,13 @@ func (c *VehicleController) CreateModel(ctx *gin.Context) {
 
 // @Summary     Update a vehicle model
 // @Description Update a vehicle model
-// @Tags        models
+// @Tags        Admin - Models
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Model ID"
 // @Param       model body dto.UpdateVehicleModelRequest true "Vehicle Model"
 // @Success     200 {object} dto.VehicleModelResponse
-// @Router      /api/v1/admin/vehicles/models/{id} [put]
+// @Router      /admin/vehicles/models/{id} [put]
 func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var model dto.UpdateVehicleModelRequest
@@ -577,12 +576,12 @@ func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 
 // @Summary     Delete a vehicle model
 // @Description Delete a vehicle model
-// @Tags        models
+// @Tags        Admin - Models
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Model ID"
 // @Success     204
-// @Router      /api/v1/admin/vehicles/models/{id} [delete]
+// @Router      /admin/vehicles/models/{id} [delete]
 func (c *VehicleController) DeleteModel(ctx *gin.Context) {
 	id := ctx.Param("id")
 	err := c.vehicleUseCase.DeleteModel(ctx, id)
@@ -595,12 +594,12 @@ func (c *VehicleController) DeleteModel(ctx *gin.Context) {
 
 // @Summary     Create a new vehicle generation
 // @Description Create a new vehicle generation
-// @Tags        generations
+// @Tags        Admin - Generations
 // @Accept      json
 // @Security    BearerAuth
 // @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     201 {object} dto.VehicleGenerationResponse
-// @Router      /api/v1/admin/vehicles/generations [post]
+// @Router      /admin/vehicles/generations [post]
 func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 	var generation dto.CreateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&generation); err != nil {
@@ -618,13 +617,13 @@ func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 
 // @Summary     Update a vehicle generation
 // @Description Update a vehicle generation
-// @Tags        generations
+// @Tags        Admin - Generations
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle generation ID"
 // @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     200 {object} dto.VehicleGenerationResponse
-// @Router      /api/v1/admin/vehicles/generations/{id} [put]
+// @Router      /admin/vehicles/generations/{id} [put]
 func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var generation dto.UpdateVehicleGenerationRequest
@@ -643,12 +642,12 @@ func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 
 // @Summary     Delete a vehicle generation
 // @Description Delete a vehicle generation
-// @Tags        generations
+// @Tags        Admin - Generations
 // @Accept      json
 // @Security    BearerAuth
 // @Param       id path string true "Vehicle Generation ID"
 // @Success     204
-// @Router      /api/v1/admin/vehicles/generations/{id} [delete]
+// @Router      /admin/vehicles/generations/{id} [delete]
 func (c *VehicleController) DeleteGeneration(ctx *gin.Context) {
 	id := ctx.Param("id")
 	err := c.vehicleUseCase.DeleteGeneration(ctx, id)

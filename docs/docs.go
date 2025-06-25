@@ -9,967 +9,17 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
+        "contact": {},
         "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "name": "GNU General Public License v3.0",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/admin/vehicles/brands": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "brands"
-                ],
-                "summary": "Create a new vehicle brand",
-                "parameters": [
-                    {
-                        "description": "Vehicle Brand",
-                        "name": "brand",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleBrandRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleBrandResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/vehicles/brands/{brandId}/models": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "models"
-                ],
-                "summary": "Create a new vehicle model",
-                "parameters": [
-                    {
-                        "description": "Vehicle Model",
-                        "name": "model",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleModelRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleModelResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/vehicles/brands/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "brands"
-                ],
-                "summary": "Update a vehicle brand",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Brand ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Vehicle Brand",
-                        "name": "brand",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateVehicleBrandRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleBrandResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "brands"
-                ],
-                "summary": "Delete a vehicle brand",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Brand ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/vehicles/generations": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new vehicle generation",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "generations"
-                ],
-                "summary": "Create a new vehicle generation",
-                "parameters": [
-                    {
-                        "description": "Vehicle Generation",
-                        "name": "generation",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/vehicles/generations/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a vehicle generation",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "generations"
-                ],
-                "summary": "Update a vehicle generation",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle generation ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Vehicle Generation",
-                        "name": "generation",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a vehicle generation",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "generations"
-                ],
-                "summary": "Delete a vehicle generation",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Generation ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/vehicles/models/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "models"
-                ],
-                "summary": "Update a vehicle model",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Model ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Vehicle Model",
-                        "name": "model",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateVehicleModelRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleModelResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "models"
-                ],
-                "summary": "Delete a vehicle model",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Model ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/vehicles/types": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new vehicle type",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "types"
-                ],
-                "summary": "Create a new vehicle type",
-                "parameters": [
-                    {
-                        "description": "Vehicle Type",
-                        "name": "vehicleType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleTypeRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleTypeResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/vehicles/types/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a vehicle type",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "types"
-                ],
-                "summary": "Update a vehicle type",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Type ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Vehicle Type",
-                        "name": "vehicleType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateVehicleTypeRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleTypeResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a vehicle type",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "types"
-                ],
-                "summary": "Delete a vehicle type",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Type ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/login": {
-            "post": {
-                "description": "Login a user with phone number and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth-public"
-                ],
-                "summary": "User login",
-                "parameters": [
-                    {
-                        "description": "User login details",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.LoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/logout": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Logout a user by invalidating the refresh token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth-protected"
-                ],
-                "summary": "User logout",
-                "parameters": [
-                    {
-                        "description": "Refresh token to invalidate",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.LogoutRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/logout-all": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Logs out the user from all devices by invalidating all refresh tokens",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth-protected"
-                ],
-                "summary": "Logout from all devices",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/refresh-token": {
-            "post": {
-                "description": "Get new access and refresh tokens using a valid refresh token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth-public"
-                ],
-                "summary": "Refresh access token",
-                "parameters": [
-                    {
-                        "description": "Current refresh token",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/register": {
-            "post": {
-                "description": "Register a new user with phone number and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth-public"
-                ],
-                "summary": "Register a new user",
-                "parameters": [
-                    {
-                        "description": "User registration details",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RegisterRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/sessions": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Returns all active sessions for the authenticated user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth-protected"
-                ],
-                "summary": "Get user sessions",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetSessionsResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/user/vehicles": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get a list of all user vehicle",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user-vehicles"
-                ],
-                "summary": "List all user vehicles",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListUserVehiclesResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Add new vehicle to user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user-vehicles"
-                ],
-                "summary": "Add new vehicle to",
-                "parameters": [
-                    {
-                        "description": "UserVehicle Type",
-                        "name": "vehicleType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateUserVehicleRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.UserVehicleResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/user/vehicles/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get details of a specific user vehicle",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user-vehicles"
-                ],
-                "summary": "Get user vehicle details",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User Vehicle ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.UserVehicleResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update the details of a specific user vehicle",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user-vehicles"
-                ],
-                "summary": "Update user vehicle details",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User Vehicle ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "User Vehicle",
-                        "name": "userVehicle",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateUserVehicleRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateUserVehicleRequest"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a user vehicle",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user-vehicles"
-                ],
-                "summary": "delete a user vehicle",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User Vehicle ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/api/v1/users": {
+        "/admin/users": {
             "get": {
                 "security": [
                     {
@@ -984,7 +34,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Admin - Users"
                 ],
                 "summary": "List all users",
                 "responses": {
@@ -1024,242 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/me": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get the profile information of the authenticated user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Get user profile",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetProfileResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update the profile information of the authenticated user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Update user profile",
-                "parameters": [
-                    {
-                        "description": "Profile update information",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateProfileRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetProfileResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete the authenticated user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Delete user",
-                "responses": {
-                    "200": {
-                        "description": "User deleted successfully",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/users/me/change-password": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update the password of the authenticated user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Update user password",
-                "parameters": [
-                    {
-                        "description": "Password update information",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdatePasswordRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Password updated successfully",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/users/{id}": {
+        "/admin/users/{id}": {
             "get": {
                 "security": [
                     {
@@ -1274,7 +89,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Admin - Users"
                 ],
                 "summary": "Get user details",
                 "parameters": [
@@ -1345,7 +160,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Admin - Users"
                 ],
                 "summary": "Update user",
                 "parameters": [
@@ -1437,7 +252,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Admin - Users"
                 ],
                 "summary": "Delete user",
                 "parameters": [
@@ -1498,7 +313,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/{id}/change-password": {
+        "/admin/users/{id}/change-password": {
             "post": {
                 "security": [
                     {
@@ -1513,7 +328,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Admin - Users"
                 ],
                 "summary": "Change user password",
                 "parameters": [
@@ -1592,7 +407,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/{id}/role": {
+        "/admin/users/{id}/role": {
             "post": {
                 "security": [
                     {
@@ -1607,7 +422,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Admin - Users"
                 ],
                 "summary": "Change user role",
                 "parameters": [
@@ -1686,7 +501,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/{id}/status": {
+        "/admin/users/{id}/status": {
             "post": {
                 "security": [
                     {
@@ -1701,7 +516,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Admin - Users"
                 ],
                 "summary": "Change user status",
                 "parameters": [
@@ -1780,7 +595,1187 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/brands": {
+        "/admin/vehicles/brands": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Brands"
+                ],
+                "summary": "Create a new vehicle brand",
+                "parameters": [
+                    {
+                        "description": "Vehicle Brand",
+                        "name": "brand",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleBrandRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleBrandResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/brands/{brandId}/models": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Models"
+                ],
+                "summary": "Create a new vehicle model",
+                "parameters": [
+                    {
+                        "description": "Vehicle Model",
+                        "name": "model",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleModelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleModelResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/brands/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Brands"
+                ],
+                "summary": "Update a vehicle brand",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Brand",
+                        "name": "brand",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVehicleBrandRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleBrandResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Brands"
+                ],
+                "summary": "Delete a vehicle brand",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/generations": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new vehicle generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Generations"
+                ],
+                "summary": "Create a new vehicle generation",
+                "parameters": [
+                    {
+                        "description": "Vehicle Generation",
+                        "name": "generation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/generations/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a vehicle generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Generations"
+                ],
+                "summary": "Update a vehicle generation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle generation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Generation",
+                        "name": "generation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a vehicle generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Generations"
+                ],
+                "summary": "Delete a vehicle generation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Generation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/models/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Models"
+                ],
+                "summary": "Update a vehicle model",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Model",
+                        "name": "model",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVehicleModelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleModelResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Models"
+                ],
+                "summary": "Delete a vehicle model",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new vehicle type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Types"
+                ],
+                "summary": "Create a new vehicle type",
+                "parameters": [
+                    {
+                        "description": "Vehicle Type",
+                        "name": "vehicleType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleTypeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a vehicle type",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Types"
+                ],
+                "summary": "Update a vehicle type",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Type",
+                        "name": "vehicleType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVehicleTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleTypeResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a vehicle type",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Types"
+                ],
+                "summary": "Delete a vehicle type",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "Login a user with phone number and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "User login details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Logout a user by invalidating the refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User logout",
+                "parameters": [
+                    {
+                        "description": "Refresh token to invalidate",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LogoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout-all": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Logs out the user from all devices by invalidating all refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout from all devices",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh-token": {
+            "post": {
+                "description": "Get new access and refresh tokens using a valid refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh access token",
+                "parameters": [
+                    {
+                        "description": "Current refresh token",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Register a new user with phone number and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User registration details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/sessions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns all active sessions for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get user sessions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetSessionsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/vehicles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of all user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User - Vehicles"
+                ],
+                "summary": "List all user vehicles",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListUserVehiclesResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add new vehicle to user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User - Vehicles"
+                ],
+                "summary": "Add new vehicle to",
+                "parameters": [
+                    {
+                        "description": "UserVehicle Type",
+                        "name": "vehicleType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateUserVehicleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserVehicleResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/vehicles/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get details of a specific user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User - Vehicles"
+                ],
+                "summary": "Get user vehicle details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Vehicle ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserVehicleResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the details of a specific user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User - Vehicles"
+                ],
+                "summary": "Update user vehicle details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Vehicle ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User Vehicle",
+                        "name": "userVehicle",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserVehicleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserVehicleRequest"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User - Vehicles"
+                ],
+                "summary": "delete a user vehicle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Vehicle ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get the profile information of the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetProfileResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the profile information of the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user profile",
+                "parameters": [
+                    {
+                        "description": "Profile update information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetProfileResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user",
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me/change-password": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the password of the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user password",
+                "parameters": [
+                    {
+                        "description": "Password update information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatePasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password updated successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles/brands": {
             "get": {
                 "description": "Get a list of all available vehicle brands",
                 "consumes": [
@@ -1790,13 +1785,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "brands"
+                    "Brands"
                 ],
                 "summary": "List all vehicle brands",
                 "responses": {}
             }
         },
-        "/api/v1/vehicles/brands/{id}": {
+        "/vehicles/brands/{id}": {
             "get": {
                 "description": "Get details of a specific vehicle brand",
                 "consumes": [
@@ -1806,7 +1801,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "brands"
+                    "Brands"
                 ],
                 "summary": "Get vehicle brand details",
                 "parameters": [
@@ -1828,7 +1823,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/brands/{id}/models": {
+        "/vehicles/brands/{id}/models": {
             "get": {
                 "description": "Get a list of vehicle models for a specific vehicle brand",
                 "consumes": [
@@ -1838,7 +1833,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "models"
+                    "Models"
                 ],
                 "summary": "List vehicle models by brand",
                 "parameters": [
@@ -1860,7 +1855,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/generations": {
+        "/vehicles/generations": {
             "get": {
                 "description": "Get a list of all available vehicle generations",
                 "consumes": [
@@ -1870,7 +1865,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "generations"
+                    "Generations"
                 ],
                 "summary": "List all vehicle generations",
                 "responses": {
@@ -1883,7 +1878,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/generations/{id}": {
+        "/vehicles/generations/{id}": {
             "get": {
                 "description": "Get details of a specific vehicle generation",
                 "consumes": [
@@ -1893,7 +1888,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "generations"
+                    "Generations"
                 ],
                 "summary": "Get vehicle generation details",
                 "parameters": [
@@ -1915,7 +1910,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/models": {
+        "/vehicles/models": {
             "get": {
                 "description": "Get a list of all available vehicle models",
                 "consumes": [
@@ -1925,7 +1920,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "models"
+                    "Models"
                 ],
                 "summary": "List all vehicle models",
                 "responses": {
@@ -1938,7 +1933,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/models/{id}": {
+        "/vehicles/models/{id}": {
             "get": {
                 "description": "Get details of a specific vehicle model",
                 "consumes": [
@@ -1948,7 +1943,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "models"
+                    "Models"
                 ],
                 "summary": "Get vehicle model details",
                 "parameters": [
@@ -1970,7 +1965,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/models/{id}/generations": {
+        "/vehicles/models/{id}/generations": {
             "get": {
                 "description": "Get a list of vehicle generations for a specific vehicle model",
                 "consumes": [
@@ -1980,7 +1975,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "generations"
+                    "Generations"
                 ],
                 "summary": "List vehicle generations by model",
                 "parameters": [
@@ -2002,7 +1997,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/types": {
+        "/vehicles/types": {
             "get": {
                 "description": "Get a list of all available vehicle types",
                 "consumes": [
@@ -2012,7 +2007,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "types"
+                    "Types"
                 ],
                 "summary": "List all vehicle types",
                 "responses": {
@@ -2025,7 +2020,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/types/{id}": {
+        "/vehicles/types/{id}": {
             "get": {
                 "description": "Get details of a specific vehicle type",
                 "consumes": [
@@ -2035,7 +2030,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "types"
+                    "Types"
                 ],
                 "summary": "Get vehicle type details",
                 "parameters": [
@@ -2057,7 +2052,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/vehicles/types/{id}/brands": {
+        "/vehicles/types/{id}/brands": {
             "get": {
                 "description": "Get a list of vehicle brands for a specific vehicle type",
                 "consumes": [
@@ -2067,7 +2062,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "brands"
+                    "Brands"
                 ],
                 "summary": "List vehicle brands by type",
                 "parameters": [
@@ -2096,7 +2091,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "new_password": {
-                    "description": "New password for the user (minimum 8 characters)\n@Example NewPassword123",
+                    "description": "New password for the user (minimum 8 characters)",
                     "type": "string",
                     "minLength": 8,
                     "example": "NewPassword123"
@@ -2108,7 +2103,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "role": {
-                    "description": "New role for the user (User, Admin, SuperAdmin)\n@Example Admin",
+                    "description": "New role for the user (User, Admin, SuperAdmin)",
                     "type": "string",
                     "enum": [
                         "User",
@@ -2124,7 +2119,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "status": {
-                    "description": "New status for the user (Active, Deactivated, Deleted)\n@Example Active",
+                    "description": "New status for the user (Active, Deactivated, Deleted)",
                     "type": "string",
                     "enum": [
                         "Active",
@@ -2139,45 +2134,49 @@ const docTemplate = `{
             "description": "User vehicle creation request",
             "type": "object",
             "required": [
-                "color",
                 "current_mileage",
                 "generation_id",
-                "license_plate",
                 "name",
-                "production_year",
-                "purchase_date",
-                "vin"
+                "purchase_date"
             ],
             "properties": {
                 "color": {
+                    "description": "Color of the user vehicle",
                     "type": "string",
                     "example": "Red"
                 },
                 "current_mileage": {
+                    "description": "Current mileage of the user vehicle",
                     "type": "integer",
                     "example": 15000
                 },
                 "generation_id": {
+                    "description": "ID of the vehicle generation",
                     "type": "string",
                     "example": "1"
                 },
                 "license_plate": {
+                    "description": "License plate of the user vehicle",
                     "type": "string",
                     "example": "ABC123"
                 },
                 "name": {
+                    "description": "Name of the user vehicle",
                     "type": "string",
                     "example": "My Car"
                 },
                 "production_year": {
+                    "description": "Production year of the user vehicle",
                     "type": "integer",
                     "example": 2020
                 },
                 "purchase_date": {
+                    "description": "Purchase date of the user vehicle",
                     "type": "string",
                     "example": "2020-01-01"
                 },
                 "vin": {
+                    "description": "VIN of the user vehicle",
                     "type": "string",
                     "example": "1HGCM82633A123456"
                 }
@@ -2192,14 +2191,17 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
+                    "description": "Description of the vehicle brand",
                     "type": "string",
                     "example": "A popular Japanese car brand"
                 },
                 "name": {
+                    "description": "Name of the vehicle brand",
                     "type": "string",
                     "example": "Toyota"
                 },
                 "vehicle_type_id": {
+                    "description": "ID of the vehicle type",
                     "type": "string",
                     "example": "1"
                 }
@@ -2214,50 +2216,62 @@ const docTemplate = `{
             ],
             "properties": {
                 "assembler": {
+                    "description": "Assembler of the vehicle generation",
                     "type": "string",
                     "example": "Toyota"
                 },
                 "assembly_type": {
+                    "description": "Assembly type of the vehicle generation",
                     "type": "string",
                     "example": "CKD"
                 },
                 "body_style": {
+                    "description": "Body style of the vehicle generation",
                     "type": "string",
                     "example": "Sedan"
                 },
                 "description": {
+                    "description": "Description of the vehicle generation",
                     "type": "string",
                     "example": "A brief description of the generation"
                 },
                 "end_year": {
+                    "description": "End year of the vehicle generation",
                     "type": "integer",
                     "example": 2022
                 },
                 "engine_size": {
+                    "description": "Engine size of the vehicle generation",
                     "type": "integer",
                     "example": 3000
                 },
                 "engine_type": {
+                    "description": "Engine type of the vehicle generation",
                     "type": "string",
                     "example": "V6"
                 },
                 "model_id": {
+                    "description": "ID of the vehicle model",
                     "type": "string",
                     "example": "1"
                 },
                 "name": {
+                    "description": "Name of the vehicle generation",
                     "type": "string",
                     "example": "Generation Name"
                 },
                 "special_features": {
+                    "description": "Special features of the vehicle generation",
                     "type": "string",
                     "example": "Leather seats, Sunroof"
                 },
                 "start_year": {
+                    "description": "Start year of the vehicle generation",
                     "type": "integer",
                     "example": 2020
                 },
                 "transmission": {
+                    "description": "Transmission of the vehicle generation",
                     "type": "string",
                     "example": "Automatic"
                 }
@@ -2272,22 +2286,27 @@ const docTemplate = `{
             ],
             "properties": {
                 "brand_id": {
+                    "description": "ID of the vehicle brand",
                     "type": "string",
                     "example": "1"
                 },
                 "description": {
+                    "description": "Description of the vehicle model",
                     "type": "string",
                     "example": "A mid-size sedan"
                 },
                 "end_year": {
+                    "description": "End year of the vehicle model",
                     "type": "integer",
                     "example": 2022
                 },
                 "name": {
+                    "description": "Name of the vehicle model",
                     "type": "string",
                     "example": "Camry"
                 },
                 "start_year": {
+                    "description": "Start year of the vehicle model",
                     "type": "integer",
                     "example": 2020
                 }
@@ -2301,12 +2320,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
+                    "description": "Description of the vehicle type",
                     "type": "string",
                     "example": "A standard passenger car"
                 },
                 "name": {
+                    "description": "Name of the vehicle type",
                     "type": "string",
-                    "example": "sedan"
+                    "example": "car"
                 }
             }
         },
@@ -2315,22 +2336,22 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "birthday": {
-                    "description": "User's birthday (optional)\n@Example 1990-01-01",
+                    "description": "User's birthday (optional)",
                     "type": "string",
                     "example": "1990-01-01"
                 },
                 "email": {
-                    "description": "User's email address (optional)\n@Example john.doe@example.com",
+                    "description": "User's email address (optional)",
                     "type": "string",
                     "example": "john.doe@example.com"
                 },
                 "first_name": {
-                    "description": "User's first name (optional)\n@Example John",
+                    "description": "User's first name (optional)",
                     "type": "string",
                     "example": "John"
                 },
                 "last_name": {
-                    "description": "User's last name (optional)\n@Example Doe",
+                    "description": "User's last name (optional)",
                     "type": "string",
                     "example": "Doe"
                 }
@@ -2341,6 +2362,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "sessions": {
+                    "description": "List of user sessions",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.SessionResponse"
@@ -2349,9 +2371,11 @@ const docTemplate = `{
             }
         },
         "dto.ListUserVehiclesResponse": {
+            "description": "List of user vehicles",
             "type": "object",
             "properties": {
                 "vehicles": {
+                    "description": "List of user vehicles",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.UserVehicleResponse"
@@ -2373,9 +2397,11 @@ const docTemplate = `{
             }
         },
         "dto.ListVehicleBrandsResponse": {
+            "description": "List of vehicle brands",
             "type": "object",
             "properties": {
                 "brands": {
+                    "description": "List of vehicle brands",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.VehicleBrandResponse"
@@ -2384,9 +2410,11 @@ const docTemplate = `{
             }
         },
         "dto.ListVehicleGenerationsResponse": {
+            "description": "List of vehicle generations",
             "type": "object",
             "properties": {
                 "generations": {
+                    "description": "List of vehicle generations",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.VehicleGenerationResponse"
@@ -2395,9 +2423,11 @@ const docTemplate = `{
             }
         },
         "dto.ListVehicleModelsResponse": {
+            "description": "List of vehicle models",
             "type": "object",
             "properties": {
                 "models": {
+                    "description": "List of vehicle models",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.VehicleModelResponse"
@@ -2406,9 +2436,11 @@ const docTemplate = `{
             }
         },
         "dto.ListVehicleTypesResponse": {
+            "description": "List of vehicle types",
             "type": "object",
             "properties": {
                 "types": {
+                    "description": "List of vehicle types",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.VehicleTypeResponse"
@@ -2425,13 +2457,13 @@ const docTemplate = `{
             ],
             "properties": {
                 "password": {
-                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers\n@Example Password123",
+                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers",
                     "type": "string",
                     "minLength": 8,
                     "example": "Password123"
                 },
                 "phone_number": {
-                    "description": "Iranian phone number in format 09XXXXXXXXX\n@Example 09123456789",
+                    "description": "Iranian phone number in format 09XXXXXXXXX",
                     "type": "string",
                     "example": "09123456789"
                 }
@@ -2445,7 +2477,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "refresh_token": {
-                    "description": "JWT refresh token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "description": "JWT refresh token",
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 }
@@ -2459,7 +2491,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "refresh_token": {
-                    "description": "JWT refresh token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "description": "JWT refresh token",
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 }
@@ -2474,13 +2506,13 @@ const docTemplate = `{
             ],
             "properties": {
                 "password": {
-                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers\n@Example Password123",
+                    "description": "Password must be at least 8 characters long and include uppercase, lowercase, and numbers",
                     "type": "string",
                     "minLength": 8,
                     "example": "Password123"
                 },
                 "phone_number": {
-                    "description": "Iranian phone number in format 09XXXXXXXXX\n@Example 09123456789",
+                    "description": "Iranian phone number in format 09XXXXXXXXX",
                     "type": "string",
                     "example": "09123456789"
                 }
@@ -2491,14 +2523,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "device_id": {
+                    "description": "Device ID",
                     "type": "string",
                     "example": "dev_1234567890"
                 },
                 "is_active": {
+                    "description": "Is active",
                     "type": "boolean",
                     "example": true
                 },
                 "last_used": {
+                    "description": "Last used time",
                     "type": "string",
                     "example": "2024-03-15T14:30:00Z"
                 }
@@ -2509,12 +2544,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access_token": {
-                    "description": "JWT access token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "description": "JWT access token",
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 },
                 "refresh_token": {
-                    "description": "JWT refresh token\n@Example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "description": "JWT refresh token",
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 }
@@ -2535,22 +2570,22 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "birthday": {
-                    "description": "User's birthday (optional)\n@Example 1990-01-01",
+                    "description": "User's birthday (optional)",
                     "type": "string",
                     "example": "1990-01-01"
                 },
                 "email": {
-                    "description": "User's email address (optional)\n@Example john.doe@example.com",
+                    "description": "User's email address (optional)",
                     "type": "string",
                     "example": "john.doe@example.com"
                 },
                 "first_name": {
-                    "description": "User's first name (optional)\n@Example John",
+                    "description": "User's first name (optional)",
                     "type": "string",
                     "example": "John"
                 },
                 "last_name": {
-                    "description": "User's last name (optional)\n@Example Doe",
+                    "description": "User's last name (optional)",
                     "type": "string",
                     "example": "Doe"
                 }
@@ -2561,27 +2596,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "birthday": {
-                    "description": "User's birthday in YYYY-MM-DD format\n@Example 1990-01-01",
+                    "description": "User's birthday in YYYY-MM-DD format",
                     "type": "string",
                     "example": "1990-01-01"
                 },
                 "email": {
-                    "description": "User's email address\n@Example john.doe@example.com",
+                    "description": "User's email address",
                     "type": "string",
                     "example": "john.doe@example.com"
                 },
                 "first_name": {
-                    "description": "User's first name\n@Example John",
+                    "description": "User's first name",
                     "type": "string",
                     "example": "John"
                 },
                 "last_name": {
-                    "description": "User's last name\n@Example Doe",
+                    "description": "User's last name",
                     "type": "string",
                     "example": "Doe"
                 },
                 "phone": {
-                    "description": "User's phone number\n@Example 09123456789",
+                    "description": "User's phone number",
                     "type": "string",
                     "example": "09123456789"
                 }
@@ -2592,34 +2627,42 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "color": {
+                    "description": "Color of the user vehicle",
                     "type": "string",
                     "example": "Red"
                 },
                 "current_mileage": {
+                    "description": "Current mileage of the user vehicle",
                     "type": "integer",
                     "example": 15000
                 },
                 "generation_id": {
+                    "description": "ID of the vehicle generation",
                     "type": "string",
                     "example": "1"
                 },
                 "license_plate": {
+                    "description": "License plate of the user vehicle",
                     "type": "string",
                     "example": "ABC123"
                 },
                 "name": {
+                    "description": "Name of the user vehicle",
                     "type": "string",
                     "example": "My Car"
                 },
                 "production_year": {
+                    "description": "Production year of the user vehicle",
                     "type": "integer",
                     "example": 2020
                 },
                 "purchase_date": {
+                    "description": "Purchase date of the user vehicle",
                     "type": "string",
                     "example": "2020-01-01"
                 },
                 "vin": {
+                    "description": "VIN of the user vehicle",
                     "type": "string",
                     "example": "1HGCM82633A123456"
                 }
@@ -2630,14 +2673,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
+                    "description": "Description of the vehicle brand",
                     "type": "string",
                     "example": "A popular Japanese car brand"
                 },
                 "name": {
+                    "description": "Name of the vehicle brand",
                     "type": "string",
                     "example": "Toyota"
                 },
                 "vehicle_type_id": {
+                    "description": "ID of the vehicle type",
                     "type": "string",
                     "example": "1"
                 }
@@ -2648,22 +2694,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "brand_id": {
+                    "description": "ID of the vehicle brand",
                     "type": "string",
                     "example": "1"
                 },
                 "description": {
+                    "description": "Description of the vehicle model",
                     "type": "string",
                     "example": "A mid-size sedan"
                 },
                 "end_year": {
+                    "description": "End year of the vehicle model",
                     "type": "integer",
                     "example": 2022
                 },
                 "name": {
+                    "description": "Name of the vehicle model",
                     "type": "string",
                     "example": "Camry"
                 },
                 "start_year": {
+                    "description": "Start year of the vehicle model",
                     "type": "integer",
                     "example": 2020
                 }
@@ -2674,10 +2725,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
+                    "description": "Description of the vehicle type",
                     "type": "string",
                     "example": "A standard passenger car"
                 },
                 "name": {
+                    "description": "Name of the vehicle type",
                     "type": "string",
                     "example": "sedan"
                 }
@@ -2688,42 +2741,42 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "birthday": {
-                    "description": "User's birthday in YYYY-MM-DD format\n@Example 1990-01-01",
+                    "description": "User's birthday in YYYY-MM-DD format",
                     "type": "string",
                     "example": "1990-01-01"
                 },
                 "email": {
-                    "description": "User's email address\n@Example john.doe@example.com",
+                    "description": "User's email address",
                     "type": "string",
                     "example": "john.doe@example.com"
                 },
                 "first_name": {
-                    "description": "User's first name\n@Example John",
+                    "description": "User's first name",
                     "type": "string",
                     "example": "John"
                 },
                 "id": {
-                    "description": "Unique identifier of the user\n@Example 123e4567-e89b-12d3-a456-426614174000",
+                    "description": "Unique identifier of the user",
                     "type": "string",
                     "example": "123e4567-e89b-12d3-a456-426614174000"
                 },
                 "last_name": {
-                    "description": "User's last name\n@Example Doe",
+                    "description": "User's last name",
                     "type": "string",
                     "example": "Doe"
                 },
                 "phone": {
-                    "description": "User's phone number\n@Example 09123456789",
+                    "description": "User's phone number",
                     "type": "string",
                     "example": "09123456789"
                 },
                 "role": {
-                    "description": "User's role (User, Admin, SuperAdmin)\n@Example Admin",
+                    "description": "User's role (User, Admin, SuperAdmin)",
                     "type": "string",
                     "example": "Admin"
                 },
                 "status": {
-                    "description": "User's status (Active, Deactivated, Deleted)\n@Example Active",
+                    "description": "User's status (Active, Deactivated, Deleted)",
                     "type": "string",
                     "example": "Active"
                 }
@@ -2734,33 +2787,43 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "color": {
+                    "description": "Color of the user vehicle",
                     "type": "string"
                 },
                 "current_mileage": {
+                    "description": "Current mileage of the user vehicle",
                     "type": "integer"
                 },
                 "generation_id": {
+                    "description": "ID of the vehicle generation",
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID of the user vehicle",
                     "type": "integer"
                 },
                 "license_plate": {
+                    "description": "License plate of the user vehicle",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Name of the user vehicle",
                     "type": "string"
                 },
                 "production_year": {
+                    "description": "Production year of the user vehicle",
                     "type": "integer"
                 },
                 "purchase_date": {
+                    "description": "Purchase date of the user vehicle",
                     "type": "string"
                 },
                 "user_id": {
+                    "description": "ID of the user",
                     "type": "string"
                 },
                 "vin": {
+                    "description": "VIN of the user vehicle",
                     "type": "string"
                 }
             }
@@ -2770,15 +2833,19 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
+                    "description": "Description of the vehicle brand",
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID of the vehicle brand",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "Name of the vehicle brand",
                     "type": "string"
                 },
                 "vehicle_type": {
+                    "description": "ID of the vehicle type",
                     "type": "string"
                 }
             }
@@ -2788,42 +2855,55 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "assembler": {
+                    "description": "Assembler of the vehicle generation",
                     "type": "string"
                 },
                 "assembly_type": {
+                    "description": "Assembly type of the vehicle generation",
                     "type": "string"
                 },
                 "body_style": {
+                    "description": "Body style of the vehicle generation",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Description of the vehicle generation",
                     "type": "string"
                 },
                 "end_year": {
+                    "description": "End year of the vehicle generation",
                     "type": "integer"
                 },
                 "engine_size": {
+                    "description": "Engine size of the vehicle generation",
                     "type": "integer"
                 },
                 "engine_type": {
+                    "description": "Engine type of the vehicle generation",
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID of the vehicle generation",
                     "type": "integer"
                 },
                 "model_id": {
+                    "description": "ID of the vehicle model",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Name of the vehicle generation",
                     "type": "string"
                 },
                 "special_features": {
+                    "description": "Special features of the vehicle generation",
                     "type": "string"
                 },
                 "start_year": {
+                    "description": "Start year of the vehicle generation",
                     "type": "integer"
                 },
                 "transmission": {
+                    "description": "Transmission of the vehicle generation",
                     "type": "string"
                 }
             }
@@ -2833,21 +2913,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "brand_id": {
+                    "description": "ID of the vehicle brand",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Description of the vehicle model",
                     "type": "string"
                 },
                 "end_year": {
+                    "description": "End year of the vehicle model",
                     "type": "integer"
                 },
                 "id": {
+                    "description": "ID of the vehicle model",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "Name of the vehicle model",
                     "type": "string"
                 },
                 "start_year": {
+                    "description": "Start year of the vehicle model",
                     "type": "integer"
                 }
             }
@@ -2857,12 +2943,15 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
+                    "description": "Description of the vehicle type",
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID of the vehicle type",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "Name of the vehicle type",
                     "type": "string"
                 }
             }
@@ -2875,14 +2964,68 @@ const docTemplate = `{
             "name": "Authorization",
             "in": "header"
         }
-    }
+    },
+    "tags": [
+        {
+            "description": "Authentication operations",
+            "name": "Authentication"
+        },
+        {
+            "description": "User management operations",
+            "name": "Users"
+        },
+        {
+            "description": "User vehicle management",
+            "name": "User - Vehicles"
+        },
+        {
+            "description": "Vehicle types management",
+            "name": "Types"
+        },
+        {
+            "description": "Vehicle brands management",
+            "name": "Brands"
+        },
+        {
+            "description": "Vehicle models management",
+            "name": "Models"
+        },
+        {
+            "description": "Vehicle generations management",
+            "name": "Generations"
+        },
+        {
+            "description": "Admin user management operations",
+            "name": "Admin - Users"
+        },
+        {
+            "description": "Admin vehicle type management operations",
+            "name": "Admin - Types"
+        },
+        {
+            "description": "Admin vehicle brand management operations",
+            "name": "Admin - Brands"
+        },
+        {
+            "description": "Admin vehicle model management operations",
+            "name": "Admin - Models"
+        },
+        {
+            "description": "Admin vehicle generation management operations",
+            "name": "Admin - Generations"
+        },
+        {
+            "description": "Admin user vehicle management operations",
+            "name": "Admin - UserVehicles"
+        }
+    ]
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/",
+	BasePath:         "/api/v1",
 	Schemes:          []string{"http", "https"},
 	Title:            "AutoBan API",
 	Description:      "This is a sample server for AutoBan.",
