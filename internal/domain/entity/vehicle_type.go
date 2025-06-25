@@ -10,7 +10,7 @@ import (
 type VehicleType struct {
 	gorm.Model
 
-	Name        string `json:"name" gorm:"not null"`
+	Name        string `json:"name" gorm:"index;not null;unique"`
 	Description string `json:"description"`
 }
 
@@ -18,7 +18,7 @@ type VehicleType struct {
 type VehicleBrand struct {
 	gorm.Model
 
-	Name          string      `json:"name" gorm:"not null"`
+	Name          string      `json:"name" gorm:"index;not null;unique"`
 	Description   string      `json:"description"`
 	VehicleTypeID string      `json:"vehicle_type_id" gorm:"type:uuid;not null"`
 	VehicleType   VehicleType `json:"vehicle_type" gorm:"foreignKey:VehicleTypeID"`
@@ -28,7 +28,7 @@ type VehicleBrand struct {
 type VehicleModel struct {
 	gorm.Model
 
-	Name        string       `json:"name" gorm:"not null"`
+	Name        string       `json:"name" gorm:"index;not null;unique"`
 	Description string       `json:"description"`
 	BrandID     string       `json:"brand_id" gorm:"type:uuid;not null"`
 	Brand       VehicleBrand `json:"brand" gorm:"foreignKey:BrandID"`
@@ -40,7 +40,7 @@ type VehicleModel struct {
 type VehicleGeneration struct {
 	gorm.Model
 
-	Name         string       `json:"name" gorm:"not null"`
+	Name         string       `json:"name" gorm:"index;not null;unique"`
 	Description  string       `json:"description"`
 	ModelID      string       `json:"model_id" gorm:"type:uuid;not null"`
 	ModelInfo    VehicleModel `json:"model" gorm:"foreignKey:ModelID"`

@@ -8,7 +8,7 @@ import (
 // CreateVehicleTypeRequest represents the request for creating a new vehicle type
 // @Description Vehicle type creation request
 type CreateVehicleTypeRequest struct {
-	Name        string `json:"name" binding:"required" example:"sedan"`
+	Name        string `json:"name" validate:"required" example:"car"`
 	Description string `json:"description" example:"A standard passenger car"`
 }
 
@@ -31,8 +31,8 @@ type VehicleTypeResponse struct {
 // CreateVehicleBrandRequest represents the request for creating a new vehicle brand
 // @Description Vehicle brand creation request
 type CreateVehicleBrandRequest struct {
-	VehicleTypeID string `json:"vehicle_type_id" binding:"required" example:"1"`
-	Name          string `json:"name" binding:"required" example:"Toyota"`
+	VehicleTypeID string `json:"vehicle_type_id" validate:"required" example:"1"`
+	Name          string `json:"name" validate:"required" example:"Toyota"`
 	Description   string `json:"description" example:"A popular Japanese car brand"`
 }
 
@@ -57,8 +57,8 @@ type VehicleBrandResponse struct {
 // CreateVehicleModelRequest represents the request for creating a new vehicle model
 // @Description Vehicle model creation request
 type CreateVehicleModelRequest struct {
-	BrandID     string `json:"brand_id" binding:"required" example:"1"`
-	Name        string `json:"name" binding:"required" example:"Camry"`
+	BrandID     string `json:"brand_id" validate:"required" example:"1"`
+	Name        string `json:"name" validate:"required" example:"Camry"`
 	Description string `json:"description" example:"A mid-size sedan"`
 	StartYear   int    `json:"start_year" example:"2020"`
 	EndYear     int    `json:"end_year" example:"2022"`
@@ -89,9 +89,9 @@ type VehicleModelResponse struct {
 // CreateVehicleGenerationRequest represents the request for creating a new vehicle generation
 // @Description Vehicle generation creation request
 type CreateVehicleGenerationRequest struct {
-	Name            string `json:"name" binding:"required" example:"Generation Name"`
+	Name            string `json:"name" validate:"required" example:"Generation Name"`
 	Description     string `json:"description" example:"A brief description of the generation"`
-	ModelID         string `json:"model_id" binding:"required" example:"1"`
+	ModelID         string `json:"model_id" validate:"required" example:"1"`
 	StartYear       int    `json:"start_year" example:"2020"`
 	EndYear         int    `json:"end_year" example:"2022"`
 	EngineType      string `json:"engine_type" example:"V6"`
@@ -142,12 +142,12 @@ type VehicleGenerationResponse struct {
 // CreateUserVehicleRequest represents the request for adding a new user vehicle
 // @Description User vehicle creation request
 type CreateUserVehicleRequest struct {
-	Name           string    `json:"name" binding:"required" example:"My Car"`
-	GenerationID   string    `json:"generation_id" binding:"required" example:"1"`
-	ProductionYear int       `json:"production_year" binding:"required" example:"2020"`
-	Color          string    `json:"color" binding:"required" example:"Red"`
-	LicensePlate   string    `json:"license_plate" binding:"required" example:"ABC123"`
-	VIN            string    `json:"vin" binding:"required" example:"1HGCM82633A123456"`
+	Name           string    `json:"name" validate:"required" example:"My Car"`
+	GenerationID   string    `json:"generation_id" validate:"required" example:"1"`
+	ProductionYear int       `json:"production_year" example:"2020"`
+	Color          string    `json:"color" example:"Red"`
+	LicensePlate   string    `json:"license_plate" example:"ABC123"`
+	VIN            string    `json:"vin" example:"1HGCM82633A123456"`
 	CurrentMileage int       `json:"current_mileage" binding:"required" example:"15000"`
 	PurchaseDate   time.Time `json:"purchase_date" binding:"required" example:"2020-01-01"`
 }

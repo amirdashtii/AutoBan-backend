@@ -8,6 +8,7 @@ import (
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/repository"
+	"github.com/amirdashtii/AutoBan/internal/validation"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
 )
 
@@ -104,11 +105,17 @@ func (uc *vehicleUseCase) GetVehicleType(ctx context.Context, id string) (*dto.V
 }
 
 func (uc *vehicleUseCase) CreateVehicleType(ctx context.Context, request dto.CreateVehicleTypeRequest) (*dto.VehicleTypeResponse, error) {
+	err := validation.ValidateVehicleTypeCreateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle type create request")
+		return nil, errors.ErrInvalidVehicleTypeCreateRequest
+	}
+
 	vehicleType := entity.VehicleType{
 		Name:        request.Name,
 		Description: request.Description,
 	}
-	err := uc.vehicleRepository.CreateVehicleType(ctx, &vehicleType)
+	err = uc.vehicleRepository.CreateVehicleType(ctx, &vehicleType)
 	if err != nil {
 		logger.Error(err, "Failed to create vehicle type")
 		return nil, errors.ErrFailedToCreateVehicleType
@@ -121,6 +128,11 @@ func (uc *vehicleUseCase) CreateVehicleType(ctx context.Context, request dto.Cre
 }
 
 func (uc *vehicleUseCase) UpdateVehicleType(ctx context.Context, id string, request dto.UpdateVehicleTypeRequest) (*dto.VehicleTypeResponse, error) {
+	err := validation.ValidateVehicleTypeUpdateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle type update request")
+		return nil, errors.ErrInvalidVehicleTypeUpdateRequest
+	}
 	vehicleType := entity.VehicleType{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
@@ -225,12 +237,18 @@ func (uc *vehicleUseCase) ListBrandsByType(ctx context.Context, typeID string) (
 }
 
 func (uc *vehicleUseCase) CreateBrand(ctx context.Context, request dto.CreateVehicleBrandRequest) (*dto.VehicleBrandResponse, error) {
+	err := validation.ValidateVehicleBrandCreateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle brand create request")
+		return nil, errors.ErrInvalidVehicleBrandCreateRequest
+	}
+
 	brand := entity.VehicleBrand{
 		Name:          request.Name,
 		Description:   request.Description,
 		VehicleTypeID: request.VehicleTypeID,
 	}
-	err := uc.vehicleRepository.CreateBrand(ctx, &brand)
+	err = uc.vehicleRepository.CreateBrand(ctx, &brand)
 	if err != nil {
 		logger.Error(err, "Failed to create vehicle brand")
 		return nil, errors.ErrFailedToCreateVehicleBrand
@@ -244,6 +262,12 @@ func (uc *vehicleUseCase) CreateBrand(ctx context.Context, request dto.CreateVeh
 }
 
 func (uc *vehicleUseCase) UpdateBrand(ctx context.Context, id string, request dto.UpdateVehicleBrandRequest) (*dto.VehicleBrandResponse, error) {
+	err := validation.ValidateVehicleBrandUpdateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle brand update request")
+		return nil, errors.ErrInvalidVehicleBrandUpdateRequest
+	}
+
 	brand := entity.VehicleBrand{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
@@ -359,6 +383,12 @@ func (uc *vehicleUseCase) GetModel(ctx context.Context, id string) (*dto.Vehicle
 }
 
 func (uc *vehicleUseCase) CreateModel(ctx context.Context, request dto.CreateVehicleModelRequest) (*dto.VehicleModelResponse, error) {
+	err := validation.ValidateVehicleModelCreateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle model create request")
+		return nil, errors.ErrInvalidVehicleModelCreateRequest
+	}
+
 	model := entity.VehicleModel{
 		Name:        request.Name,
 		Description: request.Description,
@@ -366,7 +396,7 @@ func (uc *vehicleUseCase) CreateModel(ctx context.Context, request dto.CreateVeh
 		StartYear:   request.StartYear,
 		EndYear:     request.EndYear,
 	}
-	err := uc.vehicleRepository.CreateModel(ctx, &model)
+	err = uc.vehicleRepository.CreateModel(ctx, &model)
 	if err != nil {
 		logger.Error(err, "Failed to create vehicle model")
 		return nil, errors.ErrFailedToCreateVehicleModel
@@ -382,6 +412,12 @@ func (uc *vehicleUseCase) CreateModel(ctx context.Context, request dto.CreateVeh
 }
 
 func (uc *vehicleUseCase) UpdateModel(ctx context.Context, id string, request dto.UpdateVehicleModelRequest) (*dto.VehicleModelResponse, error) {
+	err := validation.ValidateVehicleModelUpdateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle model update request")
+		return nil, errors.ErrInvalidVehicleModelUpdateRequest
+	}
+
 	model := entity.VehicleModel{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
@@ -406,11 +442,6 @@ func (uc *vehicleUseCase) UpdateModel(ctx context.Context, id string, request dt
 		model.EndYear = *request.EndYear
 	}
 
-	err = uc.vehicleRepository.UpdateModel(ctx, &model)
-	if err != nil {
-		return nil, errors.ErrInvalidVehicleModelID
-	}
-	model.ID = uint(uintID)
 	err = uc.vehicleRepository.UpdateModel(ctx, &model)
 	if err != nil {
 		logger.Error(err, "Failed to update vehicle model")
@@ -531,6 +562,12 @@ func (uc *vehicleUseCase) ListGenerationsByModel(ctx context.Context, modelID st
 }
 
 func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, request dto.CreateVehicleGenerationRequest) (*dto.VehicleGenerationResponse, error) {
+	err := validation.ValidateVehicleGenerationCreateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle generation create request")
+		return nil, errors.ErrInvalidVehicleGenerationCreateRequest
+	}
+
 	generation := entity.VehicleGeneration{
 		Name:            request.Name,
 		Description:     request.Description,
@@ -545,7 +582,7 @@ func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, request dto.Crea
 		BodyStyle:       request.BodyStyle,
 		SpecialFeatures: request.SpecialFeatures,
 	}
-	err := uc.vehicleRepository.CreateGeneration(ctx, &generation)
+	err = uc.vehicleRepository.CreateGeneration(ctx, &generation)
 	if err != nil {
 		logger.Error(err, "Failed to create vehicle generation")
 		return nil, errors.ErrFailedToCreateVehicleGeneration
@@ -568,6 +605,12 @@ func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, request dto.Crea
 }
 
 func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, id string, request dto.UpdateVehicleGenerationRequest) (*dto.VehicleGenerationResponse, error) {
+	err := validation.ValidateVehicleGenerationUpdateRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate vehicle generation update request")
+		return nil, errors.ErrInvalidVehicleGenerationUpdateRequest
+	}
+
 	generation := entity.VehicleGeneration{}
 	uintID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
@@ -653,6 +696,12 @@ func (uc *vehicleUseCase) DeleteGeneration(ctx context.Context, id string) error
 
 // User Vehicles
 func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, request *dto.CreateUserVehicleRequest) (*dto.UserVehicleResponse, error) {
+	err := validation.ValidateUserVehicleCreateRequest(*request)
+	if err != nil {
+		logger.Error(err, "Failed to validate user vehicle create request")
+		return nil, errors.ErrInvalidUserVehicleCreateRequest
+	}
+
 	userVehicle := entity.UserVehicle{
 		UserID:         userID,
 		GenerationID:   request.GenerationID,
@@ -664,7 +713,7 @@ func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, req
 		CurrentMileage: request.CurrentMileage,
 		PurchaseDate:   request.PurchaseDate,
 	}
-	err := uc.vehicleRepository.CreateUserVehicle(ctx, &userVehicle)
+	err = uc.vehicleRepository.CreateUserVehicle(ctx, &userVehicle)
 	if err != nil {
 		logger.Error(err, "Failed to create user vehicle")
 		return nil, errors.ErrFailedToCreateUserVehicle
@@ -730,8 +779,14 @@ func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID 
 }
 
 func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UpdateUserVehicleRequest) (*dto.UserVehicleResponse, error) {
+	err := validation.ValidateUserVehicleUpdateRequest(*request)
+	if err != nil {
+		logger.Error(err, "Failed to validate user vehicle update request")
+		return nil, errors.ErrInvalidUserVehicleUpdateRequest
+	}
+
 	userVehicle := entity.UserVehicle{
-		UserID:         userID,
+		UserID: userID,
 	}
 
 	// Validate and assign optional fields

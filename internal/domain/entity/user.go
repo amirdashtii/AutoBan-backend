@@ -78,12 +78,12 @@ func ParseStatusType(s string) StatusType {
 type User struct {
 	BaseEntity
 
-	PhoneNumber string     `gorm:"index;unique" json:"phone_number" gorm:"not null"`
+	PhoneNumber string     `gorm:"index;unique;not null" json:"phone_number"`
 	Password    string     `json:"password" gorm:"not null"`
-	FirstName   string    `json:"first_name"`
-	LastName    string    `json:"last_name"`
-	Birthday    time.Time `json:"birthday"`
-	Email       string    `gorm:"unique" json:"email"`
+	FirstName   string     `json:"first_name"`
+	LastName    string     `json:"last_name"`
+	Birthday    time.Time  `json:"birthday"`
+	Email       string     `gorm:"unique" json:"email"`
 	Status      StatusType `json:"status"`
 	Role        RoleType   `json:"role"`
 }
