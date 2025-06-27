@@ -44,6 +44,7 @@ func (u *userUseCase) GetProfile(ctx context.Context, userID string) (*dto.GetPr
 	}
 
 	return &dto.GetProfileResponse{
+		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
@@ -97,6 +98,7 @@ func (u *userUseCase) UpdateProfile(ctx context.Context, userID string, request 
 	}
 
 	return &dto.UpdateProfileResponse{
+		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,

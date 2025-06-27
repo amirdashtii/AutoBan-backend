@@ -1,8 +1,12 @@
 package dto
 
+import "github.com/google/uuid"
+
 // GetProfileResponse represents the response for getting user profile
 // @Description User profile information response
 type GetProfileResponse struct {
+	// User's ID
+	ID uuid.UUID `json:"id" example:"123e4567-e89b-12d3-a456-426614174000"`
 	// User's first name (optional)
 	FirstName string `json:"first_name" example:"John"`
 	// User's last name (optional)
@@ -29,6 +33,8 @@ type UpdateProfileRequest struct {
 // UpdateProfileResponse represents the response for updating user profile
 // @Description User profile update response
 type UpdateProfileResponse struct {
+	// User's ID
+	ID uuid.UUID `json:"id" example:"123e4567-e89b-12d3-a456-426614174000"`
 	// User's first name (optional)
 	FirstName string `json:"first_name" example:"John"`
 	// User's last name (optional)

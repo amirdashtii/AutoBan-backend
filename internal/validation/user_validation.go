@@ -9,14 +9,8 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// Custom validation for Iranian phone numbers
-func ValidatePhoneNumber(fl validator.FieldLevel) bool {
-	iranPhoneRegex := regexp.MustCompile(`^09\d{9}$`)
-	return iranPhoneRegex.MatchString(fl.Field().String())
-}
-
 // Custom validation for password
-func ValidatePassword(fl validator.FieldLevel) bool {
+func validatePassword(fl validator.FieldLevel) bool {
 	password := fl.Field().String()
 	if len(password) < 8 {
 		return false
@@ -66,7 +60,7 @@ func ValidateUpdateProfileRequest(request dto.UpdateProfileRequest) error {
 
 func ValidateUpdatePasswordRequest(request dto.UpdatePasswordRequest) error {
 	validate := validator.New()
-	validate.RegisterValidation("password", ValidatePassword)
+	validate.RegisterValidation("password", validatePassword)
 	err := validate.Struct(request)
 	if err != nil {
 		return errors.ErrInvalidPassword

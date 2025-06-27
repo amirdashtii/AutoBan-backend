@@ -46,8 +46,8 @@ definitions:
         type: integer
       generation_id:
         description: ID of the vehicle generation
-        example: "1"
-        type: string
+        example: 1
+        type: integer
       license_plate:
         description: License plate of the user vehicle
         example: ABC123
@@ -87,8 +87,8 @@ definitions:
         type: string
       vehicle_type_id:
         description: ID of the vehicle type
-        example: "1"
-        type: string
+        example: 1
+        type: integer
     required:
     - name
     - vehicle_type_id
@@ -126,8 +126,8 @@ definitions:
         type: string
       model_id:
         description: ID of the vehicle model
-        example: "1"
-        type: string
+        example: 1
+        type: integer
       name:
         description: Name of the vehicle generation
         example: Generation Name
@@ -153,8 +153,8 @@ definitions:
     properties:
       brand_id:
         description: ID of the vehicle brand
-        example: "1"
-        type: string
+        example: 1
+        type: integer
       description:
         description: Description of the vehicle model
         example: A mid-size sedan
@@ -203,6 +203,10 @@ definitions:
       first_name:
         description: User's first name (optional)
         example: John
+        type: string
+      id:
+        description: User's ID
+        example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       last_name:
         description: User's last name (optional)
@@ -418,8 +422,8 @@ definitions:
         type: integer
       generation_id:
         description: ID of the vehicle generation
-        example: "1"
-        type: string
+        example: 1
+        type: integer
       license_plate:
         description: License plate of the user vehicle
         example: ABC123
@@ -454,16 +458,16 @@ definitions:
         type: string
       vehicle_type_id:
         description: ID of the vehicle type
-        example: "1"
-        type: string
+        example: 1
+        type: integer
     type: object
   dto.UpdateVehicleModelRequest:
     description: Vehicle model update request
     properties:
       brand_id:
         description: ID of the vehicle brand
-        example: "1"
-        type: string
+        example: 1
+        type: integer
       description:
         description: Description of the vehicle model
         example: A mid-size sedan
@@ -538,9 +542,13 @@ definitions:
       current_mileage:
         description: Current mileage of the user vehicle
         type: integer
+      generation:
+        allOf:
+        - $ref: '#/definitions/dto.VehicleGenerationResponse'
+        description: Vehicle generation
       generation_id:
         description: ID of the vehicle generation
-        type: string
+        type: integer
       id:
         description: ID of the user vehicle
         type: integer
@@ -575,9 +583,13 @@ definitions:
       name:
         description: Name of the vehicle brand
         type: string
-      vehicle_type:
+      type:
+        allOf:
+        - $ref: '#/definitions/dto.VehicleTypeResponse'
+        description: Vehicle type
+      vehicle_type_id:
         description: ID of the vehicle type
-        type: string
+        type: integer
     type: object
   dto.VehicleGenerationResponse:
     description: Vehicle generation response
@@ -608,7 +620,11 @@ definitions:
         type: integer
       model_id:
         description: ID of the vehicle model
-        type: string
+        type: integer
+      model_info:
+        allOf:
+        - $ref: '#/definitions/dto.VehicleModelResponse'
+        description: Vehicle model
       name:
         description: Name of the vehicle generation
         type: string
@@ -625,9 +641,13 @@ definitions:
   dto.VehicleModelResponse:
     description: Vehicle model response
     properties:
+      brand:
+        allOf:
+        - $ref: '#/definitions/dto.VehicleBrandResponse'
+        description: Vehicle brand
       brand_id:
         description: ID of the vehicle brand
-        type: string
+        type: integer
       description:
         description: Description of the vehicle model
         type: string

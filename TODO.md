@@ -57,6 +57,3 @@
    - [x] List user vehicles API
    - [x] Update user vehicle API
    - [x] Delete user vehicle API
-6. [ ] Add initial data for common vehicle types, brands, and models
-   - [ ] Add Iranian manufacturers and models
-   - [ ] Add common foreign manufacturers and models

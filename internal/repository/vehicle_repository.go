@@ -75,23 +75,23 @@ func (r *vehicleRepository) DeleteVehicleType(ctx context.Context, vehicleType *
 
 // Brands
 func (r *vehicleRepository) ListBrands(ctx context.Context, brands *[]entity.VehicleBrand) error {
-	return r.db.WithContext(ctx).Find(brands).Error
+	return r.db.WithContext(ctx).Preload("VehicleType").Find(brands).Error
 }
 
 func (r *vehicleRepository) ListBrandsByType(ctx context.Context, brands *[]entity.VehicleBrand, typeID string) error {
-	return r.db.WithContext(ctx).Where("vehicle_type_id = ?", typeID).Find(brands).Error
+	return r.db.WithContext(ctx).Preload("VehicleType").Where("vehicle_type_id = ?", typeID).Find(brands).Error
 }
 
 func (r *vehicleRepository) GetBrand(ctx context.Context, brand *entity.VehicleBrand) error {
-	return r.db.WithContext(ctx).Where("id = ?", brand.ID).First(brand).Error
+	return r.db.WithContext(ctx).Preload("VehicleType").Where("id = ?", brand.ID).First(brand).Error
 }
 
 func (r *vehicleRepository) CreateBrand(ctx context.Context, brand *entity.VehicleBrand) error {
-	return r.db.WithContext(ctx).Create(brand).Error
+	return r.db.WithContext(ctx).Preload("VehicleType").Create(brand).Error
 }
 
 func (r *vehicleRepository) UpdateBrand(ctx context.Context, brand *entity.VehicleBrand) error {
-	return r.db.WithContext(ctx).Model(brand).Updates(brand).Error
+	return r.db.WithContext(ctx).Preload("VehicleType").Model(brand).Updates(brand).Error
 }
 
 func (r *vehicleRepository) DeleteBrand(ctx context.Context, brand *entity.VehicleBrand) error {
@@ -100,23 +100,23 @@ func (r *vehicleRepository) DeleteBrand(ctx context.Context, brand *entity.Vehic
 
 // Models
 func (r *vehicleRepository) ListModels(ctx context.Context, models *[]entity.VehicleModel) error {
-	return r.db.WithContext(ctx).Find(models).Error
+	return r.db.WithContext(ctx).Preload("Brand").Preload("Brand.VehicleType").Find(models).Error
 }
 
 func (r *vehicleRepository) ListModelsByBrand(ctx context.Context, models *[]entity.VehicleModel, brandID string) error {
-	return r.db.WithContext(ctx).Where("brand_id = ?", brandID).Find(models).Error
+	return r.db.WithContext(ctx).Preload("Brand").Preload("Brand.VehicleType").Where("brand_id = ?", brandID).Find(models).Error
 }
 
 func (r *vehicleRepository) GetModel(ctx context.Context, model *entity.VehicleModel) error {
-	return r.db.WithContext(ctx).Where("id = ?", model.ID).First(model).Error
+	return r.db.WithContext(ctx).Preload("Brand").Preload("Brand.VehicleType").Where("id = ?", model.ID).First(model).Error
 }
 
 func (r *vehicleRepository) CreateModel(ctx context.Context, model *entity.VehicleModel) error {
-	return r.db.WithContext(ctx).Create(model).Error
+	return r.db.WithContext(ctx).Preload("Brand").Preload("Brand.VehicleType").Create(model).Error
 }
 
 func (r *vehicleRepository) UpdateModel(ctx context.Context, model *entity.VehicleModel) error {
-	return r.db.WithContext(ctx).Model(model).Updates(model).Error
+	return r.db.WithContext(ctx).Preload("Brand").Preload("Brand.VehicleType").Model(model).Updates(model).Error
 }
 
 func (r *vehicleRepository) DeleteModel(ctx context.Context, model *entity.VehicleModel) error {
@@ -125,42 +125,43 @@ func (r *vehicleRepository) DeleteModel(ctx context.Context, model *entity.Vehic
 
 // Generations
 func (r *vehicleRepository) ListGenerations(ctx context.Context, generations *[]entity.VehicleGeneration) error {
-	return r.db.WithContext(ctx).Find(generations).Error
+	return r.db.WithContext(ctx).Preload("ModelInfo").Preload("ModelInfo.Brand").Preload("ModelInfo.Brand.VehicleType").Find(generations).Error
 }
 
 func (r *vehicleRepository) GetGeneration(ctx context.Context, generation *entity.VehicleGeneration) error {
-	return r.db.WithContext(ctx).Where("id = ?", generation.ID).First(generation).Error
+	return r.db.WithContext(ctx).Preload("ModelInfo").Preload("ModelInfo.Brand").Preload("ModelInfo.Brand.VehicleType").Where("id = ?", generation.ID).First(generation).Error
 }
 
 func (r *vehicleRepository) ListGenerationsByModel(ctx context.Context, generations *[]entity.VehicleGeneration, modelID string) error {
-	return r.db.WithContext(ctx).Where("model_id = ?", modelID).Find(generations).Error
+	return r.db.WithContext(ctx).Preload("ModelInfo").Preload("ModelInfo.Brand").Preload("ModelInfo.Brand.VehicleType").Where("model_id = ?", modelID).Find(generations).Error
 }
 func (r *vehicleRepository) CreateGeneration(ctx context.Context, generation *entity.VehicleGeneration) error {
-	return r.db.WithContext(ctx).Create(generation).Error
+	return r.db.WithContext(ctx).Preload("ModelInfo").Preload("ModelInfo.Brand").Preload("ModelInfo.Brand.VehicleType").Create(generation).Error
 }
 
 func (r *vehicleRepository) UpdateGeneration(ctx context.Context, generation *entity.VehicleGeneration) error {
-	return r.db.WithContext(ctx).Model(generation).Updates(generation).Error
+	return r.db.WithContext(ctx).Preload("ModelInfo").Preload("ModelInfo.Brand").Preload("ModelInfo.Brand.VehicleType").Model(generation).Updates(generation).Error
 }
 
 func (r *vehicleRepository) DeleteGeneration(ctx context.Context, generation *entity.VehicleGeneration) error {
 	return r.db.WithContext(ctx).Delete(generation).Error
 }
 
+// User Vehicles
 func (r *vehicleRepository) CreateUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Create(userVehicle).Error
+	return r.db.WithContext(ctx).Preload("Generation").Preload("Generation.ModelInfo").Preload("Generation.ModelInfo.Brand").Preload("Generation.ModelInfo.Brand.VehicleType").Create(userVehicle).Error
 }
 
 func (r *vehicleRepository) ListUserVehicles(ctx context.Context, userID string, userVehicles *[]entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&userVehicles).Error
+	return r.db.WithContext(ctx).Preload("Generation").Preload("Generation.ModelInfo").Preload("Generation.ModelInfo.Brand").Preload("Generation.ModelInfo.Brand.VehicleType").Where("user_id = ?", userID).Find(&userVehicles).Error
 }
 
 func (r *vehicleRepository) GetUserVehicle(ctx context.Context, userID, vehicleId string, userVehicle *entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Where("user_id = ? AND id = ?", userID, vehicleId).First(userVehicle).Error
+	return r.db.WithContext(ctx).Preload("Generation").Preload("Generation.ModelInfo").Preload("Generation.ModelInfo.Brand").Preload("Generation.ModelInfo.Brand.VehicleType").Where("user_id = ? AND id = ?", userID, vehicleId).First(userVehicle).Error
 }
 
 func (r *vehicleRepository) UpdateUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Model(userVehicle).Updates(userVehicle).Error
+	return r.db.WithContext(ctx).Preload("Generation").Preload("Generation.ModelInfo").Preload("Generation.ModelInfo.Brand").Preload("Generation.ModelInfo.Brand.VehicleType").Model(userVehicle).Updates(userVehicle).Error
 }
 
 func (r *vehicleRepository) DeleteUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error {

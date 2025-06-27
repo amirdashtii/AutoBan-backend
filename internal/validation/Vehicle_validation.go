@@ -1,10 +1,58 @@
 package validation
 
 import (
+	"regexp"
+	"strconv"
+	"time"
+
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/go-playground/validator/v10"
 )
+
+func validateYear(fl validator.FieldLevel) bool {
+	year, err := strconv.Atoi(fl.Field().String())
+	if err != nil {
+		return false
+	}
+	return year >= 1300 && year <= time.Now().Year()
+}
+
+func validateDate(fl validator.FieldLevel) bool {
+	dateTime, err := time.Parse("2006-01-02", fl.Field().String())
+	if err != nil {
+		return false
+	}
+	return !dateTime.IsZero()
+}
+
+func validateIranianLicensePlate(fl validator.FieldLevel) bool {
+	licensePlate := fl.Field().String()
+
+	// پلاک سواری و تاکسی و دولتی و انتظامی و مناطق آزاد
+	normalPlate := regexp.MustCompile(`^\d{2}[آ-ی]\d{3}-?\d{2}$`)
+	// پلاک موتورسیکلت (۸ رقم)
+	motorPlate := regexp.MustCompile(`^\d{8}$`)
+	// پلاک گذر موقت (مثلاً: موقت12-345-67 یا موقت1234567)
+	temporaryPlate := regexp.MustCompile(`^موقت\d{2,3}-?\d{3}-?\d{2}$|^موقت\d{7,8}$`)
+	// پلاک دیپلمات (مثلاً: D12-345-67)
+	diplomatPlate := regexp.MustCompile(`^[DS]\d{2}-\d{3}-\d{2}$`)
+	// پلاک معلولین و جانبازان (حرف ژ)
+	disabledPlate := regexp.MustCompile(`^\d{2}ژ\d{3}-?\d{2}$`)
+
+	return normalPlate.MatchString(licensePlate) ||
+		motorPlate.MatchString(licensePlate) ||
+		temporaryPlate.MatchString(licensePlate) ||
+		diplomatPlate.MatchString(licensePlate) ||
+		disabledPlate.MatchString(licensePlate)
+}
+
+func validateIranianVin(fl validator.FieldLevel) bool {
+	vin := fl.Field().String()
+	// باید دقیقاً ۱۷ کاراکتر باشد و فقط شامل حروف و عدد (بدون I, O, Q)
+	re := regexp.MustCompile(`^[A-HJ-NPR-Z0-9]{17}$`)
+	return re.MatchString(vin)
+}
 
 func ValidateVehicleTypeCreateRequest(request dto.CreateVehicleTypeRequest) error {
 	validate := validator.New()
@@ -52,6 +100,7 @@ func ValidateVehicleBrandUpdateRequest(request dto.UpdateVehicleBrandRequest) er
 
 func ValidateVehicleModelCreateRequest(request dto.CreateVehicleModelRequest) error {
 	validate := validator.New()
+	validate.RegisterValidation("year", validateYear)
 	err := validate.Struct(request)
 	if err != nil {
 		return errors.ErrInvalidVehicleModelCreateRequest
@@ -70,11 +119,18 @@ func ValidateVehicleModelUpdateRequest(request dto.UpdateVehicleModelRequest) er
 		return errors.ErrInvalidVehicleModelUpdateRequest
 	}
 
+	validate := validator.New()
+	validate.RegisterValidation("year", validateYear)
+	err := validate.Struct(request)
+	if err != nil {
+		return errors.ErrInvalidVehicleModelUpdateRequest
+	}
 	return nil
 }
 
 func ValidateVehicleGenerationCreateRequest(request dto.CreateVehicleGenerationRequest) error {
 	validate := validator.New()
+	validate.RegisterValidation("year", validateYear)
 	err := validate.Struct(request)
 	if err != nil {
 		return errors.ErrInvalidVehicleGenerationCreateRequest
@@ -96,11 +152,22 @@ func ValidateVehicleGenerationUpdateRequest(request dto.UpdateVehicleGenerationR
 		return errors.ErrInvalidVehicleGenerationUpdateRequest
 	}
 
+	validate := validator.New()
+	validate.RegisterValidation("year", validateYear)
+	err := validate.Struct(request)
+	if err != nil {
+		return errors.ErrInvalidVehicleGenerationUpdateRequest
+	}
 	return nil
 }
 
 func ValidateUserVehicleCreateRequest(request dto.CreateUserVehicleRequest) error {
 	validate := validator.New()
+	validate.RegisterValidation("year", validateYear)
+	validate.RegisterValidation("date", validateDate)
+	validate.RegisterValidation("iranian_license_plate", validateIranianLicensePlate)
+	validate.RegisterValidation("iranian_vin", validateIranianVin)
+
 	err := validate.Struct(request)
 	if err != nil {
 		return errors.ErrInvalidUserVehicleCreateRequest
@@ -118,6 +185,17 @@ func ValidateUserVehicleUpdateRequest(request dto.UpdateUserVehicleRequest) erro
 
 	// If Name is provided, validate it's not empty
 	if request.Name != nil && *request.Name == "" {
+		return errors.ErrInvalidUserVehicleUpdateRequest
+	}
+
+	validate := validator.New()
+	validate.RegisterValidation("year", validateYear)
+	validate.RegisterValidation("date", validateDate)
+	validate.RegisterValidation("iranian_license_plate", validateIranianLicensePlate)
+	validate.RegisterValidation("iranian_vin", validateIranianVin)
+
+	err := validate.Struct(request)
+	if err != nil {
 		return errors.ErrInvalidUserVehicleUpdateRequest
 	}
 

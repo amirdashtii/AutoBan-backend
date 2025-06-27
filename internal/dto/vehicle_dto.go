@@ -2,6 +2,8 @@ package dto
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Type
@@ -39,7 +41,7 @@ type VehicleTypeResponse struct {
 // @Description Vehicle brand creation request
 type CreateVehicleBrandRequest struct {
 	// ID of the vehicle type
-	VehicleTypeID string `json:"vehicle_type_id" validate:"required" example:"1"`
+	VehicleTypeID uint `json:"vehicle_type_id" validate:"required" example:"1"`
 	// Name of the vehicle brand
 	Name string `json:"name" validate:"required" example:"Toyota"`
 	// Description of the vehicle brand
@@ -50,7 +52,7 @@ type CreateVehicleBrandRequest struct {
 // @Description Vehicle brand update request
 type UpdateVehicleBrandRequest struct {
 	// ID of the vehicle type
-	VehicleTypeID *string `json:"vehicle_type_id" example:"1"`
+	VehicleTypeID *uint `json:"vehicle_type_id" example:"1"`
 	// Name of the vehicle brand
 	Name *string `json:"name" example:"Toyota"`
 	// Description of the vehicle brand
@@ -67,7 +69,9 @@ type VehicleBrandResponse struct {
 	// Description of the vehicle brand
 	Description string `json:"description"`
 	// ID of the vehicle type
-	VehicleType string `json:"vehicle_type"`
+	VehicleTypeID uint `json:"vehicle_type_id"`
+	// Vehicle type
+	Type VehicleTypeResponse `json:"type"`
 }
 
 // Model
@@ -75,30 +79,30 @@ type VehicleBrandResponse struct {
 // @Description Vehicle model creation request
 type CreateVehicleModelRequest struct {
 	// ID of the vehicle brand
-	BrandID string `json:"brand_id" validate:"required" example:"1"`
+	BrandID uint `json:"brand_id" validate:"required" example:"1"`
 	// Name of the vehicle model
 	Name string `json:"name" validate:"required" example:"Camry"`
 	// Description of the vehicle model
 	Description string `json:"description" example:"A mid-size sedan"`
 	// Start year of the vehicle model
-	StartYear int `json:"start_year" example:"2020"`
+	StartYear int `json:"start_year" validate:"year" example:"2020"`
 	// End year of the vehicle model
-	EndYear int `json:"end_year" example:"2022"`
+	EndYear int `json:"end_year" validate:"year" example:"2022"`
 }
 
 // UpdateVehicleModelRequest represents the request for updating vehicle model
 // @Description Vehicle model update request
 type UpdateVehicleModelRequest struct {
 	// ID of the vehicle brand
-	BrandID *string `json:"brand_id" example:"1"`
+	BrandID *uint `json:"brand_id" example:"1"`
 	// Name of the vehicle model
 	Name *string `json:"name" example:"Camry"`
 	// Description of the vehicle model
 	Description *string `json:"description" example:"A mid-size sedan"`
 	// Start year of the vehicle model
-	StartYear *int `json:"start_year" example:"2020"`
+	StartYear *int `json:"start_year" validate:"year" example:"2020"`
 	// End year of the vehicle model
-	EndYear *int `json:"end_year" example:"2022"`
+	EndYear *int `json:"end_year" validate:"year" example:"2022"`
 }
 
 // VehicleModelResponse represents the response for vehicle model data
@@ -111,11 +115,13 @@ type VehicleModelResponse struct {
 	// Description of the vehicle model
 	Description string `json:"description"`
 	// ID of the vehicle brand
-	BrandID string `json:"brand_id"`
+	BrandID uint `json:"brand_id"`
 	// Start year of the vehicle model
 	StartYear int `json:"start_year"`
 	// End year of the vehicle model
 	EndYear int `json:"end_year"`
+	// Vehicle brand
+	Brand VehicleBrandResponse `json:"brand"`
 }
 
 // Generation
@@ -127,11 +133,11 @@ type CreateVehicleGenerationRequest struct {
 	// Description of the vehicle generation
 	Description string `json:"description" example:"A brief description of the generation"`
 	// ID of the vehicle model
-	ModelID string `json:"model_id" validate:"required" example:"1"`
+	ModelID uint `json:"model_id" validate:"required" example:"1"`
 	// Start year of the vehicle generation
-	StartYear int `json:"start_year" example:"2020"`
+	StartYear int `json:"start_year" validate:"year" example:"2020"`
 	// End year of the vehicle generation
-	EndYear int `json:"end_year" example:"2022"`
+	EndYear int `json:"end_year" validate:"year" example:"2022"`
 	// Engine type of the vehicle generation
 	EngineType string `json:"engine_type" example:"V6"`
 	// Assembly type of the vehicle generation
@@ -156,11 +162,11 @@ type UpdateVehicleGenerationRequest struct {
 	// Description of the vehicle generation
 	Description *string `json:"description" example:"A brief description of the generation"`
 	// ID of the vehicle model
-	ModelID *string `json:"model_id" example:"1"`
+	ModelID *uint `json:"model_id" example:"1"`
 	// Start year of the vehicle generation
-	StartYear *int `json:"start_year" example:"2020"`
+	StartYear *int `json:"start_year" validate:"year" example:"2020"`
 	// End year of the vehicle generation
-	EndYear *int `json:"end_year" example:"2022"`
+	EndYear *int `json:"end_year" validate:"year" example:"2022"`
 	// Engine type of the vehicle generation
 	EngineType *string `json:"engine_type" example:"V6"`
 	// Assembly type of the vehicle generation
@@ -187,7 +193,7 @@ type VehicleGenerationResponse struct {
 	// Description of the vehicle generation
 	Description string `json:"description"`
 	// ID of the vehicle model
-	ModelID string `json:"model_id"`
+	ModelID uint `json:"model_id"`
 	// Start year of the vehicle generation
 	StartYear int `json:"start_year"`
 	// End year of the vehicle generation
@@ -206,6 +212,8 @@ type VehicleGenerationResponse struct {
 	BodyStyle string `json:"body_style"`
 	// Special features of the vehicle generation
 	SpecialFeatures string `json:"special_features"`
+	// Vehicle model
+	ModelInfo VehicleModelResponse `json:"model_info"`
 }
 
 // UserVehicle
@@ -215,19 +223,19 @@ type CreateUserVehicleRequest struct {
 	// Name of the user vehicle
 	Name string `json:"name" validate:"required" example:"My Car"`
 	// ID of the vehicle generation
-	GenerationID string `json:"generation_id" validate:"required" example:"1"`
+	GenerationID uint `json:"generation_id" validate:"required" example:"1"`
 	// Production year of the user vehicle
-	ProductionYear int `json:"production_year" example:"2020"`
+	ProductionYear int `json:"production_year" validate:"date" example:"2020"`
 	// Color of the user vehicle
 	Color string `json:"color" example:"Red"`
 	// License plate of the user vehicle
-	LicensePlate string `json:"license_plate" example:"ABC123"`
+	LicensePlate string `json:"license_plate" validate:"iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
 	// VIN of the user vehicle
-	VIN string `json:"vin" example:"1HGCM82633A123456"`
+	VIN string `json:"vin" validate:"iranian_vin" example:"1HGCM82633A123456"`
 	// Current mileage of the user vehicle
-	CurrentMileage int `json:"current_mileage" binding:"required" example:"15000"`
+	CurrentMileage int `json:"current_mileage" validate:"min=0" example:"15000"`
 	// Purchase date of the user vehicle
-	PurchaseDate time.Time `json:"purchase_date" binding:"required" example:"2020-01-01"`
+	PurchaseDate string `json:"purchase_date" validate:"year" example:"2020-01-01"`
 }
 
 // UpdateUserVehicleRequest represents the request for updating user vehicle
@@ -236,19 +244,19 @@ type UpdateUserVehicleRequest struct {
 	// Name of the user vehicle
 	Name *string `json:"name" example:"My Car"`
 	// ID of the vehicle generation
-	GenerationID *string `json:"generation_id" example:"1"`
+	GenerationID *uint `json:"generation_id" example:"1"`
 	// Production year of the user vehicle
-	ProductionYear *int `json:"production_year" example:"2020"`
+	ProductionYear *int `json:"production_year" validate:"date" example:"2020"`
 	// Color of the user vehicle
 	Color *string `json:"color" example:"Red"`
 	// License plate of the user vehicle
-	LicensePlate *string `json:"license_plate" example:"ABC123"`
+	LicensePlate *string `json:"license_plate" validate:"iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
 	// VIN of the user vehicle
-	VIN *string `json:"vin" example:"1HGCM82633A123456"`
+	VIN *string `json:"vin" validate:"iranian_vin" example:"1HGCM82633A123456"`
 	// Current mileage of the user vehicle
-	CurrentMileage *int `json:"current_mileage" example:"15000"`
+	CurrentMileage *int `json:"current_mileage" validate:"min=0" example:"15000"`
 	// Purchase date of the user vehicle
-	PurchaseDate *time.Time `json:"purchase_date" example:"2020-01-01"`
+	PurchaseDate *string `json:"purchase_date" validate:"year" example:"2020-01-01"`
 }
 
 // UserVehicleResponse represents the response for user vehicle data
@@ -257,11 +265,11 @@ type UserVehicleResponse struct {
 	// ID of the user vehicle
 	ID uint `json:"id"`
 	// ID of the user
-	UserID string `json:"user_id"`
+	UserID uuid.UUID `json:"user_id"`
 	// Name of the user vehicle
 	Name string `json:"name"`
 	// ID of the vehicle generation
-	GenerationID string `json:"generation_id"`
+	GenerationID uint `json:"generation_id"`
 	// Production year of the user vehicle
 	ProductionYear int `json:"production_year"`
 	// Color of the user vehicle
@@ -274,6 +282,8 @@ type UserVehicleResponse struct {
 	CurrentMileage int `json:"current_mileage"`
 	// Purchase date of the user vehicle
 	PurchaseDate time.Time `json:"purchase_date"`
+	// Vehicle generation
+	Generation VehicleGenerationResponse `json:"generation"`
 }
 
 // ListVehicleTypesResponse represents the response for listing vehicle types

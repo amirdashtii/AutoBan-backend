@@ -2152,8 +2152,8 @@ const docTemplate = `{
                 },
                 "generation_id": {
                     "description": "ID of the vehicle generation",
-                    "type": "string",
-                    "example": "1"
+                    "type": "integer",
+                    "example": 1
                 },
                 "license_plate": {
                     "description": "License plate of the user vehicle",
@@ -2202,8 +2202,8 @@ const docTemplate = `{
                 },
                 "vehicle_type_id": {
                     "description": "ID of the vehicle type",
-                    "type": "string",
-                    "example": "1"
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -2252,8 +2252,8 @@ const docTemplate = `{
                 },
                 "model_id": {
                     "description": "ID of the vehicle model",
-                    "type": "string",
-                    "example": "1"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
                     "description": "Name of the vehicle generation",
@@ -2287,8 +2287,8 @@ const docTemplate = `{
             "properties": {
                 "brand_id": {
                     "description": "ID of the vehicle brand",
-                    "type": "string",
-                    "example": "1"
+                    "type": "integer",
+                    "example": 1
                 },
                 "description": {
                     "description": "Description of the vehicle model",
@@ -2349,6 +2349,11 @@ const docTemplate = `{
                     "description": "User's first name (optional)",
                     "type": "string",
                     "example": "John"
+                },
+                "id": {
+                    "description": "User's ID",
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
                 },
                 "last_name": {
                     "description": "User's last name (optional)",
@@ -2638,8 +2643,8 @@ const docTemplate = `{
                 },
                 "generation_id": {
                     "description": "ID of the vehicle generation",
-                    "type": "string",
-                    "example": "1"
+                    "type": "integer",
+                    "example": 1
                 },
                 "license_plate": {
                     "description": "License plate of the user vehicle",
@@ -2684,8 +2689,8 @@ const docTemplate = `{
                 },
                 "vehicle_type_id": {
                     "description": "ID of the vehicle type",
-                    "type": "string",
-                    "example": "1"
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -2695,8 +2700,8 @@ const docTemplate = `{
             "properties": {
                 "brand_id": {
                     "description": "ID of the vehicle brand",
-                    "type": "string",
-                    "example": "1"
+                    "type": "integer",
+                    "example": 1
                 },
                 "description": {
                     "description": "Description of the vehicle model",
@@ -2794,9 +2799,17 @@ const docTemplate = `{
                     "description": "Current mileage of the user vehicle",
                     "type": "integer"
                 },
+                "generation": {
+                    "description": "Vehicle generation",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
+                        }
+                    ]
+                },
                 "generation_id": {
                     "description": "ID of the vehicle generation",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "description": "ID of the user vehicle",
@@ -2844,9 +2857,17 @@ const docTemplate = `{
                     "description": "Name of the vehicle brand",
                     "type": "string"
                 },
-                "vehicle_type": {
+                "type": {
+                    "description": "Vehicle type",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.VehicleTypeResponse"
+                        }
+                    ]
+                },
+                "vehicle_type_id": {
                     "description": "ID of the vehicle type",
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -2888,7 +2909,15 @@ const docTemplate = `{
                 },
                 "model_id": {
                     "description": "ID of the vehicle model",
-                    "type": "string"
+                    "type": "integer"
+                },
+                "model_info": {
+                    "description": "Vehicle model",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.VehicleModelResponse"
+                        }
+                    ]
                 },
                 "name": {
                     "description": "Name of the vehicle generation",
@@ -2912,9 +2941,17 @@ const docTemplate = `{
             "description": "Vehicle model response",
             "type": "object",
             "properties": {
+                "brand": {
+                    "description": "Vehicle brand",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.VehicleBrandResponse"
+                        }
+                    ]
+                },
                 "brand_id": {
                     "description": "ID of the vehicle brand",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "description": {
                     "description": "Description of the vehicle model",

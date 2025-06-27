@@ -30,6 +30,7 @@ var (
 	ErrFailedToChangeUserStatus     = New("failed to change user status", "خطای تغییر وضعیت کاربر")
 	ErrFailedToChangeUserPassword   = New("failed to change user password", "خطای تغییر رمز عبور کاربر")
 	ErrInvalidUserID                = New("invalid user id", "شناسه کاربر نامعتبر است")
+	ErrInvalidPurchaseDate          = New("invalid purchase date", "تاریخ خرید نامعتبر است")
 )
 
 var (

@@ -24,7 +24,7 @@ func NewAuthController() *AuthController {
 func AuthRoutes(router *gin.Engine) {
 	c := NewAuthController()
 
-	authGroup := router.Group("/auth")
+	authGroup := router.Group("/api/v1/auth")
 	{
 		// Public routes
 		authGroup.POST("/register", c.Register)

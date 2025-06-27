@@ -24,7 +24,7 @@ func VehicleRoutes(router *gin.Engine) {
 	c := NewVehicleController()
 
 	// Public routes for vehicle catalog
-	vehicleGroup := router.Group("/vehicles")
+	vehicleGroup := router.Group("/api/v1/vehicles")
 	{
 		// Vehicle Types
 		vehicleGroup.GET("/types", c.ListVehicleTypes)
@@ -47,7 +47,7 @@ func VehicleRoutes(router *gin.Engine) {
 	}
 
 	// User vehicle management (requires authentication)
-	userVehicles := router.Group("/user/vehicles")
+	userVehicles := router.Group("/api/v1/user/vehicles")
 	userVehicles.Use(middleware.AuthMiddleware())
 	{
 		userVehicles.POST("", c.AddUserVehicle)
@@ -58,7 +58,7 @@ func VehicleRoutes(router *gin.Engine) {
 	}
 
 	// Admin routes for managing vehicle catalog
-	adminVehicles := router.Group("/admin/vehicles")
+	adminVehicles := router.Group("/api/v1/admin/vehicles")
 	adminVehicles.Use(middleware.AuthMiddleware(), middleware.RequireAdmin())
 	{
 		// Vehicle Types management

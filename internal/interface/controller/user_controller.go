@@ -27,7 +27,7 @@ func NewUserController() *UserController {
 func UserRoutes(router *gin.Engine) {
 	c := NewUserController()
 
-	userGroup := router.Group("/users")
+	userGroup := router.Group("/api/v1/users")
 	{
 		protected := userGroup.Use(middleware.AuthMiddleware())
 		{

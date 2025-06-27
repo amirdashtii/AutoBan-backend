@@ -21,7 +21,7 @@ func NewAdminController() *AdminController {
 func AdminRoutes(router *gin.Engine) {
 	c := NewAdminController()
 
-	adminGroup := router.Group("/admin/users")
+	adminGroup := router.Group("/api/v1/admin/users")
 	{
 		adminGroup.Use(middleware.AuthMiddleware())
 		adminGroup.Use(middleware.RequireAdmin())
