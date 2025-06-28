@@ -25,9 +25,9 @@ type UpdateProfileRequest struct {
 	// User's last name (optional)
 	LastName *string `json:"last_name" example:"Doe"`
 	// User's email address (optional)
-	Email *string `validate:"email" json:"email" example:"john.doe@example.com"`
+	Email *string `validate:"omitempty,email" json:"email" example:"john.doe@example.com"`
 	// User's birthday (optional)
-	Birthday *string `validate:"datetime" json:"birthday" example:"1990-01-01"`
+	Birthday *string `validate:"omitempty,datetime" json:"birthday" example:"1990-01-01"`
 }
 
 // UpdateProfileResponse represents the response for updating user profile

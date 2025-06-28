@@ -1,20 +1,35 @@
 package validation
 
 import (
+	"errors"
+	"reflect"
 	"regexp"
 	"strconv"
 	"time"
 
 	"github.com/amirdashtii/AutoBan/internal/dto"
-	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/go-playground/validator/v10"
 )
 
 func validateYear(fl validator.FieldLevel) bool {
-	year, err := strconv.Atoi(fl.Field().String())
-	if err != nil {
+	var year int
+
+	// Handle different field types
+	switch fl.Field().Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		year = int(fl.Field().Int())
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		year = int(fl.Field().Uint())
+	case reflect.String:
+		if yearStr, err := strconv.Atoi(fl.Field().String()); err == nil {
+			year = yearStr
+		} else {
+			return false
+		}
+	default:
 		return false
 	}
+
 	return year >= 1300 && year <= time.Now().Year()
 }
 
@@ -29,22 +44,55 @@ func validateDate(fl validator.FieldLevel) bool {
 func validateIranianLicensePlate(fl validator.FieldLevel) bool {
 	licensePlate := fl.Field().String()
 
-	// پلاک سواری و تاکسی و دولتی و انتظامی و مناطق آزاد
-	normalPlate := regexp.MustCompile(`^\d{2}[آ-ی]\d{3}-?\d{2}$`)
+	// پلاک سفید عادی (فقط حروف مشخص شده)
+	normalWhitePlate := regexp.MustCompile(`^\d{2}[بجدسصطلقلمنوهی]\d{3}-?\d{2}$`)
+	// پلاک سفید با حرف گ (گذر موقت)
+	temporaryPlate := regexp.MustCompile(`^\d{2}گ\d{3}-?\d{2}$`)
+	// پلاک سفید با حرف ژ (معلولین و جانبازان)
+	disabledPlate := regexp.MustCompile(`^\d{2}ژ\d{3}-?\d{2}$`)
 	// پلاک موتورسیکلت (۸ رقم)
 	motorPlate := regexp.MustCompile(`^\d{8}$`)
-	// پلاک گذر موقت (مثلاً: موقت12-345-67 یا موقت1234567)
-	temporaryPlate := regexp.MustCompile(`^موقت\d{2,3}-?\d{3}-?\d{2}$|^موقت\d{7,8}$`)
-	// پلاک دیپلمات (مثلاً: D12-345-67)
-	diplomatPlate := regexp.MustCompile(`^[DS]\d{2}-\d{3}-\d{2}$`)
-	// پلاک معلولین و جانبازان (حرف ژ)
-	disabledPlate := regexp.MustCompile(`^\d{2}ژ\d{3}-?\d{2}$`)
+	// پلاک قرمز تشریفات دولتی
+	ceremonyPlate := regexp.MustCompile(`^تشریفات\d{4}$`)
+	// پلاک قرمز با حرف الف (دولتی)
+	governmentPlate := regexp.MustCompile(`^\d{2}الف\d{3}-?\d{2}$`)
+	// پلاک سبز با حرف پ (فراجا، راهور، پلیس مبارزه با مواد مخدر)
+	policePlate := regexp.MustCompile(`^\d{2}پ\d{3}-?\d{2}$`)
+	// پلاک سبز با حرف ث (سپاه پاسداران)
+	irgcPlate := regexp.MustCompile(`^\d{2}ث\d{3}-?\d{2}$`)
+	// پلاک زرد با حرف ک (وسایل کشاورزی)
+	agriculturalPlate := regexp.MustCompile(`^\d{2}ک\d{3}-?\d{2}$`)
+	// پلاک زرد با حرف ع (حمل‌ونقل عمومی)
+	publicTransportPlate := regexp.MustCompile(`^\d{2}ع\d{3}-?\d{2}$`)
+	// پلاک زرد با حرف ت (تاکسی)
+	taxiPlate := regexp.MustCompile(`^\d{2}ت\d{3}-?\d{2}$`)
+	// پلاک آبی با حرف D (دیپلمات)
+	diplomatPlate := regexp.MustCompile(`^\d{2}T\d{3}-\d{2}$`)
+	// پلاک آبی با حرف S (سفارت)
+	embassyPlate := regexp.MustCompile(`^\d{2}S\d{3}-\d{2}$`)
+	// پلاک آبی با حرف ز (وزارت دفاع)
+	defensePlate := regexp.MustCompile(`^\d{2}ز\d{3}-?\d{2}$`)
+	// پلاک آبی با حرف ف (ستاد کل نیروهای مسلح)
+	militaryStaffPlate := regexp.MustCompile(`^\d{2}ف\d{3}-?\d{2}$`)
+	// پلاک کرِم یا خاکی (ارتش)
+	armyPlate := regexp.MustCompile(`^\d{2}[ش]\d{3}-?\d{2}$`)
 
-	return normalPlate.MatchString(licensePlate) ||
-		motorPlate.MatchString(licensePlate) ||
+	return normalWhitePlate.MatchString(licensePlate) ||
 		temporaryPlate.MatchString(licensePlate) ||
+		disabledPlate.MatchString(licensePlate) ||
+		motorPlate.MatchString(licensePlate) ||
+		ceremonyPlate.MatchString(licensePlate) ||
+		governmentPlate.MatchString(licensePlate) ||
+		policePlate.MatchString(licensePlate) ||
+		irgcPlate.MatchString(licensePlate) ||
+		agriculturalPlate.MatchString(licensePlate) ||
+		publicTransportPlate.MatchString(licensePlate) ||
+		taxiPlate.MatchString(licensePlate) ||
 		diplomatPlate.MatchString(licensePlate) ||
-		disabledPlate.MatchString(licensePlate)
+		embassyPlate.MatchString(licensePlate) ||
+		defensePlate.MatchString(licensePlate) ||
+		militaryStaffPlate.MatchString(licensePlate) ||
+		armyPlate.MatchString(licensePlate)
 }
 
 func validateIranianVin(fl validator.FieldLevel) bool {
@@ -58,18 +106,34 @@ func ValidateVehicleTypeCreateRequest(request dto.CreateVehicleTypeRequest) erro
 	validate := validator.New()
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidVehicleTypeCreateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "Name":
+					if fieldError.Tag() == "required" {
+						return errors.New("vehicle type name is required")
+					}
+				case "Description":
+					if fieldError.Tag() == "max" {
+						return errors.New("description is too long")
+					}
+				default:
+					return errors.New("validation failed for field: " + fieldError.Field())
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 	return nil
 }
 
 func ValidateVehicleTypeUpdateRequest(request dto.UpdateVehicleTypeRequest) error {
 	if request.Name == nil && request.Description == nil {
-		return errors.ErrInvalidVehicleTypeUpdateRequest
+		return errors.New("no fields to update")
 	}
 
 	if request.Name != nil && *request.Name == "" {
-		return errors.ErrInvalidVehicleTypeUpdateRequest
+		return errors.New("name is required")
 	}
 
 	return nil
@@ -79,7 +143,27 @@ func ValidateVehicleBrandCreateRequest(request dto.CreateVehicleBrandRequest) er
 	validate := validator.New()
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidVehicleBrandCreateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "VehicleTypeID":
+					if fieldError.Tag() == "required" {
+						return errors.New("vehicle type id is required")
+					}
+				case "Name":
+					if fieldError.Tag() == "required" {
+						return errors.New("brand name is required")
+					}
+				case "Description":
+					if fieldError.Tag() == "max" {
+						return errors.New("description is too long")
+					}
+				default:
+					return errors.New("validation failed for field: " + fieldError.Field())
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 	return nil
 }
@@ -87,12 +171,12 @@ func ValidateVehicleBrandCreateRequest(request dto.CreateVehicleBrandRequest) er
 func ValidateVehicleBrandUpdateRequest(request dto.UpdateVehicleBrandRequest) error {
 	// Check if at least one field has a value
 	if request.VehicleTypeID == nil && request.Name == nil && request.Description == nil {
-		return errors.ErrInvalidVehicleBrandUpdateRequest
+		return errors.New("no fields to update")
 	}
 
 	// If Name is provided, validate it's not empty
 	if request.Name != nil && *request.Name == "" {
-		return errors.ErrInvalidVehicleBrandUpdateRequest
+		return errors.New("name is required")
 	}
 
 	return nil
@@ -103,7 +187,35 @@ func ValidateVehicleModelCreateRequest(request dto.CreateVehicleModelRequest) er
 	validate.RegisterValidation("year", validateYear)
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidVehicleModelCreateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "BrandID":
+					if fieldError.Tag() == "required" {
+						return errors.New("brand id is required")
+					}
+				case "Name":
+					if fieldError.Tag() == "required" {
+						return errors.New("model name is required")
+					}
+				case "StartYear":
+					if fieldError.Tag() == "year" {
+						return errors.New("invalid start year format")
+					}
+				case "EndYear":
+					if fieldError.Tag() == "year" {
+						return errors.New("invalid end year format")
+					}
+				case "Description":
+					if fieldError.Tag() == "max" {
+						return errors.New("description is too long")
+					}
+				default:
+					return errors.New("validation failed for field: " + fieldError.Field())
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 	return nil
 }
@@ -111,19 +223,29 @@ func ValidateVehicleModelCreateRequest(request dto.CreateVehicleModelRequest) er
 func ValidateVehicleModelUpdateRequest(request dto.UpdateVehicleModelRequest) error {
 	// Check if at least one field has a value
 	if request.BrandID == nil && request.Name == nil && request.Description == nil && request.StartYear == nil && request.EndYear == nil {
-		return errors.ErrInvalidVehicleModelUpdateRequest
+		return errors.New("no fields to update")
 	}
 
 	// If Name is provided, validate it's not empty
 	if request.Name != nil && *request.Name == "" {
-		return errors.ErrInvalidVehicleModelUpdateRequest
+		return errors.New("name is required")
 	}
 
 	validate := validator.New()
 	validate.RegisterValidation("year", validateYear)
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidVehicleModelUpdateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "StartYear":
+					return errors.New("invalid start year format")
+				case "EndYear":
+					return errors.New("invalid end year format")
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 	return nil
 }
@@ -133,7 +255,21 @@ func ValidateVehicleGenerationCreateRequest(request dto.CreateVehicleGenerationR
 	validate.RegisterValidation("year", validateYear)
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidVehicleGenerationCreateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "ModelID":
+					return errors.New("model id is required")
+				case "Name":
+					return errors.New("generation name is required")
+				case "StartYear":
+					return errors.New("invalid start year format")
+				case "EndYear":
+					return errors.New("invalid end year format")
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 	return nil
 }
@@ -144,19 +280,29 @@ func ValidateVehicleGenerationUpdateRequest(request dto.UpdateVehicleGenerationR
 		request.StartYear == nil && request.EndYear == nil && request.EngineType == nil &&
 		request.AssemblyType == nil && request.Assembler == nil && request.Transmission == nil &&
 		request.EngineSize == nil && request.BodyStyle == nil && request.SpecialFeatures == nil {
-		return errors.ErrInvalidVehicleGenerationUpdateRequest
+		return errors.New("no fields to update")
 	}
 
 	// If Name is provided, validate it's not empty
 	if request.Name != nil && *request.Name == "" {
-		return errors.ErrInvalidVehicleGenerationUpdateRequest
+		return errors.New("name is required")
 	}
 
 	validate := validator.New()
 	validate.RegisterValidation("year", validateYear)
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidVehicleGenerationUpdateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "StartYear":
+					return errors.New("invalid start year format")
+				case "EndYear":
+					return errors.New("invalid end year format")
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 	return nil
 }
@@ -170,7 +316,43 @@ func ValidateUserVehicleCreateRequest(request dto.CreateUserVehicleRequest) erro
 
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidUserVehicleCreateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "Name":
+					if fieldError.Tag() == "required" {
+						return errors.New("name is required")
+					}
+				case "GenerationID":
+					if fieldError.Tag() == "required" {
+						return errors.New("generation id is required")
+					}
+				case "ProductionYear":
+					if fieldError.Tag() == "year" {
+						return errors.New("invalid production year format")
+					}
+				case "LicensePlate":
+					if fieldError.Tag() == "iranian_license_plate" {
+						return errors.New("invalid Iranian license plate format")
+					}
+				case "VIN":
+					if fieldError.Tag() == "iranian_vin" {
+						return errors.New("invalid Iranian VIN format")
+					}
+				case "CurrentMileage":
+					if fieldError.Tag() == "min" {
+						return errors.New("current mileage must be greater than 0")
+					}
+				case "PurchaseDate":
+					if fieldError.Tag() == "date" {
+						return errors.New("invalid purchase date format")
+					}
+				default:
+					return errors.New("validation failed for field: " + fieldError.Field())
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 	return nil
 }
@@ -180,12 +362,12 @@ func ValidateUserVehicleUpdateRequest(request dto.UpdateUserVehicleRequest) erro
 	if request.Name == nil && request.GenerationID == nil && request.ProductionYear == nil &&
 		request.Color == nil && request.LicensePlate == nil && request.VIN == nil &&
 		request.CurrentMileage == nil && request.PurchaseDate == nil {
-		return errors.ErrInvalidUserVehicleUpdateRequest
+		return errors.New("no fields to update")
 	}
 
 	// If Name is provided, validate it's not empty
 	if request.Name != nil && *request.Name == "" {
-		return errors.ErrInvalidUserVehicleUpdateRequest
+		return errors.New("name is required")
 	}
 
 	validate := validator.New()
@@ -196,7 +378,17 @@ func ValidateUserVehicleUpdateRequest(request dto.UpdateUserVehicleRequest) erro
 
 	err := validate.Struct(request)
 	if err != nil {
-		return errors.ErrInvalidUserVehicleUpdateRequest
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, fieldError := range validationErrors {
+				switch fieldError.Field() {
+				case "StartYear":
+					return errors.New("invalid start year format")
+				case "EndYear":
+					return errors.New("invalid end year format")
+				}
+			}
+		}
+		return errors.New("validation failed")
 	}
 
 	return nil

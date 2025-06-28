@@ -48,7 +48,7 @@ type VehicleGeneration struct {
 	StartYear    int          `json:"start_year"`                    // First year of production
 	EndYear      int          `json:"end_year"`                      // Last year of production (0 if still in production)
 	EngineType   string       `json:"engine_type"`                   // Gasoline, Diesel, Hybrid, Electric
-	AssemblyType string       `json:"assembly_type" gorm:"not null"` // Import, CKD, SKD, etc.
+	AssemblyType string       `json:"assembly_type"` // Import, CKD, SKD, etc.
 	Assembler    string       `json:"assembler"`                     // e.g., Kerman Motor, IKCO, Saipa
 
 	// Technical specifications

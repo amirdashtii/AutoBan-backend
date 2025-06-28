@@ -85,9 +85,9 @@ type CreateVehicleModelRequest struct {
 	// Description of the vehicle model
 	Description string `json:"description" example:"A mid-size sedan"`
 	// Start year of the vehicle model
-	StartYear int `json:"start_year" validate:"year" example:"2020"`
+	StartYear int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle model
-	EndYear int `json:"end_year" validate:"year" example:"2022"`
+	EndYear int `json:"end_year" validate:"omitempty,year" example:"2022"`
 }
 
 // UpdateVehicleModelRequest represents the request for updating vehicle model
@@ -100,9 +100,9 @@ type UpdateVehicleModelRequest struct {
 	// Description of the vehicle model
 	Description *string `json:"description" example:"A mid-size sedan"`
 	// Start year of the vehicle model
-	StartYear *int `json:"start_year" validate:"year" example:"2020"`
+	StartYear *int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle model
-	EndYear *int `json:"end_year" validate:"year" example:"2022"`
+	EndYear *int `json:"end_year" validate:"omitempty,year" example:"2022"`
 }
 
 // VehicleModelResponse represents the response for vehicle model data
@@ -135,9 +135,9 @@ type CreateVehicleGenerationRequest struct {
 	// ID of the vehicle model
 	ModelID uint `json:"model_id" validate:"required" example:"1"`
 	// Start year of the vehicle generation
-	StartYear int `json:"start_year" validate:"year" example:"2020"`
+	StartYear int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle generation
-	EndYear int `json:"end_year" validate:"year" example:"2022"`
+	EndYear int `json:"end_year" validate:"omitempty,year" example:"2022"`
 	// Engine type of the vehicle generation
 	EngineType string `json:"engine_type" example:"V6"`
 	// Assembly type of the vehicle generation
@@ -164,9 +164,9 @@ type UpdateVehicleGenerationRequest struct {
 	// ID of the vehicle model
 	ModelID *uint `json:"model_id" example:"1"`
 	// Start year of the vehicle generation
-	StartYear *int `json:"start_year" validate:"year" example:"2020"`
+	StartYear *int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle generation
-	EndYear *int `json:"end_year" validate:"year" example:"2022"`
+	EndYear *int `json:"end_year" validate:"omitempty,year" example:"2022"`
 	// Engine type of the vehicle generation
 	EngineType *string `json:"engine_type" example:"V6"`
 	// Assembly type of the vehicle generation
@@ -225,17 +225,17 @@ type CreateUserVehicleRequest struct {
 	// ID of the vehicle generation
 	GenerationID uint `json:"generation_id" validate:"required" example:"1"`
 	// Production year of the user vehicle
-	ProductionYear int `json:"production_year" validate:"date" example:"2020"`
+	ProductionYear int `json:"production_year" validate:"omitempty,year" example:"2020"`
 	// Color of the user vehicle
 	Color string `json:"color" example:"Red"`
 	// License plate of the user vehicle
-	LicensePlate string `json:"license_plate" validate:"iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
+	LicensePlate string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
 	// VIN of the user vehicle
-	VIN string `json:"vin" validate:"iranian_vin" example:"1HGCM82633A123456"`
+	VIN string `json:"vin" validate:"omitempty,iranian_vin" example:"1HGCM82633A123456"`
 	// Current mileage of the user vehicle
-	CurrentMileage int `json:"current_mileage" validate:"min=0" example:"15000"`
+	CurrentMileage int `json:"current_mileage" validate:"omitempty,min=0" example:"15000"`
 	// Purchase date of the user vehicle
-	PurchaseDate string `json:"purchase_date" validate:"year" example:"2020-01-01"`
+	PurchaseDate string `json:"purchase_date" validate:"omitempty,date" example:"2020-01-01"`
 }
 
 // UpdateUserVehicleRequest represents the request for updating user vehicle
@@ -246,17 +246,17 @@ type UpdateUserVehicleRequest struct {
 	// ID of the vehicle generation
 	GenerationID *uint `json:"generation_id" example:"1"`
 	// Production year of the user vehicle
-	ProductionYear *int `json:"production_year" validate:"date" example:"2020"`
+	ProductionYear *int `json:"production_year" validate:"omitempty,year" example:"2020"`
 	// Color of the user vehicle
 	Color *string `json:"color" example:"Red"`
 	// License plate of the user vehicle
-	LicensePlate *string `json:"license_plate" validate:"iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
+	LicensePlate *string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
 	// VIN of the user vehicle
-	VIN *string `json:"vin" validate:"iranian_vin" example:"1HGCM82633A123456"`
+	VIN *string `json:"vin" validate:"omitempty,iranian_vin" example:"1HGCM82633A123456"`
 	// Current mileage of the user vehicle
-	CurrentMileage *int `json:"current_mileage" validate:"min=0" example:"15000"`
+	CurrentMileage *int `json:"current_mileage" validate:"omitempty,min=0" example:"15000"`
 	// Purchase date of the user vehicle
-	PurchaseDate *string `json:"purchase_date" validate:"year" example:"2020-01-01"`
+	PurchaseDate *string `json:"purchase_date" validate:"omitempty,date" example:"2020-01-01"`
 }
 
 // UserVehicleResponse represents the response for user vehicle data

@@ -43,11 +43,11 @@ type UpdateUserRequest struct {
 	// User's last name
 	LastName *string `json:"last_name" example:"Doe"`
 	// User's email address
-	Email *string `validate:"email" json:"email" example:"john.doe@example.com"`
+	Email *string `validate:"omitempty,email" json:"email" example:"john.doe@example.com"`
 	// User's phone number
-	Phone *string `validate:"phone" json:"phone" example:"09123456789"`
+	Phone *string `validate:"omitempty,phone" json:"phone" example:"09123456789"`
 	// User's birthday in YYYY-MM-DD format
-	Birthday *string `validate:"datetime" json:"birthday" example:"1990-01-01"`
+	Birthday *string `validate:"omitempty,datetime" json:"birthday" example:"1990-01-01"`
 }
 
 // ChangeUserRoleRequest represents the request for changing user role
