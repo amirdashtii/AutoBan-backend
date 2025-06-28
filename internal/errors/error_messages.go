@@ -106,3 +106,15 @@ var (
 	ErrInvalidDate                   = New("invalid date format", "فرمت تاریخ نامعتبر است")
 	ErrUserVehicleIDRequired         = New("user vehicle id is required", "شناسه وسیله نقلیه کاربر الزامی است")
 )
+
+// Oil Filter Errors
+var (
+	ErrInvalidOilFilterCreateRequest = New("invalid oil filter create request", "درخواست ساخت تعویض فیلتر روغن معتبر نیست")
+	ErrInvalidOilFilterUpdateRequest = New("invalid oil filter update request", "درخواست به روز رسانی تعویض فیلتر روغن معتبر نیست")
+	ErrInvalidOilFilterID            = New("invalid oil filter id", "شناسه تعویض فیلتر روغن نامعتبر است")
+	ErrFailedToCreateOilFilter       = New("failed to create oil filter", "خطای ساخت تعویض فیلتر روغن")
+	ErrFailedToGetOilFilter          = New("failed to get oil filter", "خطای دریافت تعویض فیلتر روغن")
+	ErrFailedToListOilFilters        = New("failed to list oil filters", "خطای فهرست تعویض فیلتر روغن")
+	ErrFailedToUpdateOilFilter       = New("failed to update oil filter", "خطای به روز رسانی تعویض فیلتر روغن")
+	ErrFailedToDeleteOilFilter       = New("failed to delete oil filter", "خطای حذف تعویض فیلتر روغن")
+)

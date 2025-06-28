@@ -71,6 +71,9 @@ import (
 // @tag.name        Oil Changes
 // @tag.description Oil change management operations
 
+// @tag.name        Oil Filters
+// @tag.description Oil filter management operations
+
 func main() {
 	logger.InitLogger()
 	config, err := config.GetConfig()
@@ -87,6 +90,7 @@ func main() {
 	controller.AdminRoutes(r)
 	controller.VehicleRoutes(r)
 	controller.OilChangeRoutes(r)
+	controller.OilFilterRoutes(r)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run(config.Server.Address + ":" + config.Server.Port) // listen and serve on specified address and port
