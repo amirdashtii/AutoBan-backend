@@ -33,6 +33,67 @@ definitions:
         example: Active
         type: string
     type: object
+  dto.CreateOilChangeRequest:
+    description: Request to create an oil change
+    properties:
+      change_date:
+        description: Change date
+        example: "2021-01-01"
+        type: string
+      change_mileage:
+        description: Change mileage
+        example: 10000
+        type: integer
+      cost:
+        description: Cost
+        example: 1000000
+        type: number
+      next_change_date:
+        description: Next change date
+        example: "2021-01-01"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 20000
+        type: integer
+      notes:
+        description: Notes
+        example: تعویض روغن
+        type: string
+      oil_brand:
+        description: Oil brand
+        example: بهران
+        type: string
+      oil_capacity:
+        description: Oil capacity
+        example: 5
+        type: number
+      oil_name:
+        description: Oil name
+        example: تکتاز
+        type: string
+      oil_type:
+        description: Oil type
+        example: مینرال، سنتتیک، نیمه سنتتیک
+        type: string
+      oil_viscosity:
+        description: Oil viscosity
+        example: 5W-30, 10W-40, etc.
+        type: string
+      service_center:
+        description: Service center
+        example: اتوبان سرویس
+        type: string
+      user_vehicle_id:
+        description: User vehicle ID
+        example: 1
+        type: integer
+    required:
+    - change_date
+    - change_mileage
+    - oil_name
+    - user_vehicle_id
+    type: object
   dto.CreateUserVehicleRequest:
     description: User vehicle creation request
     properties:
@@ -43,6 +104,7 @@ definitions:
       current_mileage:
         description: Current mileage of the user vehicle
         example: 15000
+        minimum: 0
         type: integer
       generation_id:
         description: ID of the vehicle generation
@@ -50,7 +112,7 @@ definitions:
         type: integer
       license_plate:
         description: License plate of the user vehicle
-        example: ABC123
+        example: ۱۲الف۳۴۵۶۸
         type: string
       name:
         description: Name of the user vehicle
@@ -69,10 +131,8 @@ definitions:
         example: 1HGCM82633A123456
         type: string
     required:
-    - current_mileage
     - generation_id
     - name
-    - purchase_date
     type: object
   dto.CreateVehicleBrandRequest:
     description: Vehicle brand creation request
@@ -222,6 +282,15 @@ definitions:
           $ref: '#/definitions/dto.SessionResponse'
         type: array
     type: object
+  dto.ListOilChangesResponse:
+    description: Oil change list response
+    properties:
+      oil_changes:
+        description: Oil changes
+        items:
+          $ref: '#/definitions/dto.OilChangeResponse'
+        type: array
+    type: object
   dto.ListUserVehiclesResponse:
     description: List of user vehicles
     properties:
@@ -303,6 +372,66 @@ definitions:
     required:
     - refresh_token
     type: object
+  dto.OilChangeResponse:
+    description: Oil change response
+    properties:
+      change_date:
+        description: Change date
+        example: "2021-01-01"
+        type: string
+      change_mileage:
+        description: Change mileage
+        example: 10000
+        type: integer
+      cost:
+        description: Cost
+        example: 1000000
+        type: number
+      id:
+        description: ID
+        example: 1
+        type: integer
+      next_change_date:
+        description: Next change date
+        example: "2021-01-01"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 20000
+        type: integer
+      notes:
+        description: Notes
+        example: تعویض روغن
+        type: string
+      oil_brand:
+        description: Oil brand
+        example: بهران
+        type: string
+      oil_capacity:
+        description: Oil capacity
+        example: 5
+        type: number
+      oil_name:
+        description: Oil name
+        example: تکتاز
+        type: string
+      oil_type:
+        description: Oil type
+        example: مینرال، سنتتیک، نیمه سنتتیک
+        type: string
+      oil_viscosity:
+        description: Oil viscosity
+        example: 5W-30, 10W-40, etc.
+        type: string
+      service_center:
+        description: Service center
+        example: اتوبان سرویس
+        type: string
+      user_vehicle_id:
+        description: User vehicle ID
+        example: 1
+        type: integer
+    type: object
   dto.RefreshTokenRequest:
     description: Token refresh request
     properties:
@@ -356,6 +485,58 @@ definitions:
       refresh_token:
         description: JWT refresh token
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    type: object
+  dto.UpdateOilChangeRequest:
+    description: Request to update an oil change
+    properties:
+      change_date:
+        description: Change date
+        example: "2021-01-01"
+        type: string
+      change_mileage:
+        description: Change mileage
+        example: 10000
+        type: integer
+      cost:
+        description: Cost
+        example: 1000000
+        type: number
+      next_change_date:
+        description: Next change date
+        example: "2021-01-01"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 20000
+        type: integer
+      notes:
+        description: Notes
+        example: تعویض روغن
+        type: string
+      oil_brand:
+        description: Oil brand
+        example: بهران
+        type: string
+      oil_capacity:
+        description: Oil capacity
+        example: 5
+        type: number
+      oil_name:
+        description: Oil name
+        example: تکتاز
+        type: string
+      oil_type:
+        description: Oil type
+        example: مینرال، سنتتیک، نیمه سنتتیک
+        type: string
+      oil_viscosity:
+        description: Oil viscosity
+        example: 5W-30, 10W-40, etc.
+        type: string
+      service_center:
+        description: Service center
+        example: اتوبان سرویس
         type: string
     type: object
   dto.UpdatePasswordRequest:
@@ -419,6 +600,7 @@ definitions:
       current_mileage:
         description: Current mileage of the user vehicle
         example: 15000
+        minimum: 0
         type: integer
       generation_id:
         description: ID of the vehicle generation
@@ -426,7 +608,7 @@ definitions:
         type: integer
       license_plate:
         description: License plate of the user vehicle
-        example: ABC123
+        example: ۱۲الف۳۴۵۶۸
         type: string
       name:
         description: Name of the user vehicle
@@ -1545,6 +1727,238 @@ paths:
       summary: Get user sessions
       tags:
       - Authentication
+  /oil-changes:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all oil changes for a user vehicle
+      parameters:
+      - description: User vehicle ID
+        in: query
+        name: user_vehicle_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListOilChangesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List all oil changes
+      tags:
+      - Oil Changes
+    post:
+      consumes:
+      - application/json
+      description: Create a new oil change record for a user vehicle
+      parameters:
+      - description: Oil change information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateOilChangeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.OilChangeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new oil change record for a user vehicle
+      tags:
+      - Oil Changes
+  /oil-changes/{id}:
+    delete:
+      description: Delete an oil change record
+      parameters:
+      - description: Oil change ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete oil change
+      tags:
+      - Oil Changes
+    get:
+      consumes:
+      - application/json
+      description: Get information about a specific oil change
+      parameters:
+      - description: Oil change ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OilChangeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get oil change information
+      tags:
+      - Oil Changes
+    put:
+      consumes:
+      - application/json
+      description: Update the information of an oil change
+      parameters:
+      - description: Oil change ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update oil change information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateOilChangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OilChangeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update oil change
+      tags:
+      - Oil Changes
+  /oil-changes/last:
+    get:
+      description: Get the last oil change for a user vehicle
+      parameters:
+      - description: User vehicle ID
+        in: query
+        name: user_vehicle_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OilChangeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Last oil change
+      tags:
+      - Oil Changes
   /user/vehicles:
     get:
       consumes:
@@ -2046,3 +2460,5 @@ tags:
   name: Admin - Generations
 - description: Admin user vehicle management operations
   name: Admin - UserVehicles
+- description: Oil change management operations
+  name: Oil Changes

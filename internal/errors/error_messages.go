@@ -31,6 +31,7 @@ var (
 	ErrFailedToChangeUserPassword   = New("failed to change user password", "خطای تغییر رمز عبور کاربر")
 	ErrInvalidUserID                = New("invalid user id", "شناسه کاربر نامعتبر است")
 	ErrInvalidPurchaseDate          = New("invalid purchase date", "تاریخ خرید نامعتبر است")
+	ErrUserVehicleNotOwned          = New("user vehicle not owned by user", "این وسیله نقلیه متعلق به شما نیست")
 )
 
 var (
@@ -90,4 +91,18 @@ var (
 	ErrInvalidUserVehicleID            = New("invalid vehicle user vehicle id", "شناسه وسیله نقلیه کاربر نامعتبر است")
 	ErrFailedToUpdateUserVehicle       = New("failed to update user vehicle", "خطای به روز رسانی وسیلقه نقلیه کاربر")
 	ErrFailedToDeleteUserVehicle       = New("failed to delete user vehicle", "خطای حذف وسیلثه نقلیه کاربر")
+)
+
+// Oil Change Errors
+var (
+	ErrInvalidOilChangeCreateRequest = New("invalid oil change create request", "درخواست ساخت تعویض روغن معتبر نیست")
+	ErrInvalidOilChangeUpdateRequest = New("invalid oil change update request", "درخواست به روز رسانی تعویض روغن معتبر نیست")
+	ErrInvalidOilChangeID            = New("invalid oil change id", "شناسه تعویض روغن نامعتبر است")
+	ErrFailedToCreateOilChange       = New("failed to create oil change", "خطای ساخت تعویض روغن")
+	ErrFailedToGetOilChange          = New("failed to get oil change", "خطای دریافت تعویض روغن")
+	ErrFailedToListOilChanges        = New("failed to list oil changes", "خطای فهرست تعویض روغن")
+	ErrFailedToUpdateOilChange       = New("failed to update oil change", "خطای به روز رسانی تعویض روغن")
+	ErrFailedToDeleteOilChange       = New("failed to delete oil change", "خطای حذف تعویض روغن")
+	ErrInvalidDate                   = New("invalid date format", "فرمت تاریخ نامعتبر است")
+	ErrUserVehicleIDRequired         = New("user vehicle id is required", "شناسه وسیله نقلیه کاربر الزامی است")
 )

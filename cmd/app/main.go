@@ -68,6 +68,9 @@ import (
 // @tag.name        Admin - UserVehicles
 // @tag.description Admin user vehicle management operations
 
+// @tag.name        Oil Changes
+// @tag.description Oil change management operations
+
 func main() {
 	logger.InitLogger()
 	config, err := config.GetConfig()
@@ -83,6 +86,7 @@ func main() {
 	controller.UserRoutes(r)
 	controller.AdminRoutes(r)
 	controller.VehicleRoutes(r)
+	controller.OilChangeRoutes(r)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run(config.Server.Address + ":" + config.Server.Port) // listen and serve on specified address and port

@@ -1362,6 +1362,368 @@ const docTemplate = `{
                 }
             }
         },
+        "/oil-changes": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of all oil changes for a user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Changes"
+                ],
+                "summary": "List all oil changes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User vehicle ID",
+                        "name": "user_vehicle_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListOilChangesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new oil change record for a user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Changes"
+                ],
+                "summary": "Create a new oil change record for a user vehicle",
+                "parameters": [
+                    {
+                        "description": "Oil change information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOilChangeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilChangeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oil-changes/last": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get the last oil change for a user vehicle",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Changes"
+                ],
+                "summary": "Last oil change",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User vehicle ID",
+                        "name": "user_vehicle_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilChangeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oil-changes/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get information about a specific oil change",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Changes"
+                ],
+                "summary": "Get oil change information",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Oil change ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilChangeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the information of an oil change",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Changes"
+                ],
+                "summary": "Update oil change",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Oil change ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update oil change information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateOilChangeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilChangeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an oil change record",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Changes"
+                ],
+                "summary": "Delete oil change",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Oil change ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/user/vehicles": {
             "get": {
                 "security": [
@@ -2130,14 +2492,89 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateOilChangeRequest": {
+            "description": "Request to create an oil change",
+            "type": "object",
+            "required": [
+                "change_date",
+                "change_mileage",
+                "oil_name",
+                "user_vehicle_id"
+            ],
+            "properties": {
+                "change_date": {
+                    "description": "Change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "change_mileage": {
+                    "description": "Change mileage",
+                    "type": "integer",
+                    "example": 10000
+                },
+                "cost": {
+                    "description": "Cost",
+                    "type": "number",
+                    "example": 1000000
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "example": 20000
+                },
+                "notes": {
+                    "description": "Notes",
+                    "type": "string",
+                    "example": "تعویض روغن"
+                },
+                "oil_brand": {
+                    "description": "Oil brand",
+                    "type": "string",
+                    "example": "بهران"
+                },
+                "oil_capacity": {
+                    "description": "Oil capacity",
+                    "type": "number",
+                    "example": 5
+                },
+                "oil_name": {
+                    "description": "Oil name",
+                    "type": "string",
+                    "example": "تکتاز"
+                },
+                "oil_type": {
+                    "description": "Oil type",
+                    "type": "string",
+                    "example": "مینرال، سنتتیک، نیمه سنتتیک"
+                },
+                "oil_viscosity": {
+                    "description": "Oil viscosity",
+                    "type": "string",
+                    "example": "5W-30, 10W-40, etc."
+                },
+                "service_center": {
+                    "description": "Service center",
+                    "type": "string",
+                    "example": "اتوبان سرویس"
+                },
+                "user_vehicle_id": {
+                    "description": "User vehicle ID",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "dto.CreateUserVehicleRequest": {
             "description": "User vehicle creation request",
             "type": "object",
             "required": [
-                "current_mileage",
                 "generation_id",
-                "name",
-                "purchase_date"
+                "name"
             ],
             "properties": {
                 "color": {
@@ -2148,6 +2585,7 @@ const docTemplate = `{
                 "current_mileage": {
                     "description": "Current mileage of the user vehicle",
                     "type": "integer",
+                    "minimum": 0,
                     "example": 15000
                 },
                 "generation_id": {
@@ -2158,7 +2596,7 @@ const docTemplate = `{
                 "license_plate": {
                     "description": "License plate of the user vehicle",
                     "type": "string",
-                    "example": "ABC123"
+                    "example": "۱۲الف۳۴۵۶۸"
                 },
                 "name": {
                     "description": "Name of the user vehicle",
@@ -2375,6 +2813,19 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.ListOilChangesResponse": {
+            "description": "Oil change list response",
+            "type": "object",
+            "properties": {
+                "oil_changes": {
+                    "description": "Oil changes",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.OilChangeResponse"
+                    }
+                }
+            }
+        },
         "dto.ListUserVehiclesResponse": {
             "description": "List of user vehicles",
             "type": "object",
@@ -2488,6 +2939,82 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OilChangeResponse": {
+            "description": "Oil change response",
+            "type": "object",
+            "properties": {
+                "change_date": {
+                    "description": "Change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "change_mileage": {
+                    "description": "Change mileage",
+                    "type": "integer",
+                    "example": 10000
+                },
+                "cost": {
+                    "description": "Cost",
+                    "type": "number",
+                    "example": 1000000
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer",
+                    "example": 1
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "example": 20000
+                },
+                "notes": {
+                    "description": "Notes",
+                    "type": "string",
+                    "example": "تعویض روغن"
+                },
+                "oil_brand": {
+                    "description": "Oil brand",
+                    "type": "string",
+                    "example": "بهران"
+                },
+                "oil_capacity": {
+                    "description": "Oil capacity",
+                    "type": "number",
+                    "example": 5
+                },
+                "oil_name": {
+                    "description": "Oil name",
+                    "type": "string",
+                    "example": "تکتاز"
+                },
+                "oil_type": {
+                    "description": "Oil type",
+                    "type": "string",
+                    "example": "مینرال، سنتتیک، نیمه سنتتیک"
+                },
+                "oil_viscosity": {
+                    "description": "Oil viscosity",
+                    "type": "string",
+                    "example": "5W-30, 10W-40, etc."
+                },
+                "service_center": {
+                    "description": "Service center",
+                    "type": "string",
+                    "example": "اتوبان سرویس"
+                },
+                "user_vehicle_id": {
+                    "description": "User vehicle ID",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "dto.RefreshTokenRequest": {
             "description": "Token refresh request",
             "type": "object",
@@ -2557,6 +3084,72 @@ const docTemplate = `{
                     "description": "JWT refresh token",
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+            }
+        },
+        "dto.UpdateOilChangeRequest": {
+            "description": "Request to update an oil change",
+            "type": "object",
+            "properties": {
+                "change_date": {
+                    "description": "Change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "change_mileage": {
+                    "description": "Change mileage",
+                    "type": "integer",
+                    "example": 10000
+                },
+                "cost": {
+                    "description": "Cost",
+                    "type": "number",
+                    "example": 1000000
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "example": 20000
+                },
+                "notes": {
+                    "description": "Notes",
+                    "type": "string",
+                    "example": "تعویض روغن"
+                },
+                "oil_brand": {
+                    "description": "Oil brand",
+                    "type": "string",
+                    "example": "بهران"
+                },
+                "oil_capacity": {
+                    "description": "Oil capacity",
+                    "type": "number",
+                    "example": 5
+                },
+                "oil_name": {
+                    "description": "Oil name",
+                    "type": "string",
+                    "example": "تکتاز"
+                },
+                "oil_type": {
+                    "description": "Oil type",
+                    "type": "string",
+                    "example": "مینرال، سنتتیک، نیمه سنتتیک"
+                },
+                "oil_viscosity": {
+                    "description": "Oil viscosity",
+                    "type": "string",
+                    "example": "5W-30, 10W-40, etc."
+                },
+                "service_center": {
+                    "description": "Service center",
+                    "type": "string",
+                    "example": "اتوبان سرویس"
                 }
             }
         },
@@ -2639,6 +3232,7 @@ const docTemplate = `{
                 "current_mileage": {
                     "description": "Current mileage of the user vehicle",
                     "type": "integer",
+                    "minimum": 0,
                     "example": 15000
                 },
                 "generation_id": {
@@ -2649,7 +3243,7 @@ const docTemplate = `{
                 "license_plate": {
                     "description": "License plate of the user vehicle",
                     "type": "string",
-                    "example": "ABC123"
+                    "example": "۱۲الف۳۴۵۶۸"
                 },
                 "name": {
                     "description": "Name of the user vehicle",
@@ -3054,6 +3648,10 @@ const docTemplate = `{
         {
             "description": "Admin user vehicle management operations",
             "name": "Admin - UserVehicles"
+        },
+        {
+            "description": "Oil change management operations",
+            "name": "Oil Changes"
         }
     ]
 }`

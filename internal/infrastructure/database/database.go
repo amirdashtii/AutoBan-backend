@@ -69,6 +69,7 @@ func ConnectDatabase() *gorm.DB {
 			&entity.VehicleModel{},
 			&entity.VehicleGeneration{},
 			&entity.UserVehicle{},
+			&entity.OilChange{},
 		// Add other models as needed
 		)
 		if err != nil {
