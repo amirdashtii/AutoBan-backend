@@ -29,7 +29,7 @@ type UpdateVehicleTypeRequest struct {
 // @Description Vehicle type response
 type VehicleTypeResponse struct {
 	// ID of the vehicle type
-	ID uint `json:"id"`
+	ID uint64 `json:"id"`
 	// Name of the vehicle type
 	Name string `json:"name"`
 	// Description of the vehicle type
@@ -41,7 +41,7 @@ type VehicleTypeResponse struct {
 // @Description Vehicle brand creation request
 type CreateVehicleBrandRequest struct {
 	// ID of the vehicle type
-	VehicleTypeID uint `json:"vehicle_type_id" validate:"required" example:"1"`
+	VehicleTypeID uint64 `json:"vehicle_type_id" validate:"required" example:"1"`
 	// Name of the vehicle brand
 	Name string `json:"name" validate:"required" example:"Toyota"`
 	// Description of the vehicle brand
@@ -52,7 +52,7 @@ type CreateVehicleBrandRequest struct {
 // @Description Vehicle brand update request
 type UpdateVehicleBrandRequest struct {
 	// ID of the vehicle type
-	VehicleTypeID *uint `json:"vehicle_type_id" example:"1"`
+	VehicleTypeID *uint64 `json:"vehicle_type_id" example:"1"`
 	// Name of the vehicle brand
 	Name *string `json:"name" example:"Toyota"`
 	// Description of the vehicle brand
@@ -63,13 +63,13 @@ type UpdateVehicleBrandRequest struct {
 // @Description Vehicle brand response
 type VehicleBrandResponse struct {
 	// ID of the vehicle brand
-	ID uint `json:"id"`
+	ID uint64 `json:"id"`
 	// Name of the vehicle brand
 	Name string `json:"name"`
 	// Description of the vehicle brand
 	Description string `json:"description"`
 	// ID of the vehicle type
-	VehicleTypeID uint `json:"vehicle_type_id"`
+	VehicleTypeID uint64 `json:"vehicle_type_id"`
 	// Vehicle type
 	Type VehicleTypeResponse `json:"type"`
 }
@@ -79,7 +79,7 @@ type VehicleBrandResponse struct {
 // @Description Vehicle model creation request
 type CreateVehicleModelRequest struct {
 	// ID of the vehicle brand
-	BrandID uint `json:"brand_id" validate:"required" example:"1"`
+	BrandID uint64 `json:"brand_id" validate:"required" example:"1"`
 	// Name of the vehicle model
 	Name string `json:"name" validate:"required" example:"Camry"`
 	// Description of the vehicle model
@@ -94,7 +94,7 @@ type CreateVehicleModelRequest struct {
 // @Description Vehicle model update request
 type UpdateVehicleModelRequest struct {
 	// ID of the vehicle brand
-	BrandID *uint `json:"brand_id" example:"1"`
+	BrandID *uint64 `json:"brand_id" example:"1"`
 	// Name of the vehicle model
 	Name *string `json:"name" example:"Camry"`
 	// Description of the vehicle model
@@ -109,13 +109,13 @@ type UpdateVehicleModelRequest struct {
 // @Description Vehicle model response
 type VehicleModelResponse struct {
 	// ID of the vehicle model
-	ID uint `json:"id"`
+	ID uint64 `json:"id"`
 	// Name of the vehicle model
 	Name string `json:"name"`
 	// Description of the vehicle model
 	Description string `json:"description"`
 	// ID of the vehicle brand
-	BrandID uint `json:"brand_id"`
+	BrandID uint64 `json:"brand_id"`
 	// Start year of the vehicle model
 	StartYear int `json:"start_year"`
 	// End year of the vehicle model
@@ -133,7 +133,7 @@ type CreateVehicleGenerationRequest struct {
 	// Description of the vehicle generation
 	Description string `json:"description" example:"A brief description of the generation"`
 	// ID of the vehicle model
-	ModelID uint `json:"model_id" validate:"required" example:"1"`
+	ModelID uint64 `json:"model_id" validate:"required" example:"1"`
 	// Start year of the vehicle generation
 	StartYear int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle generation
@@ -162,7 +162,7 @@ type UpdateVehicleGenerationRequest struct {
 	// Description of the vehicle generation
 	Description *string `json:"description" example:"A brief description of the generation"`
 	// ID of the vehicle model
-	ModelID *uint `json:"model_id" example:"1"`
+	ModelID *uint64 `json:"model_id" example:"1"`
 	// Start year of the vehicle generation
 	StartYear *int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle generation
@@ -187,13 +187,13 @@ type UpdateVehicleGenerationRequest struct {
 // @Description Vehicle generation response
 type VehicleGenerationResponse struct {
 	// ID of the vehicle generation
-	ID uint `json:"id"`
+	ID uint64 `json:"id"`
 	// Name of the vehicle generation
 	Name string `json:"name"`
 	// Description of the vehicle generation
 	Description string `json:"description"`
 	// ID of the vehicle model
-	ModelID uint `json:"model_id"`
+	ModelID uint64 `json:"model_id"`
 	// Start year of the vehicle generation
 	StartYear int `json:"start_year"`
 	// End year of the vehicle generation
@@ -223,7 +223,7 @@ type CreateUserVehicleRequest struct {
 	// Name of the user vehicle
 	Name string `json:"name" validate:"required" example:"My Car"`
 	// ID of the vehicle generation
-	GenerationID uint `json:"generation_id" validate:"required" example:"1"`
+	GenerationID uint64 `json:"generation_id" validate:"required" example:"1"`
 	// Production year of the user vehicle
 	ProductionYear int `json:"production_year" validate:"omitempty,year" example:"2020"`
 	// Color of the user vehicle
@@ -244,7 +244,7 @@ type UpdateUserVehicleRequest struct {
 	// Name of the user vehicle
 	Name *string `json:"name" example:"My Car"`
 	// ID of the vehicle generation
-	GenerationID *uint `json:"generation_id" example:"1"`
+	GenerationID *uint64 `json:"generation_id" example:"1"`
 	// Production year of the user vehicle
 	ProductionYear *int `json:"production_year" validate:"omitempty,year" example:"2020"`
 	// Color of the user vehicle
@@ -263,13 +263,13 @@ type UpdateUserVehicleRequest struct {
 // @Description User vehicle response
 type UserVehicleResponse struct {
 	// ID of the user vehicle
-	ID uint `json:"id"`
+	ID uint64 `json:"id"`
 	// ID of the user
 	UserID uuid.UUID `json:"user_id"`
 	// Name of the user vehicle
 	Name string `json:"name"`
 	// ID of the vehicle generation
-	GenerationID uint `json:"generation_id"`
+	GenerationID uint64 `json:"generation_id"`
 	// Production year of the user vehicle
 	ProductionYear int `json:"production_year"`
 	// Color of the user vehicle

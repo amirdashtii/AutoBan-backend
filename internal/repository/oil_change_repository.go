@@ -10,11 +10,11 @@ import (
 
 type OilChangeRepository interface {
 	CreateOilChange(ctx context.Context, oilChange *entity.OilChange) error
-	GetOilChange(ctx context.Context, id uint, oilChange *entity.OilChange) error
-	ListOilChanges(ctx context.Context, userVehicleID string, oilChanges *[]entity.OilChange) error
+	GetOilChange(ctx context.Context, id uint64, oilChange *entity.OilChange) error
+	ListOilChanges(ctx context.Context, userVehicleID uint64, oilChanges *[]entity.OilChange) error
 	UpdateOilChange(ctx context.Context, oilChange *entity.OilChange) error
 	DeleteOilChange(ctx context.Context, oilChange *entity.OilChange) error
-	GetLastOilChange(ctx context.Context, userVehicleID string, oilChange *entity.OilChange) error
+	GetLastOilChange(ctx context.Context, userVehicleID uint64, oilChange *entity.OilChange) error
 }
 
 type oilChangeRepository struct {
@@ -30,11 +30,11 @@ func (r *oilChangeRepository) CreateOilChange(ctx context.Context, oilChange *en
 	return r.db.WithContext(ctx).Preload("UserVehicle").Create(oilChange).Error
 }
 
-func (r *oilChangeRepository) GetOilChange(ctx context.Context, id uint, oilChange *entity.OilChange) error {
+func (r *oilChangeRepository) GetOilChange(ctx context.Context, id uint64, oilChange *entity.OilChange) error {
 	return r.db.WithContext(ctx).Preload("UserVehicle").First(oilChange, id).Error
 }
 
-func (r *oilChangeRepository) ListOilChanges(ctx context.Context, userVehicleID string, oilChanges *[]entity.OilChange) error {
+func (r *oilChangeRepository) ListOilChanges(ctx context.Context, userVehicleID uint64, oilChanges *[]entity.OilChange) error {
 	return r.db.WithContext(ctx).
 		Preload("UserVehicle").
 		Where("user_vehicle_id = ?", userVehicleID).
@@ -50,7 +50,7 @@ func (r *oilChangeRepository) DeleteOilChange(ctx context.Context, oilChange *en
 	return r.db.WithContext(ctx).Delete(oilChange).Error
 }
 
-func (r *oilChangeRepository) GetLastOilChange(ctx context.Context, userVehicleID string, oilChange *entity.OilChange) error {
+func (r *oilChangeRepository) GetLastOilChange(ctx context.Context, userVehicleID uint64, oilChange *entity.OilChange) error {
 	return r.db.WithContext(ctx).
 		Preload("UserVehicle").
 		Where("user_vehicle_id = ?", userVehicleID).

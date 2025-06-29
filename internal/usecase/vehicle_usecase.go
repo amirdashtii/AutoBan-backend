@@ -92,7 +92,7 @@ func (uc *vehicleUseCase) GetVehicleType(ctx context.Context, id string) (*dto.V
 		logger.Error(err, "Failed to parse vehicle type id")
 		return nil, errors.ErrInvalidVehicleTypeID
 	}
-	vehicleType.ID = uint(uintID)
+	vehicleType.ID = uintID
 
 	err = uc.vehicleRepository.GetVehicleType(ctx, &vehicleType)
 	if err != nil {
@@ -141,7 +141,7 @@ func (uc *vehicleUseCase) UpdateVehicleType(ctx context.Context, id string, requ
 		logger.Error(err, "Failed to parse vehicle type id")
 		return nil, errors.ErrInvalidVehicleTypeID
 	}
-	vehicleType.ID = uint(uintID)
+	vehicleType.ID = uintID
 
 	if request.Name != nil {
 		vehicleType.Name = *request.Name
@@ -169,7 +169,7 @@ func (uc *vehicleUseCase) DeleteVehicleType(ctx context.Context, id string) erro
 		logger.Error(err, "Failed to parse vehicle type id")
 		return errors.ErrInvalidVehicleTypeID
 	}
-	vehicleType.ID = uint(uintID)
+	vehicleType.ID = uintID
 	err = uc.vehicleRepository.DeleteVehicleType(ctx, &vehicleType)
 	if err != nil {
 		logger.Error(err, "Failed to delete vehicle type")
@@ -211,7 +211,7 @@ func (uc *vehicleUseCase) GetBrand(ctx context.Context, id string) (*dto.Vehicle
 		logger.Error(err, "Failed to parse vehicle brand id")
 		return nil, errors.ErrInvalidVehicleBrandID
 	}
-	brand.ID = uint(uintID)
+	brand.ID = uintID
 	err = uc.vehicleRepository.GetBrand(ctx, &brand)
 	if err != nil {
 		logger.Error(err, "Failed to get vehicle brand")
@@ -232,7 +232,12 @@ func (uc *vehicleUseCase) GetBrand(ctx context.Context, id string) (*dto.Vehicle
 
 func (uc *vehicleUseCase) ListBrandsByType(ctx context.Context, typeID string) (*dto.ListVehicleBrandsResponse, error) {
 	brands := []entity.VehicleBrand{}
-	err := uc.vehicleRepository.ListBrandsByType(ctx, &brands, typeID)
+	uintTypeID, err := strconv.ParseUint(typeID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse vehicle type id")
+		return nil, errors.ErrInvalidVehicleTypeID
+	}
+	err = uc.vehicleRepository.ListBrandsByType(ctx, &brands, uintTypeID)
 	if err != nil {
 		logger.Error(err, "Failed to list vehicle brands by type")
 		return nil, errors.ErrFailedToListVehicleBrandsByType
@@ -297,7 +302,7 @@ func (uc *vehicleUseCase) UpdateBrand(ctx context.Context, id string, request dt
 		logger.Error(err, "Failed to parse vehicle brand id")
 		return nil, errors.ErrInvalidVehicleBrandID
 	}
-	brand.ID = uint(uintID)
+	brand.ID = uintID
 
 	if request.Name != nil {
 		brand.Name = *request.Name
@@ -335,7 +340,7 @@ func (uc *vehicleUseCase) DeleteBrand(ctx context.Context, id string) error {
 		logger.Error(err, "Failed to parse vehicle brand id")
 		return errors.ErrInvalidVehicleBrandID
 	}
-	brand.ID = uint(uintID)
+	brand.ID = uintID
 	err = uc.vehicleRepository.DeleteBrand(ctx, &brand)
 	if err != nil {
 		logger.Error(err, "Failed to delete vehicle brand")
@@ -379,7 +384,12 @@ func (uc *vehicleUseCase) ListModels(ctx context.Context) (*dto.ListVehicleModel
 
 func (uc *vehicleUseCase) ListModelsByBrand(ctx context.Context, brandID string) (*dto.ListVehicleModelsResponse, error) {
 	models := []entity.VehicleModel{}
-	err := uc.vehicleRepository.ListModelsByBrand(ctx, &models, brandID)
+	uintBrandID, err := strconv.ParseUint(brandID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse vehicle brand id")
+		return nil, errors.ErrInvalidVehicleBrandID
+	}
+	err = uc.vehicleRepository.ListModelsByBrand(ctx, &models, uintBrandID)
 	if err != nil {
 		logger.Error(err, "Failed to list vehicle models by brand")
 		return nil, errors.ErrFailedToListVehicleModelsByBrand
@@ -416,7 +426,7 @@ func (uc *vehicleUseCase) GetModel(ctx context.Context, id string) (*dto.Vehicle
 		logger.Error(err, "Failed to parse vehicle model id")
 		return nil, errors.ErrInvalidVehicleModelID
 	}
-	model.ID = uint(uintID)
+	model.ID = uintID
 	err = uc.vehicleRepository.GetModel(ctx, &model)
 	if err != nil {
 		logger.Error(err, "Failed to get vehicle model")
@@ -496,7 +506,7 @@ func (uc *vehicleUseCase) UpdateModel(ctx context.Context, id string, request dt
 		logger.Error(err, "Failed to parse vehicle model id")
 		return nil, errors.ErrInvalidVehicleModelID
 	}
-	model.ID = uint(uintID)
+	model.ID = uintID
 
 	if request.Name != nil {
 		model.Name = *request.Name
@@ -547,7 +557,7 @@ func (uc *vehicleUseCase) DeleteModel(ctx context.Context, id string) error {
 		logger.Error(err, "Failed to parse vehicle model id")
 		return errors.ErrInvalidVehicleModelID
 	}
-	model.ID = uint(uintID)
+	model.ID = uintID
 	err = uc.vehicleRepository.DeleteModel(ctx, &model)
 	if err != nil {
 		logger.Error(err, "Failed to delete vehicle model")
@@ -611,7 +621,7 @@ func (uc *vehicleUseCase) GetGeneration(ctx context.Context, id string) (*dto.Ve
 		logger.Error(err, "Failed to parse vehicle generation id")
 		return nil, errors.ErrInvalidVehicleGenerationID
 	}
-	generation.ID = uint(uintID)
+	generation.ID = uintID
 	err = uc.vehicleRepository.GetGeneration(ctx, &generation)
 	if err != nil {
 		logger.Error(err, "Failed to get vehicle generation")
@@ -655,7 +665,12 @@ func (uc *vehicleUseCase) GetGeneration(ctx context.Context, id string) (*dto.Ve
 
 func (uc *vehicleUseCase) ListGenerationsByModel(ctx context.Context, modelID string) (*dto.ListVehicleGenerationsResponse, error) {
 	generations := []entity.VehicleGeneration{}
-	err := uc.vehicleRepository.ListGenerationsByModel(ctx, &generations, modelID)
+	uintModelID, err := strconv.ParseUint(modelID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse vehicle model id")
+		return nil, errors.ErrInvalidVehicleModelID
+	}
+	err = uc.vehicleRepository.ListGenerationsByModel(ctx, &generations, uintModelID)
 	if err != nil {
 		logger.Error(err, "Failed to list vehicle generations by model")
 		return nil, errors.ErrFailedToListVehicleGenerationsByModel
@@ -776,7 +791,7 @@ func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, id string, reque
 		logger.Error(err, "Failed to parse vehicle generation id")
 		return nil, errors.ErrInvalidVehicleGenerationID
 	}
-	generation.ID = uint(uintID)
+	generation.ID = uintID
 
 	if request.Name != nil {
 		generation.Name = *request.Name
@@ -863,7 +878,7 @@ func (uc *vehicleUseCase) DeleteGeneration(ctx context.Context, id string) error
 		logger.Error(err, "Failed to parse vehicle generation id")
 		return errors.ErrInvalidVehicleGenerationID
 	}
-	generation.ID = uint(uintID)
+	generation.ID = uintID
 	err = uc.vehicleRepository.DeleteGeneration(ctx, &generation)
 	if err != nil {
 		logger.Error(err, "Failed to delete vehicle generation")
@@ -958,7 +973,12 @@ func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, req
 
 func (uc *vehicleUseCase) ListUserVehicles(ctx context.Context, userID string) (*dto.ListUserVehiclesResponse, error) {
 	userVehicles := []entity.UserVehicle{}
-	err := uc.vehicleRepository.ListUserVehicles(ctx, userID, &userVehicles)
+	uuidUserID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user id")
+		return nil, errors.ErrInvalidUserID
+	}
+	err = uc.vehicleRepository.ListUserVehicles(ctx, uuidUserID, &userVehicles)
 	if err != nil {
 		logger.Error(err, "Failed to list user vehicles")
 		return nil, errors.ErrFailedToListUserVehicles
@@ -1017,11 +1037,17 @@ func (uc *vehicleUseCase) ListUserVehicles(ctx context.Context, userID string) (
 
 func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID string) (*dto.UserVehicleResponse, error) {
 	userVehicle := entity.UserVehicle{}
-	err := uc.vehicleRepository.GetUserVehicle(ctx, userID, vehicleID, &userVehicle)
+	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
-		logger.Error(err, "Failed to get user vehicle")
-		return nil, errors.ErrFailedToGetUserVehicle
+		logger.Error(err, "Failed to parse user id")
+		return nil, errors.ErrInvalidUserID
 	}
+	uintVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse vehicle id")
+		return nil, errors.ErrInvalidVehicleID
+	}
+	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, uintVehicleID, &userVehicle)
 	return &dto.UserVehicleResponse{
 		ID:             userVehicle.ID,
 		UserID:         userVehicle.UserID,
@@ -1124,7 +1150,7 @@ func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicle
 		logger.Error(err, "Failed to parse user vehicle id")
 		return nil, errors.ErrInvalidUserVehicleID
 	}
-	userVehicle.ID = uint(uintUserVehicleID)
+	userVehicle.ID = uintUserVehicleID
 	err = uc.vehicleRepository.UpdateUserVehicle(ctx, &userVehicle)
 	if err != nil {
 		logger.Error(err, "Failed to update user vehicle")
@@ -1179,8 +1205,18 @@ func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicle
 }
 
 func (uc *vehicleUseCase) DeleteUserVehicle(ctx context.Context, userID, vehicleID string) error {
+	uuidUserID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user id")
+		return errors.ErrInvalidUserID
+	}
+	uintVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse vehicle id")
+		return errors.ErrInvalidVehicleID
+	}
 	userVehicle := entity.UserVehicle{}
-	err := uc.vehicleRepository.GetUserVehicle(ctx, userID, vehicleID, &userVehicle)
+	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, uintVehicleID, &userVehicle)
 	if err != nil {
 		logger.Error(err, "Failed to get user vehicle")
 		return errors.ErrFailedToGetUserVehicle

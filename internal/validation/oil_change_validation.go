@@ -32,7 +32,7 @@ func ValidateOilChangeUpdateRequest(request dto.UpdateOilChangeRequest) error {
 	if request.OilName == nil && request.OilBrand == nil && request.OilType == nil &&
 		request.OilViscosity == nil && request.ChangeMileage == nil && request.ChangeDate == nil &&
 		request.OilCapacity == nil && request.NextChangeMileage == nil &&
-		request.NextChangeDate == nil && request.ServiceCenter == nil && request.Cost == nil && request.Notes == nil {
+		request.NextChangeDate == nil && request.ServiceCenter == nil && request.Notes == nil {
 		return errors.New("no fields to update")
 	}
 

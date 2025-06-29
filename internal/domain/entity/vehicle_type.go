@@ -4,12 +4,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 // VehicleType represents the main category of vehicles
 type VehicleType struct {
-	gorm.Model
+	BaseModel
 
 	Name        string `json:"name" gorm:"index;not null;unique"`
 	Description string `json:"description"`
@@ -17,21 +16,21 @@ type VehicleType struct {
 
 // VehicleBrand represents the manufacturer of vehicles
 type VehicleBrand struct {
-	gorm.Model
+	BaseModel
 
 	Name          string      `json:"name" gorm:"index;not null;unique"`
 	Description   string      `json:"description"`
-	VehicleTypeID uint        `json:"vehicle_type_id" gorm:"not null"`
+	VehicleTypeID uint64      `json:"vehicle_type_id" gorm:"not null"`
 	VehicleType   VehicleType `json:"vehicle_type" gorm:"foreignKey:VehicleTypeID"`
 }
 
 // VehicleModel represents specific models of vehicles
 type VehicleModel struct {
-	gorm.Model
+	BaseModel
 
 	Name        string       `json:"name" gorm:"index;not null;unique"`
 	Description string       `json:"description"`
-	BrandID     uint         `json:"brand_id" gorm:"not null"`
+	BrandID     uint64       `json:"brand_id" gorm:"not null"`
 	Brand       VehicleBrand `json:"brand" gorm:"foreignKey:BrandID"`
 	StartYear   int          `json:"start_year"` // First year of production
 	EndYear     int          `json:"end_year"`   // Last year of production (0 if still in production)
@@ -39,17 +38,17 @@ type VehicleModel struct {
 
 // VehicleGeneration represents different generations/versions of a model
 type VehicleGeneration struct {
-	gorm.Model
+	BaseModel
 
 	Name         string       `json:"name" gorm:"index;not null;unique"`
 	Description  string       `json:"description"`
-	ModelID      uint         `json:"model_id" gorm:"not null"`
+	ModelID      uint64       `json:"model_id" gorm:"not null"`
 	ModelInfo    VehicleModel `json:"model" gorm:"foreignKey:ModelID"`
-	StartYear    int          `json:"start_year"`                    // First year of production
-	EndYear      int          `json:"end_year"`                      // Last year of production (0 if still in production)
-	EngineType   string       `json:"engine_type"`                   // Gasoline, Diesel, Hybrid, Electric
+	StartYear    int          `json:"start_year"`    // First year of production
+	EndYear      int          `json:"end_year"`      // Last year of production (0 if still in production)
+	EngineType   string       `json:"engine_type"`   // Gasoline, Diesel, Hybrid, Electric
 	AssemblyType string       `json:"assembly_type"` // Import, CKD, SKD, etc.
-	Assembler    string       `json:"assembler"`                     // e.g., Kerman Motor, IKCO, Saipa
+	Assembler    string       `json:"assembler"`     // e.g., Kerman Motor, IKCO, Saipa
 
 	// Technical specifications
 	Transmission    string `json:"transmission"`     // MT, AT, CVT, etc.
@@ -60,11 +59,11 @@ type VehicleGeneration struct {
 
 // UserVehicle represents vehicles owned by users
 type UserVehicle struct {
-	gorm.Model
+	BaseModel
 
 	UserID         uuid.UUID         `json:"user_id" gorm:"type:uuid;not null"`
 	Name           string            `json:"name" gorm:"not null"`
-	GenerationID   uint              `json:"generation_id" gorm:"not null"`
+	GenerationID   uint64            `json:"generation_id" gorm:"not null"`
 	Generation     VehicleGeneration `json:"generation" gorm:"foreignKey:GenerationID"`
 	ProductionYear int               `json:"production_year"`
 	Color          string            `json:"color"`

@@ -25,22 +25,22 @@ func OilFilterRoutes(router *gin.Engine) {
 	c := NewOilFilterController()
 
 	// User vehicle specific oil filter routes
-	oilFilterGroup := router.Group("/api/v1/user-vehicles")
+	oilFilterGroup := router.Group("/api/v1/oil-filters")
 	oilFilterGroup.Use(middleware.AuthMiddleware())
 	{
 		oilFilterGroup.POST("", c.CreateOilFilter)
 		oilFilterGroup.GET("/:id", c.GetOilFilter)
 		oilFilterGroup.PUT("/:id", c.UpdateOilFilter)
 		oilFilterGroup.DELETE("/:id", c.DeleteOilFilter)
-		oilFilterGroup.GET("/:user_vehicle_id/oil-filters", c.ListOilFilters)
-		oilFilterGroup.GET("/:user_vehicle_id/oil-filters/last", c.GetLastOilFilter)
+		oilFilterGroup.GET("/list/:user_vehicle_id", c.ListOilFilters)
+		oilFilterGroup.GET("/last/:user_vehicle_id", c.GetLastOilFilter)
 	}
 }
 
 // CreateOilFilter godoc
 // @Summary Create a new oil filter change
 // @Description Create a new oil filter change record for a user vehicle
-// @Tags Oil Filter
+// @Tags Oil Filters
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer token"
@@ -84,7 +84,7 @@ func (c *OilFilterController) CreateOilFilter(ctx *gin.Context) {
 // GetOilFilter godoc
 // @Summary Get oil filter change by ID
 // @Description Get a specific oil filter change record by its ID
-// @Tags Oil Filter
+// @Tags Oil Filters
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer token"
@@ -128,7 +128,7 @@ func (c *OilFilterController) GetOilFilter(ctx *gin.Context) {
 // ListOilFilters godoc
 // @Summary List oil filter changes for a user vehicle
 // @Description Get all oil filter change records for a specific user vehicle
-// @Tags Oil Filter
+// @Tags Oil Filters
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer token"
@@ -138,7 +138,7 @@ func (c *OilFilterController) GetOilFilter(ctx *gin.Context) {
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /user-vehicles/{user_vehicle_id}/oil-filters [get]
+// @Router /oil-filters/list/{user_vehicle_id} [get]
 func (c *OilFilterController) ListOilFilters(ctx *gin.Context) {
 	userVehicleID := ctx.Param("user_vehicle_id")
 	if userVehicleID == "" {
@@ -169,7 +169,7 @@ func (c *OilFilterController) ListOilFilters(ctx *gin.Context) {
 // UpdateOilFilter godoc
 // @Summary Update oil filter change
 // @Description Update an existing oil filter change record
-// @Tags Oil Filter
+// @Tags Oil Filters
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer token"
@@ -225,7 +225,7 @@ func (c *OilFilterController) UpdateOilFilter(ctx *gin.Context) {
 // DeleteOilFilter godoc
 // @Summary Delete oil filter change
 // @Description Delete an oil filter change record
-// @Tags Oil Filter
+// @Tags Oil Filters
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer token"
@@ -269,7 +269,7 @@ func (c *OilFilterController) DeleteOilFilter(ctx *gin.Context) {
 // GetLastOilFilter godoc
 // @Summary Get last oil filter change for a user vehicle
 // @Description Get the most recent oil filter change record for a specific user vehicle
-// @Tags Oil Filter
+// @Tags Oil Filters
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer token"
@@ -280,7 +280,7 @@ func (c *OilFilterController) DeleteOilFilter(ctx *gin.Context) {
 // @Failure 403 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /user-vehicles/{user_vehicle_id}/oil-filters/last [get]
+// @Router /oil-filters/last/{user_vehicle_id} [get]
 func (c *OilFilterController) GetLastOilFilter(ctx *gin.Context) {
 	userVehicleID := ctx.Param("user_vehicle_id")
 	if userVehicleID == "" {

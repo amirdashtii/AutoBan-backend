@@ -5,6 +5,7 @@ import (
 
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/internal/infrastructure/database"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -17,28 +18,28 @@ type VehicleRepository interface {
 
 	ListBrands(ctx context.Context, brands *[]entity.VehicleBrand) error
 	GetBrand(ctx context.Context, brand *entity.VehicleBrand) error
-	ListBrandsByType(ctx context.Context, brands *[]entity.VehicleBrand, typeID string) error
+	ListBrandsByType(ctx context.Context, brands *[]entity.VehicleBrand, typeID uint64) error
 	CreateBrand(ctx context.Context, brand *entity.VehicleBrand) error
 	UpdateBrand(ctx context.Context, brand *entity.VehicleBrand) error
 	DeleteBrand(ctx context.Context, brand *entity.VehicleBrand) error
 
 	ListModels(ctx context.Context, models *[]entity.VehicleModel) error
 	GetModel(ctx context.Context, model *entity.VehicleModel) error
-	ListModelsByBrand(ctx context.Context, models *[]entity.VehicleModel, brandID string) error
+	ListModelsByBrand(ctx context.Context, models *[]entity.VehicleModel, brandID uint64) error
 	CreateModel(ctx context.Context, model *entity.VehicleModel) error
 	UpdateModel(ctx context.Context, model *entity.VehicleModel) error
 	DeleteModel(ctx context.Context, model *entity.VehicleModel) error
 
 	ListGenerations(ctx context.Context, generations *[]entity.VehicleGeneration) error
 	GetGeneration(ctx context.Context, generation *entity.VehicleGeneration) error
-	ListGenerationsByModel(ctx context.Context, generations *[]entity.VehicleGeneration, modelID string) error
+	ListGenerationsByModel(ctx context.Context, generations *[]entity.VehicleGeneration, modelID uint64) error
 	CreateGeneration(ctx context.Context, generation *entity.VehicleGeneration) error
 	UpdateGeneration(ctx context.Context, generation *entity.VehicleGeneration) error
 	DeleteGeneration(ctx context.Context, generation *entity.VehicleGeneration) error
 
 	CreateUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error
-	ListUserVehicles(ctx context.Context, userID string, userVehicles *[]entity.UserVehicle) error
-	GetUserVehicle(ctx context.Context, userID, vehicleId string, userVehicle *entity.UserVehicle) error
+	ListUserVehicles(ctx context.Context, userID uuid.UUID, userVehicles *[]entity.UserVehicle) error
+	GetUserVehicle(ctx context.Context, userID uuid.UUID, vehicleId uint64, userVehicle *entity.UserVehicle) error
 	UpdateUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error
 	DeleteUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error
 }
@@ -78,7 +79,7 @@ func (r *vehicleRepository) ListBrands(ctx context.Context, brands *[]entity.Veh
 	return r.db.WithContext(ctx).Preload("VehicleType").Find(brands).Error
 }
 
-func (r *vehicleRepository) ListBrandsByType(ctx context.Context, brands *[]entity.VehicleBrand, typeID string) error {
+func (r *vehicleRepository) ListBrandsByType(ctx context.Context, brands *[]entity.VehicleBrand, typeID uint64) error {
 	return r.db.WithContext(ctx).Preload("VehicleType").Where("vehicle_type_id = ?", typeID).Find(brands).Error
 }
 
@@ -103,7 +104,7 @@ func (r *vehicleRepository) ListModels(ctx context.Context, models *[]entity.Veh
 	return r.db.WithContext(ctx).Preload("Brand").Preload("Brand.VehicleType").Find(models).Error
 }
 
-func (r *vehicleRepository) ListModelsByBrand(ctx context.Context, models *[]entity.VehicleModel, brandID string) error {
+func (r *vehicleRepository) ListModelsByBrand(ctx context.Context, models *[]entity.VehicleModel, brandID uint64) error {
 	return r.db.WithContext(ctx).Preload("Brand").Preload("Brand.VehicleType").Where("brand_id = ?", brandID).Find(models).Error
 }
 
@@ -132,7 +133,7 @@ func (r *vehicleRepository) GetGeneration(ctx context.Context, generation *entit
 	return r.db.WithContext(ctx).Preload("ModelInfo").Preload("ModelInfo.Brand").Preload("ModelInfo.Brand.VehicleType").Where("id = ?", generation.ID).First(generation).Error
 }
 
-func (r *vehicleRepository) ListGenerationsByModel(ctx context.Context, generations *[]entity.VehicleGeneration, modelID string) error {
+func (r *vehicleRepository) ListGenerationsByModel(ctx context.Context, generations *[]entity.VehicleGeneration, modelID uint64) error {
 	return r.db.WithContext(ctx).Preload("ModelInfo").Preload("ModelInfo.Brand").Preload("ModelInfo.Brand.VehicleType").Where("model_id = ?", modelID).Find(generations).Error
 }
 func (r *vehicleRepository) CreateGeneration(ctx context.Context, generation *entity.VehicleGeneration) error {
@@ -152,11 +153,11 @@ func (r *vehicleRepository) CreateUserVehicle(ctx context.Context, userVehicle *
 	return r.db.WithContext(ctx).Preload("Generation").Preload("Generation.ModelInfo").Preload("Generation.ModelInfo.Brand").Preload("Generation.ModelInfo.Brand.VehicleType").Create(userVehicle).Error
 }
 
-func (r *vehicleRepository) ListUserVehicles(ctx context.Context, userID string, userVehicles *[]entity.UserVehicle) error {
+func (r *vehicleRepository) ListUserVehicles(ctx context.Context, userID uuid.UUID, userVehicles *[]entity.UserVehicle) error {
 	return r.db.WithContext(ctx).Preload("Generation").Preload("Generation.ModelInfo").Preload("Generation.ModelInfo.Brand").Preload("Generation.ModelInfo.Brand.VehicleType").Where("user_id = ?", userID).Find(&userVehicles).Error
 }
 
-func (r *vehicleRepository) GetUserVehicle(ctx context.Context, userID, vehicleId string, userVehicle *entity.UserVehicle) error {
+func (r *vehicleRepository) GetUserVehicle(ctx context.Context, userID uuid.UUID, vehicleId uint64, userVehicle *entity.UserVehicle) error {
 	return r.db.WithContext(ctx).Preload("Generation").Preload("Generation.ModelInfo").Preload("Generation.ModelInfo.Brand").Preload("Generation.ModelInfo.Brand.VehicleType").Where("user_id = ? AND id = ?", userID, vehicleId).First(userVehicle).Error
 }
 

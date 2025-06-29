@@ -28,11 +28,11 @@ func OilChangeRoutes(router *gin.Engine) {
 	oilChangeGroup.Use(middleware.AuthMiddleware())
 	{
 		oilChangeGroup.POST("", c.CreateOilChange)
-		oilChangeGroup.GET("", c.ListOilChanges)
-		oilChangeGroup.GET("/last", c.GetLastOilChange)
 		oilChangeGroup.GET("/:id", c.GetOilChange)
 		oilChangeGroup.PUT("/:id", c.UpdateOilChange)
 		oilChangeGroup.DELETE("/:id", c.DeleteOilChange)
+		oilChangeGroup.GET("/list/:user_vehicle_id", c.ListOilChanges)
+		oilChangeGroup.GET("/last/:user_vehicle_id", c.GetLastOilChange)
 	}
 
 }
@@ -112,13 +112,13 @@ func (c *OilChangeController) GetOilChange(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security    BearerAuth
-// @Param user_vehicle_id query int true "User vehicle ID"
+// @Param user_vehicle_id path int true "User vehicle ID"
 // @Success 200 {object} dto.ListOilChangesResponse
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /oil-changes [get]
+// @Router /oil-changes/list/{user_vehicle_id} [get]
 func (c *OilChangeController) ListOilChanges(ctx *gin.Context) {
-	userVehicleID := ctx.Query("user_vehicle_id")
+	userVehicleID := ctx.Param("user_vehicle_id")
 	if userVehicleID == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrUserVehicleIDRequired})
 		return
@@ -219,14 +219,14 @@ func (c *OilChangeController) DeleteOilChange(ctx *gin.Context) {
 // @Tags Oil Changes
 // @Produce json
 // @Security    BearerAuth
-// @Param user_vehicle_id query int true "User vehicle ID"
+// @Param user_vehicle_id path int true "User vehicle ID"
 // @Success 200 {object} dto.OilChangeResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /oil-changes/last [get]
+// @Router /oil-changes/last/{user_vehicle_id} [get]
 func (c *OilChangeController) GetLastOilChange(ctx *gin.Context) {
-	userVehicleID := ctx.Query("user_vehicle_id")
+	userVehicleID := ctx.Param("user_vehicle_id")
 	if userVehicleID == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrUserVehicleIDRequired})
 		return

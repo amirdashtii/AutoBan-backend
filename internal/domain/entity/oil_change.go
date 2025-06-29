@@ -3,12 +3,14 @@ package entity
 import (
 	"time"
 
-	"gorm.io/gorm"
+	"github.com/google/uuid"
 )
 
 type OilChange struct {
-	gorm.Model
-	UserVehicleID     uint      `json:"user_vehicle_id" gorm:"not null"`
+	BaseModel
+
+	UserID            uuid.UUID `json:"user_id" gorm:"not null"`
+	UserVehicleID     uint64    `json:"user_vehicle_id" gorm:"not null"`
 	OilName           string    `json:"oil_name" gorm:"not null"`
 	OilBrand          string    `json:"oil_brand"`
 	OilType           string    `json:"oil_type"`      // مینرال، سنتتیک، نیمه سنتتیک
@@ -19,9 +21,5 @@ type OilChange struct {
 	NextChangeMileage uint      `json:"next_change_mileage"`
 	NextChangeDate    time.Time `json:"next_change_date"`
 	ServiceCenter     string    `json:"service_center"`
-	Cost              float64   `json:"cost"`
 	Notes             string    `json:"notes"`
-
-	// Relations
-	UserVehicle UserVehicle `json:"user_vehicle" gorm:"foreignKey:UserVehicleID;references:ID"`
 }

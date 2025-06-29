@@ -8,7 +8,7 @@ import (
 // @Description Oil filter change creation request
 type CreateOilFilterRequest struct {
 	// ID of the user vehicle
-	UserVehicleID uint `json:"user_vehicle_id" validate:"required" example:"1"`
+	UserVehicleID uint64 `json:"user_vehicle_id" validate:"required" example:"1"`
 	// Name of the oil filter
 	FilterName string `json:"filter_name" validate:"required" example:"Oil Filter"`
 	// Brand of the oil filter
@@ -18,11 +18,11 @@ type CreateOilFilterRequest struct {
 	// Part number of the oil filter
 	FilterPartNumber string `json:"filter_part_number" example:"HU816x"`
 	// Mileage when filter was changed
-	ChangeMileage int `json:"change_mileage" validate:"required,min=0" example:"15000"`
+	ChangeMileage uint `json:"change_mileage" validate:"required,min=0" example:"15000"`
 	// Date when filter was changed
 	ChangeDate string `json:"change_date" validate:"required,date" example:"2024-01-15"`
 	// Next change mileage
-	NextChangeMileage int `json:"next_change_mileage" validate:"omitempty,min=0" example:"30000"`
+	NextChangeMileage uint `json:"next_change_mileage" validate:"omitempty,min=0" example:"30000"`
 	// Next change date
 	NextChangeDate string `json:"next_change_date" validate:"omitempty,date" example:"2024-07-15"`
 	// Service center where filter was changed
@@ -43,11 +43,11 @@ type UpdateOilFilterRequest struct {
 	// Part number of the oil filter
 	FilterPartNumber *string `json:"filter_part_number" example:"HU816x"`
 	// Mileage when filter was changed
-	ChangeMileage *int `json:"change_mileage" validate:"omitempty,min=0" example:"15000"`
+	ChangeMileage *uint `json:"change_mileage" validate:"omitempty,min=0" example:"15000"`
 	// Date when filter was changed
 	ChangeDate *string `json:"change_date" validate:"omitempty,date" example:"2024-01-15"`
 	// Next change mileage
-	NextChangeMileage *int `json:"next_change_mileage" validate:"omitempty,min=0" example:"30000"`
+	NextChangeMileage *uint `json:"next_change_mileage" validate:"omitempty,min=0" example:"30000"`
 	// Next change date
 	NextChangeDate *string `json:"next_change_date" validate:"omitempty,date" example:"2024-07-15"`
 	// Service center where filter was changed
@@ -60,9 +60,9 @@ type UpdateOilFilterRequest struct {
 // @Description Oil filter change response
 type OilFilterResponse struct {
 	// ID of the oil filter change
-	ID uint `json:"id"`
+	ID uint64 `json:"id"`
 	// ID of the user vehicle
-	UserVehicleID uint `json:"user_vehicle_id"`
+	UserVehicleID uint64 `json:"user_vehicle_id"`
 	// Name of the oil filter
 	FilterName string `json:"filter_name"`
 	// Brand of the oil filter
@@ -72,11 +72,11 @@ type OilFilterResponse struct {
 	// Part number of the oil filter
 	FilterPartNumber string `json:"filter_part_number"`
 	// Mileage when filter was changed
-	ChangeMileage int `json:"change_mileage"`
+	ChangeMileage uint `json:"change_mileage"`
 	// Date when filter was changed
 	ChangeDate time.Time `json:"change_date"`
 	// Next change mileage
-	NextChangeMileage int `json:"next_change_mileage"`
+	NextChangeMileage uint `json:"next_change_mileage"`
 	// Next change date
 	NextChangeDate time.Time `json:"next_change_date"`
 	// Service center where filter was changed

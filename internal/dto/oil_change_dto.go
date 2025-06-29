@@ -6,7 +6,7 @@ import "time"
 // @Description Request to create an oil change
 type CreateOilChangeRequest struct {
 	// User vehicle ID
-	UserVehicleID uint `json:"user_vehicle_id" validate:"required" example:"1"`
+	UserVehicleID uint64 `json:"user_vehicle_id" validate:"required" example:"1"`
 	// Oil name
 	OilName string `json:"oil_name" validate:"required" example:"تکتاز"`
 	// Oil brand
@@ -27,8 +27,6 @@ type CreateOilChangeRequest struct {
 	NextChangeDate string `json:"next_change_date" validate:"omitempty,date" example:"2021-01-01"`
 	// Service center
 	ServiceCenter string `json:"service_center" example:"اتوبان سرویس"`
-	// Cost
-	Cost float64 `json:"cost" example:"1000000"`
 	// Notes
 	Notes string `json:"notes" example:"تعویض روغن"`
 }
@@ -56,8 +54,6 @@ type UpdateOilChangeRequest struct {
 	NextChangeDate *string `json:"next_change_date" validate:"omitempty,date" example:"2021-01-01"`
 	// Service center
 	ServiceCenter *string `json:"service_center" example:"اتوبان سرویس"`
-	// Cost
-	Cost *float64 `json:"cost" example:"1000000"`
 	// Notes
 	Notes *string `json:"notes" example:"تعویض روغن"`
 }
@@ -66,9 +62,9 @@ type UpdateOilChangeRequest struct {
 // @Description Oil change response
 type OilChangeResponse struct {
 	// ID
-	ID uint `json:"id" example:"1"`
+	ID uint64 `json:"id" example:"1"`
 	// User vehicle ID
-	UserVehicleID uint `json:"user_vehicle_id" example:"1"`
+	UserVehicleID uint64 `json:"user_vehicle_id" example:"1"`
 	// Oil name
 	OilName string `json:"oil_name" example:"تکتاز"`
 	// Oil brand
@@ -89,8 +85,6 @@ type OilChangeResponse struct {
 	NextChangeDate time.Time `json:"next_change_date" example:"2021-01-01"`
 	// Service center
 	ServiceCenter string `json:"service_center" example:"اتوبان سرویس"`
-	// Cost
-	Cost float64 `json:"cost" example:"1000000"`
 	// Notes
 	Notes string `json:"notes" example:"تعویض روغن"`
 }
