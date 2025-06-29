@@ -91,6 +91,7 @@ var (
 	ErrInvalidUserVehicleID            = New("invalid vehicle user vehicle id", "شناسه وسیله نقلیه کاربر نامعتبر است")
 	ErrFailedToUpdateUserVehicle       = New("failed to update user vehicle", "خطای به روز رسانی وسیلقه نقلیه کاربر")
 	ErrFailedToDeleteUserVehicle       = New("failed to delete user vehicle", "خطای حذف وسیلثه نقلیه کاربر")
+	ErrInvalidVehicleID                = New("invalid vehicle id", "شناسه وسیله نقلیه نامعتبر است")
 )
 
 // Oil Change Errors
@@ -105,6 +106,7 @@ var (
 	ErrFailedToDeleteOilChange       = New("failed to delete oil change", "خطای حذف تعویض روغن")
 	ErrInvalidDate                   = New("invalid date format", "فرمت تاریخ نامعتبر است")
 	ErrUserVehicleIDRequired         = New("user vehicle id is required", "شناسه وسیله نقلیه کاربر الزامی است")
+	ErrOilChangeNotOwned             = New("oil change not owned", "تعویض روغن متعلق به کاربر نیست")
 )
 
 // Oil Filter Errors
@@ -114,7 +116,20 @@ var (
 	ErrInvalidOilFilterID            = New("invalid oil filter id", "شناسه تعویض فیلتر روغن نامعتبر است")
 	ErrFailedToCreateOilFilter       = New("failed to create oil filter", "خطای ساخت تعویض فیلتر روغن")
 	ErrFailedToGetOilFilter          = New("failed to get oil filter", "خطای دریافت تعویض فیلتر روغن")
+	ErrOilFilterNotOwned             = New("oil filter not owned", "تعویض فیلتر روغن متعلق به کاربر نیست")
 	ErrFailedToListOilFilters        = New("failed to list oil filters", "خطای فهرست تعویض فیلتر روغن")
 	ErrFailedToUpdateOilFilter       = New("failed to update oil filter", "خطای به روز رسانی تعویض فیلتر روغن")
 	ErrFailedToDeleteOilFilter       = New("failed to delete oil filter", "خطای حذف تعویض فیلتر روغن")
+)
+
+// Service Visit Errors
+var (
+	ErrInvalidServiceVisitCreateRequest = New("invalid service visit create request", "درخواست ساخت بازدید سرویس معتبر نیست")
+	ErrInvalidServiceVisitUpdateRequest = New("invalid service visit update request", "درخواست به روز رسانی بازدید سرویس معتبر نیست")
+	ErrInvalidServiceVisitID            = New("invalid service visit id", "شناسه بازدید سرویس نامعتبر است")
+	ErrFailedToCreateServiceVisit       = New("failed to create service visit", "خطای ساخت بازدید سرویس")
+	ErrFailedToGetServiceVisit          = New("failed to get service visit", "خطای دریافت بازدید سرویس")
+	ErrFailedToListServiceVisits        = New("failed to list service visits", "خطای فهرست بازدیدهای سرویس")
+	ErrFailedToUpdateServiceVisit       = New("failed to update service visit", "خطای به روز رسانی بازدید سرویس")
+	ErrFailedToDeleteServiceVisit       = New("failed to delete service visit", "خطای حذف بازدید سرویس")
 )

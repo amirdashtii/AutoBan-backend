@@ -68,6 +68,9 @@ import (
 // @tag.name        Admin - UserVehicles
 // @tag.description Admin user vehicle management operations
 
+// @tag.name        Service Visits
+// @tag.description Service visit management operations
+
 // @tag.name        Oil Changes
 // @tag.description Oil change management operations
 
@@ -89,6 +92,7 @@ func main() {
 	controller.UserRoutes(r)
 	controller.AdminRoutes(r)
 	controller.VehicleRoutes(r)
+	controller.ServiceVisitRoutes(r)
 	controller.OilChangeRoutes(r)
 	controller.OilFilterRoutes(r)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

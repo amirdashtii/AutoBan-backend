@@ -44,10 +44,6 @@ definitions:
         description: Change mileage
         example: 10000
         type: integer
-      cost:
-        description: Cost
-        example: 1000000
-        type: number
       next_change_date:
         description: Next change date
         example: "2021-01-01"
@@ -92,6 +88,98 @@ definitions:
     - change_date
     - change_mileage
     - oil_name
+    - user_vehicle_id
+    type: object
+  dto.CreateOilFilterRequest:
+    description: Oil filter change creation request
+    properties:
+      change_date:
+        description: Date when filter was changed
+        example: "2024-01-15"
+        type: string
+      change_mileage:
+        description: Mileage when filter was changed
+        example: 15000
+        minimum: 0
+        type: integer
+      filter_brand:
+        description: Brand of the oil filter
+        example: Mann
+        type: string
+      filter_name:
+        description: Name of the oil filter
+        example: Oil Filter
+        type: string
+      filter_part_number:
+        description: Part number of the oil filter
+        example: HU816x
+        type: string
+      filter_type:
+        description: Type of the oil filter
+        example: Cartridge
+        type: string
+      next_change_date:
+        description: Next change date
+        example: "2024-07-15"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 30000
+        minimum: 0
+        type: integer
+      notes:
+        description: Additional notes
+        example: Changed with oil change
+        type: string
+      service_center:
+        description: Service center where filter was changed
+        example: Auto Service Center
+        type: string
+      user_vehicle_id:
+        description: ID of the user vehicle
+        example: 1
+        type: integer
+    required:
+    - change_date
+    - change_mileage
+    - filter_name
+    - user_vehicle_id
+    type: object
+  dto.CreateServiceVisitRequest:
+    description: Service visit creation request
+    properties:
+      notes:
+        description: Additional notes
+        example: Regular maintenance service
+        type: string
+      oil_change:
+        allOf:
+        - $ref: '#/definitions/dto.ServiceVisitOilChange'
+        description: Oil change information (optional)
+      oil_filter:
+        allOf:
+        - $ref: '#/definitions/dto.ServiceVisitOilFilter'
+        description: Oil filter information (optional)
+      service_center:
+        description: Service center where service was performed
+        example: Auto Service Center
+        type: string
+      service_date:
+        description: Date when service was performed
+        example: "2024-01-15"
+        type: string
+      service_mileage:
+        description: Mileage when service was performed
+        example: 15000
+        minimum: 0
+        type: integer
+      user_vehicle_id:
+        description: ID of the user vehicle
+        example: 1
+        type: integer
+    required:
+    - service_date
+    - service_mileage
     - user_vehicle_id
     type: object
   dto.CreateUserVehicleRequest:
@@ -291,6 +379,24 @@ definitions:
           $ref: '#/definitions/dto.OilChangeResponse'
         type: array
     type: object
+  dto.ListOilFiltersResponse:
+    description: List of oil filter changes
+    properties:
+      oil_filters:
+        description: List of oil filter changes
+        items:
+          $ref: '#/definitions/dto.OilFilterResponse'
+        type: array
+    type: object
+  dto.ListServiceVisitsResponse:
+    description: List of service visits
+    properties:
+      service_visits:
+        description: List of service visits
+        items:
+          $ref: '#/definitions/dto.ServiceVisitResponse'
+        type: array
+    type: object
   dto.ListUserVehiclesResponse:
     description: List of user vehicles
     properties:
@@ -383,10 +489,6 @@ definitions:
         description: Change mileage
         example: 10000
         type: integer
-      cost:
-        description: Cost
-        example: 1000000
-        type: number
       id:
         description: ID
         example: 1
@@ -432,6 +534,46 @@ definitions:
         example: 1
         type: integer
     type: object
+  dto.OilFilterResponse:
+    description: Oil filter change response
+    properties:
+      change_date:
+        description: Date when filter was changed
+        type: string
+      change_mileage:
+        description: Mileage when filter was changed
+        type: integer
+      filter_brand:
+        description: Brand of the oil filter
+        type: string
+      filter_name:
+        description: Name of the oil filter
+        type: string
+      filter_part_number:
+        description: Part number of the oil filter
+        type: string
+      filter_type:
+        description: Type of the oil filter
+        type: string
+      id:
+        description: ID of the oil filter change
+        type: integer
+      next_change_date:
+        description: Next change date
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        type: integer
+      notes:
+        description: Additional notes
+        type: string
+      service_center:
+        description: Service center where filter was changed
+        type: string
+      user_vehicle_id:
+        description: ID of the user vehicle
+        type: integer
+    type: object
   dto.RefreshTokenRequest:
     description: Token refresh request
     properties:
@@ -458,6 +600,178 @@ definitions:
     required:
     - password
     - phone_number
+    type: object
+  dto.ServiceVisitOilChange:
+    description: add oil change to create service visit
+    properties:
+      next_change_date:
+        description: Next change date
+        example: "2021-01-01"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 20000
+        type: integer
+      notes:
+        description: Notes
+        example: تعویض روغن
+        type: string
+      oil_brand:
+        description: Oil brand
+        example: بهران
+        type: string
+      oil_capacity:
+        description: Oil capacity
+        example: 5
+        type: number
+      oil_name:
+        description: Oil name
+        example: تکتاز
+        type: string
+      oil_type:
+        description: Oil type
+        example: مینرال، سنتتیک، نیمه سنتتیک
+        type: string
+      oil_viscosity:
+        description: Oil viscosity
+        example: 5W-30, 10W-40, etc.
+        type: string
+    required:
+    - oil_name
+    type: object
+  dto.ServiceVisitOilChangeResponse:
+    description: Oil change response
+    properties:
+      id:
+        description: ID
+        example: 1
+        type: integer
+      next_change_date:
+        description: Next change date
+        example: "2021-01-01"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 20000
+        type: integer
+      notes:
+        description: Notes
+        example: تعویض روغن
+        type: string
+      oil_brand:
+        description: Oil brand
+        example: بهران
+        type: string
+      oil_capacity:
+        description: Oil capacity
+        example: 5
+        type: number
+      oil_name:
+        description: Oil name
+        example: تکتاز
+        type: string
+      oil_type:
+        description: Oil type
+        example: مینرال، سنتتیک، نیمه سنتتیک
+        type: string
+      oil_viscosity:
+        description: Oil viscosity
+        example: 5W-30, 10W-40, etc.
+        type: string
+    type: object
+  dto.ServiceVisitOilFilter:
+    description: Requst to add oil filter to create service visit
+    properties:
+      filter_brand:
+        description: Brand of the oil filter
+        example: Mann
+        type: string
+      filter_name:
+        description: Name of the oil filter
+        example: Oil Filter
+        type: string
+      filter_part_number:
+        description: Part number of the oil filter
+        example: HU816x
+        type: string
+      filter_type:
+        description: Type of the oil filter
+        example: Cartridge
+        type: string
+      next_change_date:
+        description: Next change date
+        example: "2024-07-15"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 30000
+        minimum: 0
+        type: integer
+      notes:
+        description: Additional notes
+        example: Changed with oil change
+        type: string
+    required:
+    - filter_name
+    type: object
+  dto.ServiceVisitOilFilterResponse:
+    description: Oil filter response
+    properties:
+      filter_brand:
+        description: Brand of the oil filter
+        type: string
+      filter_name:
+        description: Name of the oil filter
+        type: string
+      filter_part_number:
+        description: Part number of the oil filter
+        type: string
+      filter_type:
+        description: Type of the oil filter
+        type: string
+      id:
+        description: ID
+        example: 1
+        type: integer
+      next_change_date:
+        description: Next change date
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        type: integer
+      notes:
+        description: Additional notes
+        type: string
+    type: object
+  dto.ServiceVisitResponse:
+    description: Service visit response
+    properties:
+      id:
+        description: ID of the service visit
+        type: string
+      notes:
+        description: Additional notes
+        type: string
+      oil_change:
+        allOf:
+        - $ref: '#/definitions/dto.ServiceVisitOilChangeResponse'
+        description: Oil change information (if performed)
+      oil_filter:
+        allOf:
+        - $ref: '#/definitions/dto.ServiceVisitOilFilterResponse'
+        description: Oil filter information (if performed)
+      service_center:
+        description: Service center where service was performed
+        type: string
+      service_date:
+        description: Date when service was performed
+        type: string
+      service_mileage:
+        description: Mileage when service was performed
+        type: integer
+      user_vehicle_id:
+        description: ID of the user vehicle
+        type: integer
     type: object
   dto.SessionResponse:
     description: User session information
@@ -498,10 +812,6 @@ definitions:
         description: Change mileage
         example: 10000
         type: integer
-      cost:
-        description: Cost
-        example: 1000000
-        type: number
       next_change_date:
         description: Next change date
         example: "2021-01-01"
@@ -539,6 +849,52 @@ definitions:
         example: اتوبان سرویس
         type: string
     type: object
+  dto.UpdateOilFilterRequest:
+    description: Oil filter change update request
+    properties:
+      change_date:
+        description: Date when filter was changed
+        example: "2024-01-15"
+        type: string
+      change_mileage:
+        description: Mileage when filter was changed
+        example: 15000
+        minimum: 0
+        type: integer
+      filter_brand:
+        description: Brand of the oil filter
+        example: Mann
+        type: string
+      filter_name:
+        description: Name of the oil filter
+        example: Oil Filter
+        type: string
+      filter_part_number:
+        description: Part number of the oil filter
+        example: HU816x
+        type: string
+      filter_type:
+        description: Type of the oil filter
+        example: Cartridge
+        type: string
+      next_change_date:
+        description: Next change date
+        example: "2024-07-15"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 30000
+        minimum: 0
+        type: integer
+      notes:
+        description: Additional notes
+        example: Changed with oil change
+        type: string
+      service_center:
+        description: Service center where filter was changed
+        example: Auto Service Center
+        type: string
+    type: object
   dto.UpdatePasswordRequest:
     description: User password update request
     properties:
@@ -565,6 +921,104 @@ definitions:
         description: User's last name (optional)
         example: Doe
         type: string
+    type: object
+  dto.UpdateServiceVisitOilChange:
+    description: add oil change to update service visit request
+    properties:
+      next_change_date:
+        description: Next change date
+        example: "2021-01-01"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 20000
+        type: integer
+      notes:
+        description: Notes
+        example: تعویض روغن
+        type: string
+      oil_brand:
+        description: Oil brand
+        example: بهران
+        type: string
+      oil_capacity:
+        description: Oil capacity
+        example: 5
+        type: number
+      oil_name:
+        description: Oil name
+        example: تکتاز
+        type: string
+      oil_type:
+        description: Oil type
+        example: مینرال، سنتتیک، نیمه سنتتیک
+        type: string
+      oil_viscosity:
+        description: Oil viscosity
+        example: 5W-30, 10W-40, etc.
+        type: string
+    type: object
+  dto.UpdateServiceVisitOilFilter:
+    description: add oil filter to update service visit request
+    properties:
+      filter_brand:
+        description: Brand of the oil filter
+        example: Mann
+        type: string
+      filter_name:
+        description: Name of the oil filter
+        example: Oil Filter
+        type: string
+      filter_part_number:
+        description: Part number of the oil filter
+        example: HU816x
+        type: string
+      filter_type:
+        description: Type of the oil filter
+        example: Cartridge
+        type: string
+      next_change_date:
+        description: Next change date
+        example: "2024-07-15"
+        type: string
+      next_change_mileage:
+        description: Next change mileage
+        example: 30000
+        minimum: 0
+        type: integer
+      notes:
+        description: Additional notes
+        example: Changed with oil change
+        type: string
+    type: object
+  dto.UpdateServiceVisitRequest:
+    description: Service visit update request
+    properties:
+      notes:
+        description: Additional notes
+        example: Regular maintenance service
+        type: string
+      oil_change:
+        allOf:
+        - $ref: '#/definitions/dto.UpdateServiceVisitOilChange'
+        description: Oil change information (optional)
+      oil_filter:
+        allOf:
+        - $ref: '#/definitions/dto.UpdateServiceVisitOilFilter'
+        description: Oil filter information (optional)
+      service_center:
+        description: Service center where service was performed
+        example: Auto Service Center
+        type: string
+      service_date:
+        description: Date when service was performed
+        example: "2024-01-15"
+        type: string
+      service_mileage:
+        description: Mileage when service was performed
+        example: 15000
+        minimum: 0
+        type: integer
     type: object
   dto.UpdateUserRequest:
     description: Request to update user details
@@ -1728,40 +2182,6 @@ paths:
       tags:
       - Authentication
   /oil-changes:
-    get:
-      consumes:
-      - application/json
-      description: Get a list of all oil changes for a user vehicle
-      parameters:
-      - description: User vehicle ID
-        in: query
-        name: user_vehicle_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ListOilChangesResponse'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: List all oil changes
-      tags:
-      - Oil Changes
     post:
       consumes:
       - application/json
@@ -1920,12 +2340,12 @@ paths:
       summary: Update oil change
       tags:
       - Oil Changes
-  /oil-changes/last:
+  /oil-changes/last/{user_vehicle_id}:
     get:
       description: Get the last oil change for a user vehicle
       parameters:
       - description: User vehicle ID
-        in: query
+        in: path
         name: user_vehicle_id
         required: true
         type: integer
@@ -1959,6 +2379,697 @@ paths:
       summary: Last oil change
       tags:
       - Oil Changes
+  /oil-changes/list/{user_vehicle_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all oil changes for a user vehicle
+      parameters:
+      - description: User vehicle ID
+        in: path
+        name: user_vehicle_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListOilChangesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List all oil changes
+      tags:
+      - Oil Changes
+  /oil-filters:
+    post:
+      consumes:
+      - application/json
+      description: Create a new oil filter change record for a user vehicle
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Oil filter change data
+        in: body
+        name: oil_filter
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateOilFilterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.OilFilterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new oil filter change
+      tags:
+      - Oil Filters
+  /oil-filters/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an oil filter change record
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Oil filter change ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete oil filter change
+      tags:
+      - Oil Filters
+    get:
+      consumes:
+      - application/json
+      description: Get a specific oil filter change record by its ID
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Oil filter change ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OilFilterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get oil filter change by ID
+      tags:
+      - Oil Filters
+    put:
+      consumes:
+      - application/json
+      description: Update an existing oil filter change record
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Oil filter change ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated oil filter change data
+        in: body
+        name: oil_filter
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateOilFilterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OilFilterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update oil filter change
+      tags:
+      - Oil Filters
+  /oil-filters/last/{user_vehicle_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get the most recent oil filter change record for a specific user
+        vehicle
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User vehicle ID
+        in: path
+        name: user_vehicle_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OilFilterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get last oil filter change for a user vehicle
+      tags:
+      - Oil Filters
+  /oil-filters/list/{user_vehicle_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all oil filter change records for a specific user vehicle
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User vehicle ID
+        in: path
+        name: user_vehicle_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListOilFiltersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List oil filter changes for a user vehicle
+      tags:
+      - Oil Filters
+  /service-visits:
+    post:
+      consumes:
+      - application/json
+      description: Create a new service visit record for a user vehicle with optional
+        services
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Service visit data
+        in: body
+        name: service_visit
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateServiceVisitRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ServiceVisitResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new service visit
+      tags:
+      - Service Visits
+  /service-visits/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a service visit record
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Service visit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete service visit
+      tags:
+      - Service Visits
+    get:
+      consumes:
+      - application/json
+      description: Get a specific service visit record by its ID
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Service visit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ServiceVisitResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get service visit by ID
+      tags:
+      - Service Visits
+    put:
+      consumes:
+      - application/json
+      description: Update an existing service visit record
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Service visit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated service visit data
+        in: body
+        name: service_visit
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateServiceVisitRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ServiceVisitResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update service visit
+      tags:
+      - Service Visits
+  /user-vehicles/{user_vehicle_id}/service-visits:
+    get:
+      consumes:
+      - application/json
+      description: Get all service visit records for a specific user vehicle
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User vehicle ID
+        in: path
+        name: user_vehicle_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListServiceVisitsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List service visits for a user vehicle
+      tags:
+      - Service Visits
+  /user-vehicles/{user_vehicle_id}/service-visits/last:
+    get:
+      consumes:
+      - application/json
+      description: Get the most recent service visit record for a specific user vehicle
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User vehicle ID
+        in: path
+        name: user_vehicle_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ServiceVisitResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get last service visit for a user vehicle
+      tags:
+      - Service Visits
   /user/vehicles:
     get:
       consumes:
@@ -2460,5 +3571,9 @@ tags:
   name: Admin - Generations
 - description: Admin user vehicle management operations
   name: Admin - UserVehicles
+- description: Service visit management operations
+  name: Service Visits
 - description: Oil change management operations
   name: Oil Changes
+- description: Oil filter management operations
+  name: Oil Filters

@@ -1363,59 +1363,6 @@ const docTemplate = `{
             }
         },
         "/oil-changes": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get a list of all oil changes for a user vehicle",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Oil Changes"
-                ],
-                "summary": "List all oil changes",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User vehicle ID",
-                        "name": "user_vehicle_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListOilChangesResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -1472,7 +1419,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/oil-changes/last": {
+        "/oil-changes/last/{user_vehicle_id}": {
             "get": {
                 "security": [
                     {
@@ -1492,7 +1439,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "User vehicle ID",
                         "name": "user_vehicle_id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -1514,6 +1461,61 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oil-changes/list/{user_vehicle_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of all oil changes for a user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Changes"
+                ],
+                "summary": "List all oil changes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User vehicle ID",
+                        "name": "user_vehicle_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListOilChangesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1696,6 +1698,986 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oil-filters": {
+            "post": {
+                "description": "Create a new oil filter change record for a user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Filters"
+                ],
+                "summary": "Create a new oil filter change",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Oil filter change data",
+                        "name": "oil_filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOilFilterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilFilterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oil-filters/last/{user_vehicle_id}": {
+            "get": {
+                "description": "Get the most recent oil filter change record for a specific user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Filters"
+                ],
+                "summary": "Get last oil filter change for a user vehicle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User vehicle ID",
+                        "name": "user_vehicle_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilFilterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oil-filters/list/{user_vehicle_id}": {
+            "get": {
+                "description": "Get all oil filter change records for a specific user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Filters"
+                ],
+                "summary": "List oil filter changes for a user vehicle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User vehicle ID",
+                        "name": "user_vehicle_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListOilFiltersResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oil-filters/{id}": {
+            "get": {
+                "description": "Get a specific oil filter change record by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Filters"
+                ],
+                "summary": "Get oil filter change by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Oil filter change ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilFilterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an existing oil filter change record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Filters"
+                ],
+                "summary": "Update oil filter change",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Oil filter change ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated oil filter change data",
+                        "name": "oil_filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateOilFilterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.OilFilterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an oil filter change record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oil Filters"
+                ],
+                "summary": "Delete oil filter change",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Oil filter change ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/service-visits": {
+            "post": {
+                "description": "Create a new service visit record for a user vehicle with optional services",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service Visits"
+                ],
+                "summary": "Create a new service visit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Service visit data",
+                        "name": "service_visit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateServiceVisitRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceVisitResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/service-visits/{id}": {
+            "get": {
+                "description": "Get a specific service visit record by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service Visits"
+                ],
+                "summary": "Get service visit by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Service visit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceVisitResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an existing service visit record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service Visits"
+                ],
+                "summary": "Update service visit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Service visit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated service visit data",
+                        "name": "service_visit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateServiceVisitRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceVisitResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a service visit record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service Visits"
+                ],
+                "summary": "Delete service visit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Service visit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user-vehicles/{user_vehicle_id}/service-visits": {
+            "get": {
+                "description": "Get all service visit records for a specific user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service Visits"
+                ],
+                "summary": "List service visits for a user vehicle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User vehicle ID",
+                        "name": "user_vehicle_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListServiceVisitsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user-vehicles/{user_vehicle_id}/service-visits/last": {
+            "get": {
+                "description": "Get the most recent service visit record for a specific user vehicle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service Visits"
+                ],
+                "summary": "Get last service visit for a user vehicle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User vehicle ID",
+                        "name": "user_vehicle_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceVisitResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -2512,11 +3494,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 10000
                 },
-                "cost": {
-                    "description": "Cost",
-                    "type": "number",
-                    "example": 1000000
-                },
                 "next_change_date": {
                     "description": "Next change date",
                     "type": "string",
@@ -2564,6 +3541,128 @@ const docTemplate = `{
                 },
                 "user_vehicle_id": {
                     "description": "User vehicle ID",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dto.CreateOilFilterRequest": {
+            "description": "Oil filter change creation request",
+            "type": "object",
+            "required": [
+                "change_date",
+                "change_mileage",
+                "filter_name",
+                "user_vehicle_id"
+            ],
+            "properties": {
+                "change_date": {
+                    "description": "Date when filter was changed",
+                    "type": "string",
+                    "example": "2024-01-15"
+                },
+                "change_mileage": {
+                    "description": "Mileage when filter was changed",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 15000
+                },
+                "filter_brand": {
+                    "description": "Brand of the oil filter",
+                    "type": "string",
+                    "example": "Mann"
+                },
+                "filter_name": {
+                    "description": "Name of the oil filter",
+                    "type": "string",
+                    "example": "Oil Filter"
+                },
+                "filter_part_number": {
+                    "description": "Part number of the oil filter",
+                    "type": "string",
+                    "example": "HU816x"
+                },
+                "filter_type": {
+                    "description": "Type of the oil filter",
+                    "type": "string",
+                    "example": "Cartridge"
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2024-07-15"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 30000
+                },
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string",
+                    "example": "Changed with oil change"
+                },
+                "service_center": {
+                    "description": "Service center where filter was changed",
+                    "type": "string",
+                    "example": "Auto Service Center"
+                },
+                "user_vehicle_id": {
+                    "description": "ID of the user vehicle",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dto.CreateServiceVisitRequest": {
+            "description": "Service visit creation request",
+            "type": "object",
+            "required": [
+                "service_date",
+                "service_mileage",
+                "user_vehicle_id"
+            ],
+            "properties": {
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string",
+                    "example": "Regular maintenance service"
+                },
+                "oil_change": {
+                    "description": "Oil change information (optional)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.ServiceVisitOilChange"
+                        }
+                    ]
+                },
+                "oil_filter": {
+                    "description": "Oil filter information (optional)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.ServiceVisitOilFilter"
+                        }
+                    ]
+                },
+                "service_center": {
+                    "description": "Service center where service was performed",
+                    "type": "string",
+                    "example": "Auto Service Center"
+                },
+                "service_date": {
+                    "description": "Date when service was performed",
+                    "type": "string",
+                    "example": "2024-01-15"
+                },
+                "service_mileage": {
+                    "description": "Mileage when service was performed",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 15000
+                },
+                "user_vehicle_id": {
+                    "description": "ID of the user vehicle",
                     "type": "integer",
                     "example": 1
                 }
@@ -2826,6 +3925,32 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.ListOilFiltersResponse": {
+            "description": "List of oil filter changes",
+            "type": "object",
+            "properties": {
+                "oil_filters": {
+                    "description": "List of oil filter changes",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.OilFilterResponse"
+                    }
+                }
+            }
+        },
+        "dto.ListServiceVisitsResponse": {
+            "description": "List of service visits",
+            "type": "object",
+            "properties": {
+                "service_visits": {
+                    "description": "List of service visits",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ServiceVisitResponse"
+                    }
+                }
+            }
+        },
         "dto.ListUserVehiclesResponse": {
             "description": "List of user vehicles",
             "type": "object",
@@ -2953,11 +4078,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 10000
                 },
-                "cost": {
-                    "description": "Cost",
-                    "type": "number",
-                    "example": 1000000
-                },
                 "id": {
                     "description": "ID",
                     "type": "integer",
@@ -3015,6 +4135,60 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OilFilterResponse": {
+            "description": "Oil filter change response",
+            "type": "object",
+            "properties": {
+                "change_date": {
+                    "description": "Date when filter was changed",
+                    "type": "string"
+                },
+                "change_mileage": {
+                    "description": "Mileage when filter was changed",
+                    "type": "integer"
+                },
+                "filter_brand": {
+                    "description": "Brand of the oil filter",
+                    "type": "string"
+                },
+                "filter_name": {
+                    "description": "Name of the oil filter",
+                    "type": "string"
+                },
+                "filter_part_number": {
+                    "description": "Part number of the oil filter",
+                    "type": "string"
+                },
+                "filter_type": {
+                    "description": "Type of the oil filter",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the oil filter change",
+                    "type": "integer"
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer"
+                },
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string"
+                },
+                "service_center": {
+                    "description": "Service center where filter was changed",
+                    "type": "string"
+                },
+                "user_vehicle_id": {
+                    "description": "ID of the user vehicle",
+                    "type": "integer"
+                }
+            }
+        },
         "dto.RefreshTokenRequest": {
             "description": "Token refresh request",
             "type": "object",
@@ -3047,6 +4221,236 @@ const docTemplate = `{
                     "description": "Iranian phone number in format 09XXXXXXXXX",
                     "type": "string",
                     "example": "09123456789"
+                }
+            }
+        },
+        "dto.ServiceVisitOilChange": {
+            "description": "add oil change to create service visit",
+            "type": "object",
+            "required": [
+                "oil_name"
+            ],
+            "properties": {
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "example": 20000
+                },
+                "notes": {
+                    "description": "Notes",
+                    "type": "string",
+                    "example": "تعویض روغن"
+                },
+                "oil_brand": {
+                    "description": "Oil brand",
+                    "type": "string",
+                    "example": "بهران"
+                },
+                "oil_capacity": {
+                    "description": "Oil capacity",
+                    "type": "number",
+                    "example": 5
+                },
+                "oil_name": {
+                    "description": "Oil name",
+                    "type": "string",
+                    "example": "تکتاز"
+                },
+                "oil_type": {
+                    "description": "Oil type",
+                    "type": "string",
+                    "example": "مینرال، سنتتیک، نیمه سنتتیک"
+                },
+                "oil_viscosity": {
+                    "description": "Oil viscosity",
+                    "type": "string",
+                    "example": "5W-30, 10W-40, etc."
+                }
+            }
+        },
+        "dto.ServiceVisitOilChangeResponse": {
+            "description": "Oil change response",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID",
+                    "type": "integer",
+                    "example": 1
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "example": 20000
+                },
+                "notes": {
+                    "description": "Notes",
+                    "type": "string",
+                    "example": "تعویض روغن"
+                },
+                "oil_brand": {
+                    "description": "Oil brand",
+                    "type": "string",
+                    "example": "بهران"
+                },
+                "oil_capacity": {
+                    "description": "Oil capacity",
+                    "type": "number",
+                    "example": 5
+                },
+                "oil_name": {
+                    "description": "Oil name",
+                    "type": "string",
+                    "example": "تکتاز"
+                },
+                "oil_type": {
+                    "description": "Oil type",
+                    "type": "string",
+                    "example": "مینرال، سنتتیک، نیمه سنتتیک"
+                },
+                "oil_viscosity": {
+                    "description": "Oil viscosity",
+                    "type": "string",
+                    "example": "5W-30, 10W-40, etc."
+                }
+            }
+        },
+        "dto.ServiceVisitOilFilter": {
+            "description": "Requst to add oil filter to create service visit",
+            "type": "object",
+            "required": [
+                "filter_name"
+            ],
+            "properties": {
+                "filter_brand": {
+                    "description": "Brand of the oil filter",
+                    "type": "string",
+                    "example": "Mann"
+                },
+                "filter_name": {
+                    "description": "Name of the oil filter",
+                    "type": "string",
+                    "example": "Oil Filter"
+                },
+                "filter_part_number": {
+                    "description": "Part number of the oil filter",
+                    "type": "string",
+                    "example": "HU816x"
+                },
+                "filter_type": {
+                    "description": "Type of the oil filter",
+                    "type": "string",
+                    "example": "Cartridge"
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2024-07-15"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 30000
+                },
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string",
+                    "example": "Changed with oil change"
+                }
+            }
+        },
+        "dto.ServiceVisitOilFilterResponse": {
+            "description": "Oil filter response",
+            "type": "object",
+            "properties": {
+                "filter_brand": {
+                    "description": "Brand of the oil filter",
+                    "type": "string"
+                },
+                "filter_name": {
+                    "description": "Name of the oil filter",
+                    "type": "string"
+                },
+                "filter_part_number": {
+                    "description": "Part number of the oil filter",
+                    "type": "string"
+                },
+                "filter_type": {
+                    "description": "Type of the oil filter",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer",
+                    "example": 1
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer"
+                },
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ServiceVisitResponse": {
+            "description": "Service visit response",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID of the service visit",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string"
+                },
+                "oil_change": {
+                    "description": "Oil change information (if performed)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.ServiceVisitOilChangeResponse"
+                        }
+                    ]
+                },
+                "oil_filter": {
+                    "description": "Oil filter information (if performed)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.ServiceVisitOilFilterResponse"
+                        }
+                    ]
+                },
+                "service_center": {
+                    "description": "Service center where service was performed",
+                    "type": "string"
+                },
+                "service_date": {
+                    "description": "Date when service was performed",
+                    "type": "string"
+                },
+                "service_mileage": {
+                    "description": "Mileage when service was performed",
+                    "type": "integer"
+                },
+                "user_vehicle_id": {
+                    "description": "ID of the user vehicle",
+                    "type": "integer"
                 }
             }
         },
@@ -3101,11 +4505,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 10000
                 },
-                "cost": {
-                    "description": "Cost",
-                    "type": "number",
-                    "example": 1000000
-                },
                 "next_change_date": {
                     "description": "Next change date",
                     "type": "string",
@@ -3153,6 +4552,64 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UpdateOilFilterRequest": {
+            "description": "Oil filter change update request",
+            "type": "object",
+            "properties": {
+                "change_date": {
+                    "description": "Date when filter was changed",
+                    "type": "string",
+                    "example": "2024-01-15"
+                },
+                "change_mileage": {
+                    "description": "Mileage when filter was changed",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 15000
+                },
+                "filter_brand": {
+                    "description": "Brand of the oil filter",
+                    "type": "string",
+                    "example": "Mann"
+                },
+                "filter_name": {
+                    "description": "Name of the oil filter",
+                    "type": "string",
+                    "example": "Oil Filter"
+                },
+                "filter_part_number": {
+                    "description": "Part number of the oil filter",
+                    "type": "string",
+                    "example": "HU816x"
+                },
+                "filter_type": {
+                    "description": "Type of the oil filter",
+                    "type": "string",
+                    "example": "Cartridge"
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2024-07-15"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 30000
+                },
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string",
+                    "example": "Changed with oil change"
+                },
+                "service_center": {
+                    "description": "Service center where filter was changed",
+                    "type": "string",
+                    "example": "Auto Service Center"
+                }
+            }
+        },
         "dto.UpdatePasswordRequest": {
             "description": "User password update request",
             "type": "object",
@@ -3186,6 +4643,137 @@ const docTemplate = `{
                     "description": "User's last name (optional)",
                     "type": "string",
                     "example": "Doe"
+                }
+            }
+        },
+        "dto.UpdateServiceVisitOilChange": {
+            "description": "add oil change to update service visit request",
+            "type": "object",
+            "properties": {
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2021-01-01"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "example": 20000
+                },
+                "notes": {
+                    "description": "Notes",
+                    "type": "string",
+                    "example": "تعویض روغن"
+                },
+                "oil_brand": {
+                    "description": "Oil brand",
+                    "type": "string",
+                    "example": "بهران"
+                },
+                "oil_capacity": {
+                    "description": "Oil capacity",
+                    "type": "number",
+                    "example": 5
+                },
+                "oil_name": {
+                    "description": "Oil name",
+                    "type": "string",
+                    "example": "تکتاز"
+                },
+                "oil_type": {
+                    "description": "Oil type",
+                    "type": "string",
+                    "example": "مینرال، سنتتیک، نیمه سنتتیک"
+                },
+                "oil_viscosity": {
+                    "description": "Oil viscosity",
+                    "type": "string",
+                    "example": "5W-30, 10W-40, etc."
+                }
+            }
+        },
+        "dto.UpdateServiceVisitOilFilter": {
+            "description": "add oil filter to update service visit request",
+            "type": "object",
+            "properties": {
+                "filter_brand": {
+                    "description": "Brand of the oil filter",
+                    "type": "string",
+                    "example": "Mann"
+                },
+                "filter_name": {
+                    "description": "Name of the oil filter",
+                    "type": "string",
+                    "example": "Oil Filter"
+                },
+                "filter_part_number": {
+                    "description": "Part number of the oil filter",
+                    "type": "string",
+                    "example": "HU816x"
+                },
+                "filter_type": {
+                    "description": "Type of the oil filter",
+                    "type": "string",
+                    "example": "Cartridge"
+                },
+                "next_change_date": {
+                    "description": "Next change date",
+                    "type": "string",
+                    "example": "2024-07-15"
+                },
+                "next_change_mileage": {
+                    "description": "Next change mileage",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 30000
+                },
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string",
+                    "example": "Changed with oil change"
+                }
+            }
+        },
+        "dto.UpdateServiceVisitRequest": {
+            "description": "Service visit update request",
+            "type": "object",
+            "properties": {
+                "notes": {
+                    "description": "Additional notes",
+                    "type": "string",
+                    "example": "Regular maintenance service"
+                },
+                "oil_change": {
+                    "description": "Oil change information (optional)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.UpdateServiceVisitOilChange"
+                        }
+                    ]
+                },
+                "oil_filter": {
+                    "description": "Oil filter information (optional)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.UpdateServiceVisitOilFilter"
+                        }
+                    ]
+                },
+                "service_center": {
+                    "description": "Service center where service was performed",
+                    "type": "string",
+                    "example": "Auto Service Center"
+                },
+                "service_date": {
+                    "description": "Date when service was performed",
+                    "type": "string",
+                    "example": "2024-01-15"
+                },
+                "service_mileage": {
+                    "description": "Mileage when service was performed",
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 15000
                 }
             }
         },
@@ -3650,8 +5238,16 @@ const docTemplate = `{
             "name": "Admin - UserVehicles"
         },
         {
+            "description": "Service visit management operations",
+            "name": "Service Visits"
+        },
+        {
             "description": "Oil change management operations",
             "name": "Oil Changes"
+        },
+        {
+            "description": "Oil filter management operations",
+            "name": "Oil Filters"
         }
     ]
 }`
