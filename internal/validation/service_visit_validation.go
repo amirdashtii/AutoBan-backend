@@ -1,4 +1,4 @@
- package validation
+package validation
 
 import (
 	"errors"
@@ -124,6 +124,10 @@ func validateServiceVisitOilChange(oilChange dto.ServiceVisitOilChange) error {
 					if fieldError.Tag() == "date" {
 						return errors.New("invalid next change date format")
 					}
+				case "NextChangeMileage":
+					if fieldError.Tag() == "min" {
+						return errors.New("next change mileage must be greater than 0")
+					}
 				default:
 					return errors.New("validation failed for oil change field: " + fieldError.Field())
 				}
@@ -177,6 +181,10 @@ func validateUpdateServiceVisitOilChange(oilChange dto.UpdateServiceVisitOilChan
 				case "NextChangeDate":
 					if fieldError.Tag() == "date" {
 						return errors.New("invalid next change date format")
+					}
+				case "NextChangeMileage":
+					if fieldError.Tag() == "min" {
+						return errors.New("next change mileage must be greater than 0")
 					}
 				default:
 					return errors.New("validation failed for oil change field: " + fieldError.Field())

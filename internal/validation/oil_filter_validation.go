@@ -38,6 +38,14 @@ func ValidateOilFilterCreateRequest(request dto.CreateOilFilterRequest) error {
 					if fieldError.Tag() == "date" {
 						return errors.New("invalid change date format")
 					}
+				case "NextChangeDate":
+					if fieldError.Tag() == "date" {
+						return errors.New("invalid next change date format")
+					}
+				case "NextChangeMileage":
+					if fieldError.Tag() == "min" {
+						return errors.New("next change mileage must be greater than 0")
+					}
 				default:
 					return errors.New("validation failed for field: " + fieldError.Field())
 				}
@@ -76,6 +84,10 @@ func ValidateOilFilterUpdateRequest(request dto.UpdateOilFilterRequest) error {
 				case "NextChangeDate":
 					if fieldError.Tag() == "date" {
 						return errors.New("invalid next change date format")
+					}
+				case "NextChangeMileage":
+					if fieldError.Tag() == "min" {
+						return errors.New("next change mileage must be greater than 0")
 					}
 				default:
 					return errors.New("validation failed for field: " + fieldError.Field())

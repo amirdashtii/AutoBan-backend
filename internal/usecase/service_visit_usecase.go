@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -50,6 +51,7 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, request d
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
+	fmt.Println("uuidUserID", uuidUserID)
 	userVehicle := entity.UserVehicle{}
 	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, request.UserVehicleID, &userVehicle)
 	if err != nil {
@@ -70,16 +72,19 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, request d
 	}
 
 	serviceVisit := entity.ServiceVisit{
+		UserID:         uuidUserID,
 		UserVehicleID:  request.UserVehicleID,
 		ServiceMileage: request.ServiceMileage,
 		ServiceDate:    serviceDate,
 		ServiceCenter:  request.ServiceCenter,
 		Notes:          request.Notes,
 	}
-
+	serviceVisit.ID = uuid.New()
+	
 	// Create oil change if provided
 	if request.OilChange != nil {
 		oilChange := entity.OilChange{
+			UserID:            uuidUserID,
 			UserVehicleID:     request.UserVehicleID,
 			OilName:           request.OilChange.OilName,
 			OilBrand:          request.OilChange.OilBrand,
@@ -114,6 +119,7 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, request d
 	// Create oil filter if provided
 	if request.OilFilter != nil {
 		oilFilter := entity.OilFilter{
+			UserID:            uuidUserID,
 			UserVehicleID:     request.UserVehicleID,
 			FilterName:        request.OilFilter.FilterName,
 			FilterBrand:       request.OilFilter.FilterBrand,

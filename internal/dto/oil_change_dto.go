@@ -16,13 +16,13 @@ type CreateOilChangeRequest struct {
 	// Oil viscosity
 	OilViscosity string `json:"oil_viscosity" example:"5W-30, 10W-40, etc."`
 	// Change mileage
-	ChangeMileage uint `json:"change_mileage" validate:"required" example:"10000"`
+	ChangeMileage uint `json:"change_mileage" validate:"required,min=0" example:"10000"`
 	// Change date
 	ChangeDate string `json:"change_date" validate:"required,date" example:"2021-01-01"`
 	// Oil capacity
 	OilCapacity float64 `json:"oil_capacity" example:"5"`
 	// Next change mileage
-	NextChangeMileage uint `json:"next_change_mileage" example:"20000"`
+	NextChangeMileage uint `json:"next_change_mileage" validate:"omitempty,min=0" example:"20000"`
 	// Next change date
 	NextChangeDate string `json:"next_change_date" validate:"omitempty,date" example:"2021-01-01"`
 	// Service center
@@ -43,7 +43,7 @@ type UpdateOilChangeRequest struct {
 	// Oil viscosity
 	OilViscosity *string `json:"oil_viscosity" example:"5W-30, 10W-40, etc."`
 	// Change mileage
-	ChangeMileage *uint `json:"change_mileage" example:"10000"`
+	ChangeMileage *uint `json:"change_mileage" validate:"omitempty,min=0" example:"10000"`
 	// Change date
 	ChangeDate *string `json:"change_date" validate:"omitempty,date" example:"2021-01-01"`
 	// Oil capacity

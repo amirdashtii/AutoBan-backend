@@ -20,7 +20,7 @@ type ServiceVisitOilChange struct {
 	// Oil capacity
 	OilCapacity float64 `json:"oil_capacity" example:"5"`
 	// Next change mileage
-	NextChangeMileage uint `json:"next_change_mileage" example:"20000"`
+	NextChangeMileage uint `json:"next_change_mileage" validate:"omitempty,min=0" example:"20000"`
 	// Next change date
 	NextChangeDate string `json:"next_change_date" validate:"omitempty,date" example:"2021-01-01"`
 	// Notes
@@ -80,7 +80,7 @@ type UpdateServiceVisitOilChange struct {
 	// Oil capacity
 	OilCapacity *float64 `json:"oil_capacity" example:"5"`
 	// Next change mileage
-	NextChangeMileage *uint `json:"next_change_mileage" example:"20000"`
+	NextChangeMileage *uint `json:"next_change_mileage" validate:"omitempty,min=0" example:"20000"`
 	// Next change date
 	NextChangeDate *string `json:"next_change_date" validate:"omitempty,date" example:"2021-01-01"`
 	// Notes

@@ -10,7 +10,7 @@ import (
 type OilFilter struct {
 	BaseModel
 
-	UserID            uuid.UUID `json:"user_id" gorm:"not null"`
+	UserID            uuid.UUID `json:"user_id" gorm:"type:uuid;not null"`
 	UserVehicleID     uint64    `gorm:"not null" json:"user_vehicle_id"`
 	FilterName        string    `gorm:"not null" json:"filter_name"`
 	FilterBrand       string    `gorm:"not null" json:"filter_brand"`

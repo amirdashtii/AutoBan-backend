@@ -9,7 +9,7 @@ import (
 type OilChange struct {
 	BaseModel
 
-	UserID            uuid.UUID `json:"user_id" gorm:"not null"`
+	UserID            uuid.UUID `json:"user_id" gorm:"type:uuid;not null"`
 	UserVehicleID     uint64    `json:"user_vehicle_id" gorm:"not null"`
 	OilName           string    `json:"oil_name" gorm:"not null"`
 	OilBrand          string    `json:"oil_brand"`

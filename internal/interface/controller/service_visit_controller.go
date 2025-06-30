@@ -49,7 +49,7 @@ func ServiceVisitRoutes(router *gin.Engine) {
 // @Tags Service Visits
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param service_visit body dto.CreateServiceVisitRequest true "Service visit data"
 // @Success 201 {object} dto.ServiceVisitResponse
 // @Failure 400 {object} map[string]string
@@ -97,7 +97,7 @@ func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 // @Tags Service Visits
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param id path string true "Service visit ID"
 // @Success 200 {object} dto.ServiceVisitResponse
 // @Failure 400 {object} map[string]string
@@ -141,7 +141,7 @@ func (c *ServiceVisitController) GetServiceVisit(ctx *gin.Context) {
 // @Tags Service Visits
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param user_vehicle_id path string true "User vehicle ID"
 // @Success 200 {object} dto.ListServiceVisitsResponse
 // @Failure 400 {object} map[string]string
@@ -182,7 +182,7 @@ func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
 // @Tags Service Visits
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param id path string true "Service visit ID"
 // @Param service_visit body dto.UpdateServiceVisitRequest true "Updated service visit data"
 // @Success 200 {object} dto.ServiceVisitResponse
@@ -242,7 +242,7 @@ func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 // @Tags Service Visits
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param id path string true "Service visit ID"
 // @Success 204 "No Content"
 // @Failure 400 {object} map[string]string
@@ -286,7 +286,7 @@ func (c *ServiceVisitController) DeleteServiceVisit(ctx *gin.Context) {
 // @Tags Service Visits
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param user_vehicle_id path string true "User vehicle ID"
 // @Success 200 {object} dto.ServiceVisitResponse
 // @Failure 400 {object} map[string]string

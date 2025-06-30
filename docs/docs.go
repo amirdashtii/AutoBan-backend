@@ -1728,6 +1728,11 @@ const docTemplate = `{
         },
         "/oil-filters": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create a new oil filter change record for a user vehicle",
                 "consumes": [
                     "application/json"
@@ -1740,13 +1745,6 @@ const docTemplate = `{
                 ],
                 "summary": "Create a new oil filter change",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "Oil filter change data",
                         "name": "oil_filter",
@@ -1805,6 +1803,11 @@ const docTemplate = `{
         },
         "/oil-filters/last/{user_vehicle_id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get the most recent oil filter change record for a specific user vehicle",
                 "consumes": [
                     "application/json"
@@ -1817,13 +1820,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get last oil filter change for a user vehicle",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "User vehicle ID",
@@ -1889,6 +1885,11 @@ const docTemplate = `{
         },
         "/oil-filters/list/{user_vehicle_id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get all oil filter change records for a specific user vehicle",
                 "consumes": [
                     "application/json"
@@ -1901,13 +1902,6 @@ const docTemplate = `{
                 ],
                 "summary": "List oil filter changes for a user vehicle",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "User vehicle ID",
@@ -1964,6 +1958,11 @@ const docTemplate = `{
         },
         "/oil-filters/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get a specific oil filter change record by its ID",
                 "consumes": [
                     "application/json"
@@ -1976,13 +1975,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get oil filter change by ID",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Oil filter change ID",
@@ -2046,6 +2038,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update an existing oil filter change record",
                 "consumes": [
                     "application/json"
@@ -2058,13 +2055,6 @@ const docTemplate = `{
                 ],
                 "summary": "Update oil filter change",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Oil filter change ID",
@@ -2137,6 +2127,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete an oil filter change record",
                 "consumes": [
                     "application/json"
@@ -2149,13 +2144,6 @@ const docTemplate = `{
                 ],
                 "summary": "Delete oil filter change",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Oil filter change ID",
@@ -2218,6 +2206,11 @@ const docTemplate = `{
         },
         "/service-visits": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create a new service visit record for a user vehicle with optional services",
                 "consumes": [
                     "application/json"
@@ -2230,13 +2223,6 @@ const docTemplate = `{
                 ],
                 "summary": "Create a new service visit",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "Service visit data",
                         "name": "service_visit",
@@ -2295,6 +2281,11 @@ const docTemplate = `{
         },
         "/service-visits/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get a specific service visit record by its ID",
                 "consumes": [
                     "application/json"
@@ -2307,13 +2298,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get service visit by ID",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Service visit ID",
@@ -2377,6 +2361,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update an existing service visit record",
                 "consumes": [
                     "application/json"
@@ -2389,13 +2378,6 @@ const docTemplate = `{
                 ],
                 "summary": "Update service visit",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Service visit ID",
@@ -2468,6 +2450,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete a service visit record",
                 "consumes": [
                     "application/json"
@@ -2480,13 +2467,6 @@ const docTemplate = `{
                 ],
                 "summary": "Delete service visit",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Service visit ID",
@@ -2549,6 +2529,11 @@ const docTemplate = `{
         },
         "/user-vehicles/{user_vehicle_id}/service-visits": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get all service visit records for a specific user vehicle",
                 "consumes": [
                     "application/json"
@@ -2561,13 +2546,6 @@ const docTemplate = `{
                 ],
                 "summary": "List service visits for a user vehicle",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "User vehicle ID",
@@ -2624,6 +2602,11 @@ const docTemplate = `{
         },
         "/user-vehicles/{user_vehicle_id}/service-visits/last": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get the most recent service visit record for a specific user vehicle",
                 "consumes": [
                     "application/json"
@@ -2636,13 +2619,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get last service visit for a user vehicle",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "User vehicle ID",
@@ -3492,6 +3468,7 @@ const docTemplate = `{
                 "change_mileage": {
                     "description": "Change mileage",
                     "type": "integer",
+                    "minimum": 0,
                     "example": 10000
                 },
                 "next_change_date": {
@@ -3502,6 +3479,7 @@ const docTemplate = `{
                 "next_change_mileage": {
                     "description": "Next change mileage",
                     "type": "integer",
+                    "minimum": 0,
                     "example": 20000
                 },
                 "notes": {
@@ -4503,6 +4481,7 @@ const docTemplate = `{
                 "change_mileage": {
                     "description": "Change mileage",
                     "type": "integer",
+                    "minimum": 0,
                     "example": 10000
                 },
                 "next_change_date": {

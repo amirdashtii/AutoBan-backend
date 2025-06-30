@@ -43,7 +43,7 @@ func OilFilterRoutes(router *gin.Engine) {
 // @Tags Oil Filters
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param oil_filter body dto.CreateOilFilterRequest true "Oil filter change data"
 // @Success 201 {object} dto.OilFilterResponse
 // @Failure 400 {object} map[string]string
@@ -87,7 +87,7 @@ func (c *OilFilterController) CreateOilFilter(ctx *gin.Context) {
 // @Tags Oil Filters
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param id path string true "Oil filter change ID"
 // @Success 200 {object} dto.OilFilterResponse
 // @Failure 400 {object} map[string]string
@@ -131,7 +131,7 @@ func (c *OilFilterController) GetOilFilter(ctx *gin.Context) {
 // @Tags Oil Filters
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param user_vehicle_id path string true "User vehicle ID"
 // @Success 200 {object} dto.ListOilFiltersResponse
 // @Failure 400 {object} map[string]string
@@ -172,7 +172,7 @@ func (c *OilFilterController) ListOilFilters(ctx *gin.Context) {
 // @Tags Oil Filters
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param id path string true "Oil filter change ID"
 // @Param oil_filter body dto.UpdateOilFilterRequest true "Updated oil filter change data"
 // @Success 200 {object} dto.OilFilterResponse
@@ -228,7 +228,7 @@ func (c *OilFilterController) UpdateOilFilter(ctx *gin.Context) {
 // @Tags Oil Filters
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param id path string true "Oil filter change ID"
 // @Success 204 "No Content"
 // @Failure 400 {object} map[string]string
@@ -272,7 +272,7 @@ func (c *OilFilterController) DeleteOilFilter(ctx *gin.Context) {
 // @Tags Oil Filters
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer token"
+// @Security BearerAuth
 // @Param user_vehicle_id path string true "User vehicle ID"
 // @Success 200 {object} dto.OilFilterResponse
 // @Failure 400 {object} map[string]string

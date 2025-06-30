@@ -242,7 +242,7 @@ func (a *authUseCase) GenerateAccessToken(ctx context.Context, user *entity.User
 		"role":         user.Role,
 		"phone_number": user.PhoneNumber,
 		"status":       user.Status,
-		"exp":          time.Now().Add(time.Minute * 15).Unix(), // 15 minutes expiration
+		"exp":          time.Now().Add(time.Hour * 24).Unix(), // 1 day expiration
 	})
 
 	tokenString, err := token.SignedString([]byte(a.secretKey))
@@ -258,7 +258,7 @@ func (a *authUseCase) GenerateRefreshToken(ctx context.Context, userID string, d
 	claims := jwt.MapClaims{
 		"user_id":   userID,
 		"device_id": deviceID,
-		"exp":       time.Now().Add(time.Hour * 24 * 7).Unix(), // 7 روز
+		"exp":       time.Now().Add(time.Hour * 24 * 7).Unix(), // 7 days expiration
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
