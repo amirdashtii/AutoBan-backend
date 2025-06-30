@@ -27,23 +27,20 @@ func VehicleRoutes(router *gin.Engine) {
 	vehicleGroup := router.Group("/api/v1/vehicles")
 	{
 		// Vehicle Types
-		vehicleGroup.GET("/types", c.ListVehicleTypes)
-		vehicleGroup.GET("/types/:id", c.GetVehicleType)
+		vehicleGroup.GET("/types", c.ListTypes)
+		vehicleGroup.GET("/types/:type_id", c.GetType)
 
 		// Brands
-		vehicleGroup.GET("/brands", c.ListBrands)
-		vehicleGroup.GET("/brands/:id", c.GetBrand)
-		vehicleGroup.GET("/types/:id/brands", c.ListBrandsByType)
+		vehicleGroup.GET("/types/:type_id/brands", c.ListBrands)
+		vehicleGroup.GET("/types/:type_id/brands/:brand_id", c.GetBrand)
 
 		// Models
-		vehicleGroup.GET("/models", c.ListModels)
-		vehicleGroup.GET("/models/:id", c.GetModel)
-		vehicleGroup.GET("/brands/:id/models", c.ListModelsByBrand)
+		vehicleGroup.GET("/types/:type_id/brands/:brand_id/models", c.ListModels)
+		vehicleGroup.GET("/types/:type_id/brands/:brand_id/models/:model_id", c.GetModel)
 
 		// Generations
-		vehicleGroup.GET("/generations", c.ListGenerations)
-		vehicleGroup.GET("/generations/:id", c.GetGeneration)
-		vehicleGroup.GET("/models/:id/generations", c.ListGenerationsByModel)
+		vehicleGroup.GET("/types/:type_id/brands/:brand_id/models/:model_id/generations", c.ListGenerations)
+		vehicleGroup.GET("/types/:type_id/brands/:brand_id/models/:model_id/generations/:generation_id", c.GetGeneration)
 	}
 
 	// User vehicle management (requires authentication)
@@ -63,23 +60,23 @@ func VehicleRoutes(router *gin.Engine) {
 	{
 		// Vehicle Types management
 		adminVehicles.POST("/types", c.CreateVehicleType)
-		adminVehicles.PUT("/types/:id", c.UpdateVehicleType)
-		adminVehicles.DELETE("/types/:id", c.DeleteVehicleType)
+		adminVehicles.PUT("/types/:type_id", c.UpdateVehicleType)
+		adminVehicles.DELETE("/types/:type_id", c.DeleteVehicleType)
 
 		// Brands management
-		adminVehicles.POST("/brands", c.CreateBrand)
-		adminVehicles.PUT("/brands/:id", c.UpdateBrand)
-		adminVehicles.DELETE("/brands/:id", c.DeleteBrand)
+		adminVehicles.POST("/types/:type_id/brands", c.CreateBrand)
+		adminVehicles.PUT("/types/:type_id/brands/:brand_id", c.UpdateBrand)
+		adminVehicles.DELETE("/types/:type_id/brands/:brand_id", c.DeleteBrand)
 
 		// Models management
-		adminVehicles.POST("/models", c.CreateModel)
-		adminVehicles.PUT("/models/:id", c.UpdateModel)
-		adminVehicles.DELETE("/models/:id", c.DeleteModel)
+		adminVehicles.POST("/types/:type_id/brands/:brand_id/models", c.CreateModel)
+		adminVehicles.PUT("/types/:type_id/brands/:brand_id/models/:model_id", c.UpdateModel)
+		adminVehicles.DELETE("/types/:type_id/brands/:brand_id/models/:model_id", c.DeleteModel)
 
 		// Generations management
-		adminVehicles.POST("/generations", c.CreateGeneration)
-		adminVehicles.PUT("/generations/:id", c.UpdateGeneration)
-		adminVehicles.DELETE("/generations/:id", c.DeleteGeneration)
+		adminVehicles.POST("/types/:type_id/brands/:brand_id/models/:model_id/generations", c.CreateGeneration)
+		adminVehicles.PUT("/types/:type_id/brands/:brand_id/models/:model_id/generations/:generation_id", c.UpdateGeneration)
+		adminVehicles.DELETE("/types/:type_id/brands/:brand_id/models/:model_id/generations/:generation_id", c.DeleteGeneration)
 	}
 }
 
@@ -93,7 +90,7 @@ func VehicleRoutes(router *gin.Engine) {
 // @Order       1
 // @Success     200 {object} dto.ListVehicleTypesResponse
 // @Router      /vehicles/types [get]
-func (c *VehicleController) ListVehicleTypes(ctx *gin.Context) {
+func (c *VehicleController) ListTypes(ctx *gin.Context) {
 	types, err := c.vehicleUseCase.ListVehicleTypes(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
@@ -107,13 +104,13 @@ func (c *VehicleController) ListVehicleTypes(ctx *gin.Context) {
 // @Tags        Types
 // @Accept      json
 // @Produce     json
-// @Param       id path string true "Vehicle Type ID"
+// @Param       type_id path string true "Vehicle Type ID"
 // @Order       2
 // @Success     200 {object} dto.VehicleTypeResponse
-// @Router      /vehicles/types/{id} [get]
-func (c *VehicleController) GetVehicleType(ctx *gin.Context) {
-	id := ctx.Param("id")
-	vehicleType, err := c.vehicleUseCase.GetVehicleType(ctx, id)
+// @Router      /vehicles/types/{type_id} [get]
+func (c *VehicleController) GetType(ctx *gin.Context) {
+	typeID := ctx.Param("type_id")
+	vehicleType, err := c.vehicleUseCase.GetVehicleType(ctx, typeID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -121,33 +118,17 @@ func (c *VehicleController) GetVehicleType(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, vehicleType)
 }
 
-// @Summary     List all vehicle brands
-// @Description Get a list of all available vehicle brands
-// @Tags        Brands
-// @Accept      json
-// @Produce     json
-// @Order       1
-// @Router      /vehicles/brands [get]
-func (c *VehicleController) ListBrands(ctx *gin.Context) {
-	brands, err := c.vehicleUseCase.ListBrands(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		return
-	}
-	ctx.JSON(http.StatusOK, brands)
-}
-
 // @Summary     List vehicle brands by type
 // @Description Get a list of vehicle brands for a specific vehicle type
 // @Tags        Brands
 // @Accept      json
 // @Produce     json
-// @Param       id path string true "Vehicle Type ID"
+// @Param       type_id path string true "Vehicle Type ID"
 // @Success     200 {object} dto.ListVehicleBrandsResponse
-// @Router      /vehicles/types/{id}/brands [get]
-func (c *VehicleController) ListBrandsByType(ctx *gin.Context) {
-	typeID := ctx.Param("id")
-	brands, err := c.vehicleUseCase.ListBrandsByType(ctx, typeID)
+// @Router      /vehicles/types/{type_id}/brands [get]
+func (c *VehicleController) ListBrands(ctx *gin.Context) {
+	typeID := ctx.Param("type_id")
+	brands, err := c.vehicleUseCase.ListBrands(ctx, typeID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -160,12 +141,14 @@ func (c *VehicleController) ListBrandsByType(ctx *gin.Context) {
 // @Tags        Brands
 // @Accept      json
 // @Produce     json
-// @Param       id path string true "Vehicle Brand ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
 // @Success     200 {object} dto.VehicleBrandResponse
-// @Router      /vehicles/brands/{id} [get]
+// @Router      /vehicles/types/{type_id}/brands/{brand_id} [get]
 func (c *VehicleController) GetBrand(ctx *gin.Context) {
-	id := ctx.Param("id")
-	brand, err := c.vehicleUseCase.GetBrand(ctx, id)
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	brand, err := c.vehicleUseCase.GetBrand(ctx, typeID, brandID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -173,33 +156,19 @@ func (c *VehicleController) GetBrand(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, brand)
 }
 
-// @Summary     List all vehicle models
-// @Description Get a list of all available vehicle models
-// @Tags        Models
-// @Accept      json
-// @Produce     json
-// @Success     200 {object} dto.ListVehicleModelsResponse
-// @Router      /vehicles/models [get]
-func (c *VehicleController) ListModels(ctx *gin.Context) {
-	models, err := c.vehicleUseCase.ListModels(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		return
-	}
-	ctx.JSON(http.StatusOK, models)
-}
-
 // @Summary     List vehicle models by brand
 // @Description Get a list of vehicle models for a specific vehicle brand
 // @Tags        Models
 // @Accept      json
 // @Produce     json
-// @Param       id path string true "Vehicle Brand ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
 // @Success     200 {object} dto.ListVehicleModelsResponse
-// @Router      /vehicles/brands/{id}/models [get]
-func (c *VehicleController) ListModelsByBrand(ctx *gin.Context) {
-	brandID := ctx.Param("id")
-	models, err := c.vehicleUseCase.ListModelsByBrand(ctx, brandID)
+// @Router      /vehicles/types/{type_id}/brands/{brand_id}/models [get]
+func (c *VehicleController) ListModels(ctx *gin.Context) {
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	models, err := c.vehicleUseCase.ListModels(ctx, typeID, brandID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -212,12 +181,16 @@ func (c *VehicleController) ListModelsByBrand(ctx *gin.Context) {
 // @Tags        Models
 // @Accept      json
 // @Produce     json
-// @Param       id path string true "Vehicle Model ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
 // @Success     200 {object} dto.VehicleModelResponse
-// @Router      /vehicles/models/{id} [get]
+// @Router      /vehicles/types/{type_id}/brands/{brand_id}/models/{model_id} [get]
 func (c *VehicleController) GetModel(ctx *gin.Context) {
-	id := ctx.Param("id")
-	model, err := c.vehicleUseCase.GetModel(ctx, id)
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
+	model, err := c.vehicleUseCase.GetModel(ctx, typeID, brandID, modelID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -225,33 +198,23 @@ func (c *VehicleController) GetModel(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, model)
 }
 
-// @Summary     List all vehicle generations
-// @Description Get a list of all available vehicle generations
-// @Tags        Generations
-// @Accept      json
-// @Produce     json
-// @Success     200 {object} dto.ListVehicleGenerationsResponse
-// @Router      /vehicles/generations [get]
-func (c *VehicleController) ListGenerations(ctx *gin.Context) {
-	generations, err := c.vehicleUseCase.ListGenerations(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		return
-	}
-	ctx.JSON(http.StatusOK, generations)
-}
-
 // @Summary     Get vehicle generation details
 // @Description Get details of a specific vehicle generation
 // @Tags        Generations
 // @Accept      json
 // @Produce     json
-// @Param       id path string true "Vehicle Generation ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
+// @Param       generation_id path string true "Vehicle Generation ID"
 // @Success     200 {object} dto.VehicleGenerationResponse
-// @Router      /vehicles/generations/{id} [get]
+// @Router      /vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id} [get]
 func (c *VehicleController) GetGeneration(ctx *gin.Context) {
-	id := ctx.Param("id")
-	generation, err := c.vehicleUseCase.GetGeneration(ctx, id)
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
+	generationID := ctx.Param("generation_id")
+	generation, err := c.vehicleUseCase.GetGeneration(ctx, typeID, brandID, modelID, generationID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -264,12 +227,16 @@ func (c *VehicleController) GetGeneration(ctx *gin.Context) {
 // @Tags        Generations
 // @Accept      json
 // @Produce     json
-// @Param       id path string true "Vehicle Model ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
 // @Success     200 {object} dto.ListVehicleGenerationsResponse
-// @Router      /vehicles/models/{id}/generations [get]
-func (c *VehicleController) ListGenerationsByModel(ctx *gin.Context) {
-	modelID := ctx.Param("id")
-	generations, err := c.vehicleUseCase.ListGenerationsByModel(ctx, modelID)
+// @Router      /vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations [get]
+func (c *VehicleController) ListGenerations(ctx *gin.Context) {
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
+	generations, err := c.vehicleUseCase.ListGenerations(ctx, typeID, brandID, modelID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -422,19 +389,19 @@ func (c *VehicleController) CreateVehicleType(ctx *gin.Context) {
 // @Tags        Admin - Types
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle Type ID"
+// @Param       type_id path string true "Vehicle Type ID"
 // @Param       vehicleType body dto.UpdateVehicleTypeRequest true "Vehicle Type"
 // @Success     200 {object} dto.VehicleTypeResponse
-// @Router      /admin/vehicles/types/{id} [put]
+// @Router      /admin/vehicles/types/{type_id} [put]
 func (c *VehicleController) UpdateVehicleType(ctx *gin.Context) {
-	id := ctx.Param("id")
+	typeID := ctx.Param("type_id")
 	var vehicleType dto.UpdateVehicleTypeRequest
 	if err := ctx.ShouldBindJSON(&vehicleType); err != nil {
 		logger.Error(err, "Failed to bind vehicle type request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
 		return
 	}
-	updatedVehicleType, err := c.vehicleUseCase.UpdateVehicleType(ctx, id, vehicleType)
+	updatedVehicleType, err := c.vehicleUseCase.UpdateVehicleType(ctx, typeID, vehicleType)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -447,12 +414,12 @@ func (c *VehicleController) UpdateVehicleType(ctx *gin.Context) {
 // @Tags        Admin - Types
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle Type ID"
+// @Param       type_id path string true "Vehicle Type ID"
 // @Success     204
-// @Router      /admin/vehicles/types/{id} [delete]
+// @Router      /admin/vehicles/types/{type_id} [delete]
 func (c *VehicleController) DeleteVehicleType(ctx *gin.Context) {
-	id := ctx.Param("id")
-	err := c.vehicleUseCase.DeleteVehicleType(ctx, id)
+	typeID := ctx.Param("type_id")
+	err := c.vehicleUseCase.DeleteVehicleType(ctx, typeID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -467,15 +434,16 @@ func (c *VehicleController) DeleteVehicleType(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       brand body dto.CreateVehicleBrandRequest true "Vehicle Brand"
 // @Success     201 {object} dto.VehicleBrandResponse
-// @Router      /admin/vehicles/brands [post]
+// @Router      /admin/vehicles/types/{type_id}/brands [post]
 func (c *VehicleController) CreateBrand(ctx *gin.Context) {
-	var brand dto.CreateVehicleBrandRequest
-	if err := ctx.ShouldBindJSON(&brand); err != nil {
+	typeID := ctx.Param("type_id")
+	var request dto.CreateVehicleBrandRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
 		return
 	}
-	createdBrand, err := c.vehicleUseCase.CreateBrand(ctx, brand)
+	createdBrand, err := c.vehicleUseCase.CreateBrand(ctx, typeID, request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -488,19 +456,21 @@ func (c *VehicleController) CreateBrand(ctx *gin.Context) {
 // @Tags        Admin - Brands
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle Brand ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
 // @Param       brand body dto.UpdateVehicleBrandRequest true "Vehicle Brand"
 // @Success     200 {object} dto.VehicleBrandResponse
-// @Router      /admin/vehicles/brands/{id} [put]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id} [put]
 func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
-	id := ctx.Param("id")
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
 	var brand dto.UpdateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&brand); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
 		return
 	}
-	updatedBrand, err := c.vehicleUseCase.UpdateBrand(ctx, id, brand)
+	updatedBrand, err := c.vehicleUseCase.UpdateBrand(ctx, typeID, brandID, brand)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -513,12 +483,14 @@ func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 // @Tags        Admin - Brands
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle Brand ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
 // @Success     204
-// @Router      /admin/vehicles/brands/{id} [delete]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id} [delete]
 func (c *VehicleController) DeleteBrand(ctx *gin.Context) {
-	id := ctx.Param("id")
-	err := c.vehicleUseCase.DeleteBrand(ctx, id)
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	err := c.vehicleUseCase.DeleteBrand(ctx, typeID, brandID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -531,17 +503,21 @@ func (c *VehicleController) DeleteBrand(ctx *gin.Context) {
 // @Tags        Admin - Models
 // @Accept      json
 // @Security    BearerAuth
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
 // @Param       model body dto.CreateVehicleModelRequest true "Vehicle Model"
 // @Success     201 {object} dto.VehicleModelResponse
-// @Router      /admin/vehicles/brands/{brandId}/models [post]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models [post]
 func (c *VehicleController) CreateModel(ctx *gin.Context) {
-	var model dto.CreateVehicleModelRequest
-	if err := ctx.ShouldBindJSON(&model); err != nil {
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	var request dto.CreateVehicleModelRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
 		return
 	}
-	createdModel, err := c.vehicleUseCase.CreateModel(ctx, model)
+	createdModel, err := c.vehicleUseCase.CreateModel(ctx, typeID, brandID, request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -554,19 +530,23 @@ func (c *VehicleController) CreateModel(ctx *gin.Context) {
 // @Tags        Admin - Models
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle Model ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
 // @Param       model body dto.UpdateVehicleModelRequest true "Vehicle Model"
 // @Success     200 {object} dto.VehicleModelResponse
-// @Router      /admin/vehicles/models/{id} [put]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id} [put]
 func (c *VehicleController) UpdateModel(ctx *gin.Context) {
-	id := ctx.Param("id")
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
 	var model dto.UpdateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&model); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
 		return
 	}
-	updatedModel, err := c.vehicleUseCase.UpdateModel(ctx, id, model)
+	updatedModel, err := c.vehicleUseCase.UpdateModel(ctx, typeID, brandID, modelID, model)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -579,12 +559,16 @@ func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 // @Tags        Admin - Models
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle Model ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
 // @Success     204
-// @Router      /admin/vehicles/models/{id} [delete]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id} [delete]
 func (c *VehicleController) DeleteModel(ctx *gin.Context) {
-	id := ctx.Param("id")
-	err := c.vehicleUseCase.DeleteModel(ctx, id)
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
+	err := c.vehicleUseCase.DeleteModel(ctx, typeID, brandID, modelID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -597,17 +581,23 @@ func (c *VehicleController) DeleteModel(ctx *gin.Context) {
 // @Tags        Admin - Generations
 // @Accept      json
 // @Security    BearerAuth
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
 // @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     201 {object} dto.VehicleGenerationResponse
-// @Router      /admin/vehicles/generations [post]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations [post]
 func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
-	var generation dto.CreateVehicleGenerationRequest
-	if err := ctx.ShouldBindJSON(&generation); err != nil {
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
+	var request dto.CreateVehicleGenerationRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
 		return
 	}
-	createdModel, err := c.vehicleUseCase.CreateGeneration(ctx, generation)
+	createdModel, err := c.vehicleUseCase.CreateGeneration(ctx, typeID, brandID, modelID, request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -620,19 +610,25 @@ func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 // @Tags        Admin - Generations
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle generation ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
+// @Param       generation_id path string true "Vehicle Generation ID"
 // @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     200 {object} dto.VehicleGenerationResponse
-// @Router      /admin/vehicles/generations/{id} [put]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id} [put]
 func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
-	id := ctx.Param("id")
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
+	generationID := ctx.Param("generation_id")
 	var generation dto.UpdateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&generation); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
 		return
 	}
-	updatedGeneration, err := c.vehicleUseCase.UpdateGeneration(ctx, id, generation)
+	updatedGeneration, err := c.vehicleUseCase.UpdateGeneration(ctx, typeID, brandID, modelID, generationID, generation)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
@@ -645,12 +641,18 @@ func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 // @Tags        Admin - Generations
 // @Accept      json
 // @Security    BearerAuth
-// @Param       id path string true "Vehicle Generation ID"
+// @Param       type_id path string true "Vehicle Type ID"
+// @Param       brand_id path string true "Vehicle Brand ID"
+// @Param       model_id path string true "Vehicle Model ID"
+// @Param       generation_id path string true "Vehicle Generation ID"
 // @Success     204
-// @Router      /admin/vehicles/generations/{id} [delete]
+// @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id} [delete]
 func (c *VehicleController) DeleteGeneration(ctx *gin.Context) {
-	id := ctx.Param("id")
-	err := c.vehicleUseCase.DeleteGeneration(ctx, id)
+	typeID := ctx.Param("type_id")
+	brandID := ctx.Param("brand_id")
+	modelID := ctx.Param("model_id")
+	generationID := ctx.Param("generation_id")
+	err := c.vehicleUseCase.DeleteGeneration(ctx, typeID, brandID, modelID, generationID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return

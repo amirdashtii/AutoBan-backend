@@ -40,8 +40,6 @@ type VehicleTypeResponse struct {
 // CreateVehicleBrandRequest represents the request for creating a new vehicle brand
 // @Description Vehicle brand creation request
 type CreateVehicleBrandRequest struct {
-	// ID of the vehicle type
-	VehicleTypeID uint64 `json:"vehicle_type_id" validate:"required" example:"1"`
 	// Name of the vehicle brand
 	Name string `json:"name" validate:"required" example:"Toyota"`
 	// Description of the vehicle brand
@@ -78,8 +76,6 @@ type VehicleBrandResponse struct {
 // CreateVehicleModelRequest represents the request for creating a new vehicle model
 // @Description Vehicle model creation request
 type CreateVehicleModelRequest struct {
-	// ID of the vehicle brand
-	BrandID uint64 `json:"brand_id" validate:"required" example:"1"`
 	// Name of the vehicle model
 	Name string `json:"name" validate:"required" example:"Camry"`
 	// Description of the vehicle model
@@ -132,8 +128,6 @@ type CreateVehicleGenerationRequest struct {
 	Name string `json:"name" validate:"required" example:"Generation Name"`
 	// Description of the vehicle generation
 	Description string `json:"description" example:"A brief description of the generation"`
-	// ID of the vehicle model
-	ModelID uint64 `json:"model_id" validate:"required" example:"1"`
 	// Start year of the vehicle generation
 	StartYear int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle generation
