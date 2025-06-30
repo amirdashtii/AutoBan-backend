@@ -27,23 +27,22 @@ func NewOilChangeRepository() OilChangeRepository {
 }
 
 func (r *oilChangeRepository) CreateOilChange(ctx context.Context, oilChange *entity.OilChange) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").Create(oilChange).Error
+	return r.db.WithContext(ctx).Create(oilChange).Error
 }
 
 func (r *oilChangeRepository) GetOilChange(ctx context.Context, id uint64, oilChange *entity.OilChange) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").First(oilChange, id).Error
+	return r.db.WithContext(ctx).First(oilChange, id).Error
 }
 
 func (r *oilChangeRepository) ListOilChanges(ctx context.Context, userVehicleID uint64, oilChanges *[]entity.OilChange) error {
 	return r.db.WithContext(ctx).
-		Preload("UserVehicle").
 		Where("user_vehicle_id = ?", userVehicleID).
 		Order("change_date DESC").
 		Find(oilChanges).Error
 }
 
 func (r *oilChangeRepository) UpdateOilChange(ctx context.Context, oilChange *entity.OilChange) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").Updates(oilChange).Error
+	return r.db.WithContext(ctx).Updates(oilChange).Error
 }
 
 func (r *oilChangeRepository) DeleteOilChange(ctx context.Context, oilChange *entity.OilChange) error {
@@ -52,7 +51,6 @@ func (r *oilChangeRepository) DeleteOilChange(ctx context.Context, oilChange *en
 
 func (r *oilChangeRepository) GetLastOilChange(ctx context.Context, userVehicleID uint64, oilChange *entity.OilChange) error {
 	return r.db.WithContext(ctx).
-		Preload("UserVehicle").
 		Where("user_vehicle_id = ?", userVehicleID).
 		Order("change_date DESC").
 		First(oilChange).Error

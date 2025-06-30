@@ -1,8 +1,6 @@
 package dto
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -142,7 +140,7 @@ type ServiceVisitOilChangeResponse struct {
 	// Next change mileage
 	NextChangeMileage uint `json:"next_change_mileage" example:"20000"`
 	// Next change date
-	NextChangeDate time.Time `json:"next_change_date" example:"2021-01-01"`
+	NextChangeDate string `json:"next_change_date" example:"2021-01-01"`
 	// Notes
 	Notes string `json:"notes" example:"تعویض روغن"`
 }
@@ -163,7 +161,7 @@ type ServiceVisitOilFilterResponse struct {
 	// Next change mileage
 	NextChangeMileage uint `json:"next_change_mileage"`
 	// Next change date
-	NextChangeDate time.Time `json:"next_change_date"`
+	NextChangeDate string `json:"next_change_date"`
 	// Additional notes
 	Notes string `json:"notes"`
 }
@@ -178,7 +176,7 @@ type ServiceVisitResponse struct {
 	// Mileage when service was performed
 	ServiceMileage uint `json:"service_mileage"`
 	// Date when service was performed
-	ServiceDate time.Time `json:"service_date"`
+	ServiceDate string `json:"service_date"`
 	// Service center where service was performed
 	ServiceCenter string `json:"service_center"`
 	// Additional notes

@@ -3,11 +3,9 @@ package controller
 import (
 	"net/http"
 
-	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/middleware"
 	"github.com/amirdashtii/AutoBan/internal/usecase"
-	"github.com/amirdashtii/AutoBan/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,85 +22,14 @@ func OilChangeRoutes(router *gin.Engine) {
 	c := NewOilChangeController()
 
 	// Oil change management (requires authentication)
-	oilChangeGroup := router.Group("/api/v1/oil-changes")
+	oilChangeGroup := router.Group("/api/v1/user/vehicles/:vehicle_id/oil-changes")
 	oilChangeGroup.Use(middleware.AuthMiddleware())
 	{
-		oilChangeGroup.POST("", c.CreateOilChange)
-		oilChangeGroup.GET("/:id", c.GetOilChange)
-		oilChangeGroup.PUT("/:id", c.UpdateOilChange)
-		oilChangeGroup.DELETE("/:id", c.DeleteOilChange)
-		oilChangeGroup.GET("/list/:user_vehicle_id", c.ListOilChanges)
-		oilChangeGroup.GET("/last/:user_vehicle_id", c.GetLastOilChange)
+		oilChangeGroup.GET("", c.ListOilChanges)
+		oilChangeGroup.GET("/last", c.GetLastOilChange)
+		oilChangeGroup.GET("/:oil_change_id", c.GetOilChange)
 	}
 
-}
-
-// CreateOilChange godoc
-// @Summary Create a new oil change record for a user vehicle
-// @Description Create a new oil change record for a user vehicle
-// @Tags Oil Changes
-// @Accept json
-// @Produce json
-// @Security    BearerAuth
-// @Param request body dto.CreateOilChangeRequest true "Oil change information"
-// @Success 201 {object} dto.OilChangeResponse
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
-// @Router /oil-changes [post]
-func (c *OilChangeController) CreateOilChange(ctx *gin.Context) {
-	var request dto.CreateOilChangeRequest
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		logger.Error(err, "Failed to bind JSON")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody.Error()})
-		return
-	}
-
-	response, err := c.oilChangeUseCase.CreateOilChange(ctx, request)
-	if err != nil {
-		switch err {
-		case errors.ErrInvalidOilChangeCreateRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidOilChangeCreateRequest})
-		case errors.ErrInvalidDate:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidDate})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrFailedToCreateOilChange})
-		}
-		return
-	}
-
-	ctx.JSON(http.StatusCreated, response)
-}
-
-// GetOilChange godoc
-// @Summary Get oil change information
-// @Description Get information about a specific oil change
-// @Tags Oil Changes
-// @Accept json
-// @Produce json
-// @Security    BearerAuth
-// @Param id path int true "Oil change ID"
-// @Success 200 {object} dto.OilChangeResponse
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
-// @Router /oil-changes/{id} [get]
-func (c *OilChangeController) GetOilChange(ctx *gin.Context) {
-	id := ctx.Param("id")
-
-	response, err := c.oilChangeUseCase.GetOilChange(ctx, id)
-	if err != nil {
-		switch err {
-		case errors.ErrInvalidOilChangeID:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidOilChangeID})
-		case errors.ErrFailedToGetOilChange:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": errors.ErrFailedToGetOilChange})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrFailedToGetOilChange})
-		}
-		return
-	}
-
-	ctx.JSON(http.StatusOK, response)
 }
 
 // ListOilChanges godoc
@@ -112,19 +39,16 @@ func (c *OilChangeController) GetOilChange(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security    BearerAuth
-// @Param user_vehicle_id path int true "User vehicle ID"
+// @Param vehicle_id path int true "Vehicle ID"
 // @Success 200 {object} dto.ListOilChangesResponse
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /oil-changes/list/{user_vehicle_id} [get]
+// @Router /user/vehicles/{vehicle_id}/oil-changes [get]
 func (c *OilChangeController) ListOilChanges(ctx *gin.Context) {
-	userVehicleID := ctx.Param("user_vehicle_id")
-	if userVehicleID == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrUserVehicleIDRequired})
-		return
-	}
+	userID := ctx.GetString("user_id")
+	vehicleID := ctx.Param("vehicle_id")
 
-	response, err := c.oilChangeUseCase.ListOilChanges(ctx, userVehicleID)
+	response, err := c.oilChangeUseCase.ListOilChanges(ctx, userID, vehicleID)
 	if err != nil {
 		switch err {
 		case errors.ErrFailedToListOilChanges:
@@ -138,43 +62,29 @@ func (c *OilChangeController) ListOilChanges(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// UpdateOilChange godoc
-// @Summary Update oil change
-// @Description Update the information of an oil change
+// GetLastOilChange godoc
+// @Summary Last oil change
+// @Description Get the last oil change for a user vehicle
 // @Tags Oil Changes
-// @Accept json
 // @Produce json
 // @Security    BearerAuth
-// @Param id path int true "Oil change ID"
-// @Param request body dto.UpdateOilChangeRequest true "Update oil change information"
+// @Param vehicle_id path int true "Vehicle ID"
 // @Success 200 {object} dto.OilChangeResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /oil-changes/{id} [put]
-func (c *OilChangeController) UpdateOilChange(ctx *gin.Context) {
-	id := ctx.Param("id")
+// @Router /user/vehicles/{vehicle_id}/oil-changes/last [get]
+func (c *OilChangeController) GetLastOilChange(ctx *gin.Context) {
+	userID := ctx.GetString("user_id")
+	vehicleID := ctx.Param("vehicle_id")
 
-	var request dto.UpdateOilChangeRequest
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		logger.Error(err, "Failed to bind JSON")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
-		return
-	}
-
-	response, err := c.oilChangeUseCase.UpdateOilChange(ctx, id, request)
+	response, err := c.oilChangeUseCase.GetLastOilChange(ctx, userID, vehicleID)
 	if err != nil {
 		switch err {
-		case errors.ErrInvalidOilChangeUpdateRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidOilChangeUpdateRequest})
-		case errors.ErrInvalidOilChangeID:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidOilChangeID})
 		case errors.ErrFailedToGetOilChange:
 			ctx.JSON(http.StatusNotFound, gin.H{"error": errors.ErrFailedToGetOilChange})
-		case errors.ErrInvalidDate:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidDate})
 		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrFailedToUpdateOilChange})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrFailedToGetOilChange})
 		}
 		return
 	}
@@ -182,59 +92,30 @@ func (c *OilChangeController) UpdateOilChange(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// DeleteOilChange godoc
-// @Summary Delete oil change
-// @Description Delete an oil change record
+// GetOilChange godoc
+// @Summary Get oil change information
+// @Description Get information about a specific oil change
 // @Tags Oil Changes
+// @Accept json
 // @Produce json
 // @Security    BearerAuth
-// @Param id path int true "Oil change ID"
-// @Success 204 "No Content"
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
-// @Router /oil-changes/{id} [delete]
-func (c *OilChangeController) DeleteOilChange(ctx *gin.Context) {
-	id := ctx.Param("id")
-
-	err := c.oilChangeUseCase.DeleteOilChange(ctx, id)
-	if err != nil {
-		switch err {
-		case errors.ErrInvalidOilChangeID:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidOilChangeID})
-		case errors.ErrFailedToDeleteOilChange:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": errors.ErrFailedToDeleteOilChange})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrFailedToDeleteOilChange})
-		}
-		return
-	}
-
-	ctx.Status(http.StatusNoContent)
-}
-
-// GetLastOilChange godoc
-// @Summary Last oil change
-// @Description Get the last oil change for a user vehicle
-// @Tags Oil Changes
-// @Produce json
-// @Security    BearerAuth
-// @Param user_vehicle_id path int true "User vehicle ID"
+// @Param vehicle_id path int true "Vehicle ID"
+// @Param oil_change_id path int true "Oil change ID"
 // @Success 200 {object} dto.OilChangeResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /oil-changes/last/{user_vehicle_id} [get]
-func (c *OilChangeController) GetLastOilChange(ctx *gin.Context) {
-	userVehicleID := ctx.Param("user_vehicle_id")
-	if userVehicleID == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrUserVehicleIDRequired})
-		return
-	}
+// @Router /user/vehicles/{vehicle_id}/oil-changes/{oil_change_id} [get]
+func (c *OilChangeController) GetOilChange(ctx *gin.Context) {
+	userID := ctx.GetString("user_id")
+	vehicleID := ctx.Param("vehicle_id")
+	oilChangeID := ctx.Param("oil_change_id")
 
-	response, err := c.oilChangeUseCase.GetLastOilChange(ctx, userVehicleID)
+	response, err := c.oilChangeUseCase.GetOilChange(ctx, userID, vehicleID, oilChangeID)
 	if err != nil {
 		switch err {
+		case errors.ErrInvalidOilChangeID:
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidOilChangeID})
 		case errors.ErrFailedToGetOilChange:
 			ctx.JSON(http.StatusNotFound, gin.H{"error": errors.ErrFailedToGetOilChange})
 		default:

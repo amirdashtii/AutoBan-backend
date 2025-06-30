@@ -1,4 +1,4 @@
- package controller
+package controller
 
 import (
 	"net/http"
@@ -16,30 +16,21 @@ type ServiceVisitController struct {
 }
 
 func NewServiceVisitController() *ServiceVisitController {
-	return &ServiceVisitController{
-		serviceVisitUseCase: usecase.NewServiceVisitUseCase(),
-	}
+	serviceVisitUseCase := usecase.NewServiceVisitUseCase()
+	return &ServiceVisitController{serviceVisitUseCase: serviceVisitUseCase}
 }
 
 func ServiceVisitRoutes(router *gin.Engine) {
 	c := NewServiceVisitController()
-
-	// Service visit management (requires authentication)
-	serviceVisitGroup := router.Group("/api/v1/service-visits")
-	serviceVisitGroup.Use(middleware.AuthMiddleware())
-	{
-		serviceVisitGroup.POST("", c.CreateServiceVisit)
-		serviceVisitGroup.GET("/:id", c.GetServiceVisit)
-		serviceVisitGroup.PUT("/:id", c.UpdateServiceVisit)
-		serviceVisitGroup.DELETE("/:id", c.DeleteServiceVisit)
-	}
-
-	// User vehicle specific service visit routes
-	userVehicleGroup := router.Group("/api/v1/user-vehicles")
+	userVehicleGroup := router.Group("/api/v1/user/vehicles/:vehicle_id/service-visits")
 	userVehicleGroup.Use(middleware.AuthMiddleware())
 	{
-		userVehicleGroup.GET("/:user_vehicle_id/service-visits", c.ListServiceVisits)
-		userVehicleGroup.GET("/:user_vehicle_id/service-visits/last", c.GetLastServiceVisit)
+		userVehicleGroup.POST("", c.CreateServiceVisit)
+		userVehicleGroup.GET("", c.ListServiceVisits)
+		userVehicleGroup.GET("/last", c.GetLastServiceVisit)
+		userVehicleGroup.GET("/:visit_id", c.GetServiceVisit)
+		userVehicleGroup.PUT("/:visit_id", c.UpdateServiceVisit)
+		userVehicleGroup.DELETE("/:visit_id", c.DeleteServiceVisit)
 	}
 }
 
@@ -50,14 +41,18 @@ func ServiceVisitRoutes(router *gin.Engine) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
+// @Param vehicle_id path string true "Vehicle ID"
 // @Param service_visit body dto.CreateServiceVisitRequest true "Service visit data"
 // @Success 201 {object} dto.ServiceVisitResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /service-visits [post]
+// @Router /user/vehicles/{vehicle_id}/service-visits [post]
 func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
+	vehicleID := ctx.Param("vehicle_id")
+	userID := ctx.GetString("user_id")
+
 	var request dto.CreateServiceVisitRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind JSON")
@@ -65,11 +60,8 @@ func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 		return
 	}
 
-	// Add user_id to context
-	userID := ctx.GetString("user_id")
-	ctx.Set("user_id", userID)
-
-	response, err := c.serviceVisitUseCase.CreateServiceVisit(ctx, request)
+	// اعتبارسنجی مالکیت و وجود
+	response, err := c.serviceVisitUseCase.CreateServiceVisit(ctx, userID, vehicleID, request)
 	if err != nil {
 		switch err {
 		case errors.ErrInvalidServiceVisitCreateRequest:
@@ -87,7 +79,6 @@ func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 		}
 		return
 	}
-
 	ctx.JSON(http.StatusCreated, response)
 }
 
@@ -98,26 +89,21 @@ func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param id path string true "Service visit ID"
+// @Param vehicle_id path string true "Vehicle ID"
+// @Param visit_id path string true "Service visit ID"
 // @Success 200 {object} dto.ServiceVisitResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /service-visits/{id} [get]
+// @Router /user/vehicles/{vehicle_id}/service-visits/{visit_id} [get]
 func (c *ServiceVisitController) GetServiceVisit(ctx *gin.Context) {
-	id := ctx.Param("id")
-	if id == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidServiceVisitID})
-		return
-	}
-
-	// Add user_id to context
+	vehicleID := ctx.Param("vehicle_id")
+	visitID := ctx.Param("visit_id")
 	userID := ctx.GetString("user_id")
-	ctx.Set("user_id", userID)
 
-	response, err := c.serviceVisitUseCase.GetServiceVisit(ctx, id)
+	response, err := c.serviceVisitUseCase.GetServiceVisit(ctx, userID, vehicleID, visitID)
 	if err != nil {
 		switch err {
 		case errors.ErrInvalidServiceVisitID:
@@ -131,7 +117,6 @@ func (c *ServiceVisitController) GetServiceVisit(ctx *gin.Context) {
 		}
 		return
 	}
-
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -142,25 +127,18 @@ func (c *ServiceVisitController) GetServiceVisit(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param user_vehicle_id path string true "User vehicle ID"
+// @Param vehicle_id path string true "Vehicle ID"
 // @Success 200 {object} dto.ListServiceVisitsResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /user-vehicles/{user_vehicle_id}/service-visits [get]
+// @Router /user/vehicles/{vehicle_id}/service-visits [get]
 func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
-	userVehicleID := ctx.Param("user_vehicle_id")
-	if userVehicleID == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrUserVehicleIDRequired})
-		return
-	}
-
-	// Add user_id to context
+	vehicleID := ctx.Param("vehicle_id")
 	userID := ctx.GetString("user_id")
-	ctx.Set("user_id", userID)
 
-	response, err := c.serviceVisitUseCase.ListServiceVisits(ctx, userVehicleID)
+	response, err := c.serviceVisitUseCase.ListServiceVisits(ctx, userID, vehicleID)
 	if err != nil {
 		switch err {
 		case errors.ErrUserVehicleNotOwned:
@@ -172,7 +150,6 @@ func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
 		}
 		return
 	}
-
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -183,7 +160,8 @@ func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param id path string true "Service visit ID"
+// @Param vehicle_id path string true "Vehicle ID"
+// @Param visit_id path string true "Service visit ID"
 // @Param service_visit body dto.UpdateServiceVisitRequest true "Updated service visit data"
 // @Success 200 {object} dto.ServiceVisitResponse
 // @Failure 400 {object} map[string]string
@@ -191,13 +169,11 @@ func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
 // @Failure 403 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /service-visits/{id} [put]
+// @Router /user/vehicles/{vehicle_id}/service-visits/{visit_id} [put]
 func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
-	id := ctx.Param("id")
-	if id == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidServiceVisitID})
-		return
-	}
+	vehicleID := ctx.Param("vehicle_id")
+	visitID := ctx.Param("visit_id")
+	userID := ctx.GetString("user_id")
 
 	var request dto.UpdateServiceVisitRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
@@ -206,11 +182,7 @@ func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 		return
 	}
 
-	// Add user_id to context
-	userID := ctx.GetString("user_id")
-	ctx.Set("user_id", userID)
-
-	response, err := c.serviceVisitUseCase.UpdateServiceVisit(ctx, id, request)
+	response, err := c.serviceVisitUseCase.UpdateServiceVisit(ctx, userID, vehicleID, visitID, request)
 	if err != nil {
 		switch err {
 		case errors.ErrInvalidServiceVisitID:
@@ -232,7 +204,6 @@ func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 		}
 		return
 	}
-
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -243,26 +214,21 @@ func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param id path string true "Service visit ID"
+// @Param vehicle_id path string true "Vehicle ID"
+// @Param visit_id path string true "Service visit ID"
 // @Success 204 "No Content"
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /service-visits/{id} [delete]
+// @Router /user/vehicles/{vehicle_id}/service-visits/{visit_id} [delete]
 func (c *ServiceVisitController) DeleteServiceVisit(ctx *gin.Context) {
-	id := ctx.Param("id")
-	if id == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidServiceVisitID})
-		return
-	}
-
-	// Add user_id to context
+	vehicleID := ctx.Param("vehicle_id")
+	visitID := ctx.Param("visit_id")
 	userID := ctx.GetString("user_id")
-	ctx.Set("user_id", userID)
 
-	err := c.serviceVisitUseCase.DeleteServiceVisit(ctx, id)
+	err := c.serviceVisitUseCase.DeleteServiceVisit(ctx, userID, vehicleID, visitID)
 	if err != nil {
 		switch err {
 		case errors.ErrInvalidServiceVisitID:
@@ -276,7 +242,6 @@ func (c *ServiceVisitController) DeleteServiceVisit(ctx *gin.Context) {
 		}
 		return
 	}
-
 	ctx.Status(http.StatusNoContent)
 }
 
@@ -287,26 +252,19 @@ func (c *ServiceVisitController) DeleteServiceVisit(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param user_vehicle_id path string true "User vehicle ID"
+// @Param vehicle_id path string true "Vehicle ID"
 // @Success 200 {object} dto.ServiceVisitResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /user-vehicles/{user_vehicle_id}/service-visits/last [get]
+// @Router /user/vehicles/{vehicle_id}/service-visits/last [get]
 func (c *ServiceVisitController) GetLastServiceVisit(ctx *gin.Context) {
-	userVehicleID := ctx.Param("user_vehicle_id")
-	if userVehicleID == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrUserVehicleIDRequired})
-		return
-	}
-
-	// Add user_id to context
+	vehicleID := ctx.Param("vehicle_id")
 	userID := ctx.GetString("user_id")
-	ctx.Set("user_id", userID)
 
-	response, err := c.serviceVisitUseCase.GetLastServiceVisit(ctx, userVehicleID)
+	response, err := c.serviceVisitUseCase.GetLastServiceVisit(ctx, userID, vehicleID)
 	if err != nil {
 		switch err {
 		case errors.ErrUserVehicleNotOwned:
@@ -318,6 +276,5 @@ func (c *ServiceVisitController) GetLastServiceVisit(ctx *gin.Context) {
 		}
 		return
 	}
-
 	ctx.JSON(http.StatusOK, response)
 }

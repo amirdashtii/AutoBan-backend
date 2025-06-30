@@ -1,7 +1,5 @@
 package dto
 
-import "time"
-
 // CreateOilChangeRequest - Request to create an oil change
 // @Description Request to create an oil change
 type CreateOilChangeRequest struct {
@@ -76,13 +74,13 @@ type OilChangeResponse struct {
 	// Change mileage
 	ChangeMileage uint `json:"change_mileage" example:"10000"`
 	// Change date
-	ChangeDate time.Time `json:"change_date" example:"2021-01-01"`
+	ChangeDate string `json:"change_date" example:"2021-01-01"`
 	// Oil capacity
 	OilCapacity float64 `json:"oil_capacity" example:"5"`
 	// Next change mileage
 	NextChangeMileage uint `json:"next_change_mileage" example:"20000"`
 	// Next change date
-	NextChangeDate time.Time `json:"next_change_date" example:"2021-01-01"`
+	NextChangeDate string `json:"next_change_date" example:"2021-01-01"`
 	// Service center
 	ServiceCenter string `json:"service_center" example:"اتوبان سرویس"`
 	// Notes

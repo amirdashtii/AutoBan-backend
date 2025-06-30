@@ -52,9 +52,9 @@ func VehicleRoutes(router *gin.Engine) {
 	{
 		userVehicles.POST("", c.AddUserVehicle)
 		userVehicles.GET("", c.ListUserVehicles)
-		userVehicles.GET("/:id", c.GetUserVehicle)
-		userVehicles.PUT("/:id", c.UpdateUserVehicle)
-		userVehicles.DELETE("/:id", c.DeleteUserVehicle)
+		userVehicles.GET("/:vehicle_id", c.GetUserVehicle)
+		userVehicles.PUT("/:vehicle_id", c.UpdateUserVehicle)
+		userVehicles.DELETE("/:vehicle_id", c.DeleteUserVehicle)
 	}
 
 	// Admin routes for managing vehicle catalog
@@ -328,12 +328,12 @@ func (c *VehicleController) ListUserVehicles(ctx *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
-// @Param       id path string true "User Vehicle ID"
+// @Param       vehicle_id path string true "Vehicle ID"
 // @Success     200 {object} dto.UserVehicleResponse
-// @Router      /user/vehicles/{id} [get]
+// @Router      /user/vehicles/{vehicle_id} [get]
 func (c *VehicleController) GetUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
-	vehicleID := ctx.Param("id")
+	vehicleID := ctx.Param("vehicle_id")
 	userVehicle, err := c.vehicleUseCase.GetUserVehicle(ctx, userID, vehicleID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
@@ -348,13 +348,13 @@ func (c *VehicleController) GetUserVehicle(ctx *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
-// @Param       id path string true "User Vehicle ID"
+// @Param       vehicle_id path string true "Vehicle ID"
 // @Param       userVehicle body dto.UpdateUserVehicleRequest true "User Vehicle"
 // @Success     200 {object} dto.UpdateUserVehicleRequest
-// @Router      /user/vehicles/{id} [put]
+// @Router      /user/vehicles/{vehicle_id} [put]
 func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
-	vehicleID := ctx.Param("id")
+	vehicleID := ctx.Param("vehicle_id")
 	var userVehicle dto.UpdateUserVehicleRequest
 	if err := ctx.ShouldBindJSON(&userVehicle); err != nil {
 		logger.Error(err, "Failed to bind user vehicle request")
@@ -375,12 +375,12 @@ func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Security    BearerAuth
-// @Param       id path string true "User Vehicle ID"
+// @Param       vehicle_id path string true "Vehicle ID"
 // @Success     204
-// @Router      /user/vehicles/{id} [delete]
+// @Router      /user/vehicles/{vehicle_id} [delete]
 func (c *VehicleController) DeleteUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
-	vehicleID := ctx.Param("id")
+	vehicleID := ctx.Param("vehicle_id")
 
 	err := c.vehicleUseCase.DeleteUserVehicle(ctx, userID, vehicleID)
 	if err != nil {

@@ -3,24 +3,19 @@ package usecase
 import (
 	"context"
 	"strconv"
-	"time"
 
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/repository"
-	"github.com/amirdashtii/AutoBan/internal/validation"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
 	"github.com/google/uuid"
 )
 
 type OilChangeUseCase interface {
-	CreateOilChange(ctx context.Context, request dto.CreateOilChangeRequest) (*dto.OilChangeResponse, error)
-	GetOilChange(ctx context.Context, id string) (*dto.OilChangeResponse, error)
-	ListOilChanges(ctx context.Context, userVehicleID string) (*dto.ListOilChangesResponse, error)
-	UpdateOilChange(ctx context.Context, id string, request dto.UpdateOilChangeRequest) (*dto.OilChangeResponse, error)
-	DeleteOilChange(ctx context.Context, id string) error
-	GetLastOilChange(ctx context.Context, userVehicleID string) (*dto.OilChangeResponse, error)
+	GetOilChange(ctx context.Context, userID string, vehicleID string, oilChangeID string) (*dto.OilChangeResponse, error)
+	ListOilChanges(ctx context.Context, userID string, vehicleID string) (*dto.ListOilChangesResponse, error)
+	GetLastOilChange(ctx context.Context, userID string, vehicleID string) (*dto.OilChangeResponse, error)
 }
 
 type oilChangeUseCase struct {
@@ -34,82 +29,7 @@ func NewOilChangeUseCase() OilChangeUseCase {
 	return &oilChangeUseCase{oilChangeRepository: oilChangeRepository, vehicleRepository: vehicleRepository}
 }
 
-func (uc *oilChangeUseCase) CreateOilChange(ctx context.Context, request dto.CreateOilChangeRequest) (*dto.OilChangeResponse, error) {
-	userID := ctx.Value("user_id").(string)
-	uuidUserID, err := uuid.Parse(userID)
-	if err != nil {
-		logger.Error(err, "Failed to parse user id")
-		return nil, errors.ErrInvalidUserID
-	}
-	userVehicle := entity.UserVehicle{}
-	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, request.UserVehicleID, &userVehicle)
-	if err != nil {
-		logger.Error(err, "User vehicle not owned by user")
-		return nil, errors.ErrUserVehicleNotOwned
-	}
-
-	err = validation.ValidateOilChangeCreateRequest(request)
-	if err != nil {
-		logger.Error(err, "Failed to validate oil change create request")
-		return nil, errors.ErrInvalidOilChangeCreateRequest
-	}
-
-	changeDate, err := time.Parse("2006-01-02", request.ChangeDate)
-	if err != nil {
-		logger.Error(err, "Failed to parse change date")
-		return nil, errors.ErrInvalidDate
-	}
-
-	var nextChangeDate time.Time
-	if request.NextChangeDate != "" {
-		nextChangeDate, err = time.Parse("2006-01-02", request.NextChangeDate)
-		if err != nil {
-			logger.Error(err, "Failed to parse next change date")
-			return nil, errors.ErrInvalidDate
-		}
-	}
-
-	oilChange := entity.OilChange{
-		UserID:            uuidUserID,
-		UserVehicleID:     request.UserVehicleID,
-		OilName:           request.OilName,
-		OilBrand:          request.OilBrand,
-		OilType:           request.OilType,
-		OilViscosity:      request.OilViscosity,
-		ChangeMileage:     request.ChangeMileage,
-		ChangeDate:        changeDate,
-		OilCapacity:       request.OilCapacity,
-		NextChangeMileage: request.NextChangeMileage,
-		NextChangeDate:    nextChangeDate,
-		ServiceCenter:     request.ServiceCenter,
-		Notes:             request.Notes,
-	}
-
-	err = uc.oilChangeRepository.CreateOilChange(ctx, &oilChange)
-	if err != nil {
-		logger.Error(err, "Failed to create oil change")
-		return nil, errors.ErrFailedToCreateOilChange
-	}
-
-	return &dto.OilChangeResponse{
-		ID:                oilChange.ID,
-		UserVehicleID:     oilChange.UserVehicleID,
-		OilName:           oilChange.OilName,
-		OilBrand:          oilChange.OilBrand,
-		OilType:           oilChange.OilType,
-		OilViscosity:      oilChange.OilViscosity,
-		ChangeMileage:     oilChange.ChangeMileage,
-		ChangeDate:        oilChange.ChangeDate,
-		OilCapacity:       oilChange.OilCapacity,
-		NextChangeMileage: oilChange.NextChangeMileage,
-		NextChangeDate:    oilChange.NextChangeDate,
-		ServiceCenter:     oilChange.ServiceCenter,
-		Notes:             oilChange.Notes,
-	}, nil
-}
-
-func (uc *oilChangeUseCase) GetOilChange(ctx context.Context, vehicleID string) (*dto.OilChangeResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *oilChangeUseCase) GetOilChange(ctx context.Context, userID string, vehicleID string, oilChangeID string) (*dto.OilChangeResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
@@ -122,6 +42,12 @@ func (uc *oilChangeUseCase) GetOilChange(ctx context.Context, vehicleID string) 
 		return nil, errors.ErrInvalidVehicleID
 	}
 
+	uintOilChangeID, err := strconv.ParseUint(oilChangeID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse oil change id")
+		return nil, errors.ErrInvalidOilChangeID
+	}
+
 	userVehicle := entity.UserVehicle{}
 	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, uintVehicleID, &userVehicle)
 	if err != nil {
@@ -129,14 +55,8 @@ func (uc *oilChangeUseCase) GetOilChange(ctx context.Context, vehicleID string) 
 		return nil, errors.ErrUserVehicleNotOwned
 	}
 
-	uintID, err := strconv.ParseUint(vehicleID, 10, 64)
-	if err != nil {
-		logger.Error(err, "Failed to parse oil change id")
-		return nil, errors.ErrInvalidOilChangeID
-	}
-
 	oilChange := entity.OilChange{}
-	oilChange.ID = uintID
+	oilChange.ID = uintOilChangeID
 
 	err = uc.oilChangeRepository.GetOilChange(ctx, oilChange.ID, &oilChange)
 	if err != nil {
@@ -144,31 +64,16 @@ func (uc *oilChangeUseCase) GetOilChange(ctx context.Context, vehicleID string) 
 		return nil, errors.ErrFailedToGetOilChange
 	}
 
-	return &dto.OilChangeResponse{
-		ID:                oilChange.ID,
-		UserVehicleID:     oilChange.UserVehicleID,
-		OilName:           oilChange.OilName,
-		OilBrand:          oilChange.OilBrand,
-		OilType:           oilChange.OilType,
-		OilViscosity:      oilChange.OilViscosity,
-		ChangeMileage:     oilChange.ChangeMileage,
-		ChangeDate:        oilChange.ChangeDate,
-		OilCapacity:       oilChange.OilCapacity,
-		NextChangeMileage: oilChange.NextChangeMileage,
-		NextChangeDate:    oilChange.NextChangeDate,
-		ServiceCenter:     oilChange.ServiceCenter,
-		Notes:             oilChange.Notes,
-	}, nil
+	return uc.mapOilChangeToResponse(&oilChange), nil
 }
 
-func (uc *oilChangeUseCase) ListOilChanges(ctx context.Context, userVehicleID string) (*dto.ListOilChangesResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *oilChangeUseCase) ListOilChanges(ctx context.Context, userID string, vehicleID string) (*dto.ListOilChangesResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
-	uintUserVehicleID, err := strconv.ParseUint(userVehicleID, 10, 64)
+	uintUserVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse user vehicle id")
 		return nil, errors.ErrInvalidUserVehicleID
@@ -190,21 +95,7 @@ func (uc *oilChangeUseCase) ListOilChanges(ctx context.Context, userVehicleID st
 
 	oilChangesResponse := []dto.OilChangeResponse{}
 	for _, oilChange := range oilChanges {
-		oilChangesResponse = append(oilChangesResponse, dto.OilChangeResponse{
-			ID:                oilChange.ID,
-			UserVehicleID:     oilChange.UserVehicleID,
-			OilName:           oilChange.OilName,
-			OilBrand:          oilChange.OilBrand,
-			OilType:           oilChange.OilType,
-			OilViscosity:      oilChange.OilViscosity,
-			ChangeMileage:     oilChange.ChangeMileage,
-			ChangeDate:        oilChange.ChangeDate,
-			OilCapacity:       oilChange.OilCapacity,
-			NextChangeMileage: oilChange.NextChangeMileage,
-			NextChangeDate:    oilChange.NextChangeDate,
-			ServiceCenter:     oilChange.ServiceCenter,
-			Notes:             oilChange.Notes,
-		})
+		oilChangesResponse = append(oilChangesResponse, *uc.mapOilChangeToResponse(&oilChange))
 	}
 
 	return &dto.ListOilChangesResponse{
@@ -212,147 +103,13 @@ func (uc *oilChangeUseCase) ListOilChanges(ctx context.Context, userVehicleID st
 	}, nil
 }
 
-func (uc *oilChangeUseCase) UpdateOilChange(ctx context.Context, oilChangeID string, request dto.UpdateOilChangeRequest) (*dto.OilChangeResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *oilChangeUseCase) GetLastOilChange(ctx context.Context, userID string, vehicleID string) (*dto.OilChangeResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
-	uintOilChangeID, err := strconv.ParseUint(oilChangeID, 10, 64)
-	if err != nil {
-		logger.Error(err, "Failed to parse oil change id")
-		return nil, errors.ErrInvalidOilChangeID
-	}
-
-	oilChange := entity.OilChange{}
-	err = uc.oilChangeRepository.GetOilChange(ctx, uintOilChangeID, &oilChange)
-	if err != nil {
-		logger.Error(err, "Failed to get oil change")
-		return nil, errors.ErrFailedToGetOilChange
-	}
-
-	if oilChange.UserID != uuidUserID {
-		logger.Error(err, "Oil change not owned by user")
-		return nil, errors.ErrOilChangeNotOwned
-	}
-
-	err = validation.ValidateOilChangeUpdateRequest(request)
-	if err != nil {
-		logger.Error(err, "Failed to validate oil change update request")
-		return nil, errors.ErrInvalidOilChangeUpdateRequest
-	}
-
-	// Update fields if provided
-	if request.OilName != nil {
-		oilChange.OilName = *request.OilName
-	}
-	if request.OilBrand != nil {
-		oilChange.OilBrand = *request.OilBrand
-	}
-	if request.OilType != nil {
-		oilChange.OilType = *request.OilType
-	}
-	if request.OilViscosity != nil {
-		oilChange.OilViscosity = *request.OilViscosity
-	}
-	if request.ChangeMileage != nil {
-		oilChange.ChangeMileage = *request.ChangeMileage
-	}
-	if request.ChangeDate != nil {
-		changeDate, err := time.Parse("2006-01-02", *request.ChangeDate)
-		if err != nil {
-			logger.Error(err, "Failed to parse change date")
-			return nil, errors.ErrInvalidDate
-		}
-		oilChange.ChangeDate = changeDate
-	}
-	if request.OilCapacity != nil {
-		oilChange.OilCapacity = *request.OilCapacity
-	}
-	if request.NextChangeMileage != nil {
-		oilChange.NextChangeMileage = *request.NextChangeMileage
-	}
-	if request.NextChangeDate != nil {
-		nextChangeDate, err := time.Parse("2006-01-02", *request.NextChangeDate)
-		if err != nil {
-			logger.Error(err, "Failed to parse next change date")
-			return nil, errors.ErrInvalidDate
-		}
-		oilChange.NextChangeDate = nextChangeDate
-	}
-	if request.ServiceCenter != nil {
-		oilChange.ServiceCenter = *request.ServiceCenter
-	}
-	if request.Notes != nil {
-		oilChange.Notes = *request.Notes
-	}
-
-	err = uc.oilChangeRepository.UpdateOilChange(ctx, &oilChange)
-	if err != nil {
-		logger.Error(err, "Failed to update oil change")
-		return nil, errors.ErrFailedToUpdateOilChange
-	}
-
-	return &dto.OilChangeResponse{
-		ID:                oilChange.ID,
-		UserVehicleID:     oilChange.UserVehicleID,
-		OilName:           oilChange.OilName,
-		OilBrand:          oilChange.OilBrand,
-		OilType:           oilChange.OilType,
-		OilViscosity:      oilChange.OilViscosity,
-		ChangeMileage:     oilChange.ChangeMileage,
-		ChangeDate:        oilChange.ChangeDate,
-		OilCapacity:       oilChange.OilCapacity,
-		NextChangeMileage: oilChange.NextChangeMileage,
-		NextChangeDate:    oilChange.NextChangeDate,
-		ServiceCenter:     oilChange.ServiceCenter,
-		Notes:             oilChange.Notes,
-	}, nil
-}
-
-func (uc *oilChangeUseCase) DeleteOilChange(ctx context.Context, oilChangeID string) error {
-	userID := ctx.Value("user_id").(string)
-	uuidUserID, err := uuid.Parse(userID)
-	if err != nil {
-		logger.Error(err, "Failed to parse user id")
-		return errors.ErrInvalidUserID
-	}
-	uintOilChangeID, err := strconv.ParseUint(oilChangeID, 10, 64)
-	if err != nil {
-		logger.Error(err, "Failed to parse oil change id")
-		return errors.ErrInvalidOilChangeID
-	}
-
-	oilChange := entity.OilChange{}
-	err = uc.oilChangeRepository.GetOilChange(ctx, uintOilChangeID, &oilChange)
-	if err != nil {
-		logger.Error(err, "User vehicle not owned by user")
-		return errors.ErrUserVehicleNotOwned
-	}
-
-	if oilChange.UserID != uuidUserID {
-		logger.Error(err, "Oil change not owned by user")
-		return errors.ErrOilChangeNotOwned
-	}
-
-	err = uc.oilChangeRepository.DeleteOilChange(ctx, &oilChange)
-	if err != nil {
-		logger.Error(err, "Failed to delete oil change")
-		return errors.ErrFailedToDeleteOilChange
-	}
-
-	return nil
-}
-
-func (uc *oilChangeUseCase) GetLastOilChange(ctx context.Context, userVehicleID string) (*dto.OilChangeResponse, error) {
-	userID := ctx.Value("user_id").(string)
-	uuidUserID, err := uuid.Parse(userID)
-	if err != nil {
-		logger.Error(err, "Failed to parse user id")
-		return nil, errors.ErrInvalidUserID
-	}
-	uintUserVehicleID, err := strconv.ParseUint(userVehicleID, 10, 64)
+	uintUserVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse user vehicle id")
 		return nil, errors.ErrInvalidUserVehicleID
@@ -370,6 +127,10 @@ func (uc *oilChangeUseCase) GetLastOilChange(ctx context.Context, userVehicleID 
 		return nil, errors.ErrFailedToGetOilChange
 	}
 
+	return uc.mapOilChangeToResponse(&oilChange), nil
+}
+
+func (uc *oilChangeUseCase) mapOilChangeToResponse(oilChange *entity.OilChange) *dto.OilChangeResponse {
 	return &dto.OilChangeResponse{
 		ID:                oilChange.ID,
 		UserVehicleID:     oilChange.UserVehicleID,
@@ -378,11 +139,11 @@ func (uc *oilChangeUseCase) GetLastOilChange(ctx context.Context, userVehicleID 
 		OilType:           oilChange.OilType,
 		OilViscosity:      oilChange.OilViscosity,
 		ChangeMileage:     oilChange.ChangeMileage,
-		ChangeDate:        oilChange.ChangeDate,
+		ChangeDate:        oilChange.ChangeDate.Format("2006-01-02"),
 		OilCapacity:       oilChange.OilCapacity,
 		NextChangeMileage: oilChange.NextChangeMileage,
-		NextChangeDate:    oilChange.NextChangeDate,
+		NextChangeDate:    oilChange.NextChangeDate.Format("2006-01-02"),
 		ServiceCenter:     oilChange.ServiceCenter,
 		Notes:             oilChange.Notes,
-	}, nil
+	}
 }

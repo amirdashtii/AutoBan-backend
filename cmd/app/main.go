@@ -38,6 +38,15 @@ import (
 // @tag.name        User - Vehicles
 // @tag.description User vehicle management
 
+// @tag.name        Service Visits
+// @tag.description Service visit management operations
+
+// @tag.name        Oil Changes
+// @tag.description Oil change management operations
+
+// @tag.name        Oil Filters
+// @tag.description Oil filter management operations
+
 // @tag.name        Types
 // @tag.description Vehicle types management
 
@@ -53,6 +62,9 @@ import (
 // @tag.name        Admin - Users
 // @tag.description Admin user management operations
 
+// @tag.name        Admin - UserVehicles
+// @tag.description Admin user vehicle management operations
+
 // @tag.name        Admin - Types
 // @tag.description Admin vehicle type management operations
 
@@ -65,17 +77,7 @@ import (
 // @tag.name        Admin - Generations
 // @tag.description Admin vehicle generation management operations
 
-// @tag.name        Admin - UserVehicles
-// @tag.description Admin user vehicle management operations
 
-// @tag.name        Service Visits
-// @tag.description Service visit management operations
-
-// @tag.name        Oil Changes
-// @tag.description Oil change management operations
-
-// @tag.name        Oil Filters
-// @tag.description Oil filter management operations
 
 func main() {
 	logger.InitLogger()

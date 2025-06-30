@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -16,12 +15,12 @@ import (
 )
 
 type ServiceVisitUseCase interface {
-	CreateServiceVisit(ctx context.Context, request dto.CreateServiceVisitRequest) (*dto.ServiceVisitResponse, error)
-	GetServiceVisit(ctx context.Context, id string) (*dto.ServiceVisitResponse, error)
-	ListServiceVisits(ctx context.Context, userVehicleID string) (*dto.ListServiceVisitsResponse, error)
-	UpdateServiceVisit(ctx context.Context, id string, request dto.UpdateServiceVisitRequest) (*dto.ServiceVisitResponse, error)
-	DeleteServiceVisit(ctx context.Context, id string) error
-	GetLastServiceVisit(ctx context.Context, userVehicleID string) (*dto.ServiceVisitResponse, error)
+	CreateServiceVisit(ctx context.Context, userID, vehicleID string, request dto.CreateServiceVisitRequest) (*dto.ServiceVisitResponse, error)
+	GetServiceVisit(ctx context.Context, userID, vehicleID, visitID string) (*dto.ServiceVisitResponse, error)
+	ListServiceVisits(ctx context.Context, userID, vehicleID string) (*dto.ListServiceVisitsResponse, error)
+	UpdateServiceVisit(ctx context.Context, userID, vehicleID, visitID string, request dto.UpdateServiceVisitRequest) (*dto.ServiceVisitResponse, error)
+	DeleteServiceVisit(ctx context.Context, userID, vehicleID, visitID string) error
+	GetLastServiceVisit(ctx context.Context, userID, vehicleID string) (*dto.ServiceVisitResponse, error)
 }
 
 type serviceVisitUseCase struct {
@@ -44,16 +43,19 @@ func NewServiceVisitUseCase() ServiceVisitUseCase {
 	}
 }
 
-func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, request dto.CreateServiceVisitRequest) (*dto.ServiceVisitResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, userID, vehicleID string, request dto.CreateServiceVisitRequest) (*dto.ServiceVisitResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
-	fmt.Println("uuidUserID", uuidUserID)
+	uintVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse vehicle id")
+		return nil, errors.ErrInvalidUserVehicleID
+	}
 	userVehicle := entity.UserVehicle{}
-	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, request.UserVehicleID, &userVehicle)
+	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, uintVehicleID, &userVehicle)
 	if err != nil {
 		logger.Error(err, "User vehicle not owned by user")
 		return nil, errors.ErrUserVehicleNotOwned
@@ -73,19 +75,19 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, request d
 
 	serviceVisit := entity.ServiceVisit{
 		UserID:         uuidUserID,
-		UserVehicleID:  request.UserVehicleID,
+		UserVehicleID:  uintVehicleID,
 		ServiceMileage: request.ServiceMileage,
 		ServiceDate:    serviceDate,
 		ServiceCenter:  request.ServiceCenter,
 		Notes:          request.Notes,
 	}
 	serviceVisit.ID = uuid.New()
-	
+
 	// Create oil change if provided
 	if request.OilChange != nil {
 		oilChange := entity.OilChange{
 			UserID:            uuidUserID,
-			UserVehicleID:     request.UserVehicleID,
+			UserVehicleID:     uintVehicleID,
 			OilName:           request.OilChange.OilName,
 			OilBrand:          request.OilChange.OilBrand,
 			OilType:           request.OilChange.OilType,
@@ -120,7 +122,7 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, request d
 	if request.OilFilter != nil {
 		oilFilter := entity.OilFilter{
 			UserID:            uuidUserID,
-			UserVehicleID:     request.UserVehicleID,
+			UserVehicleID:     uintVehicleID,
 			FilterName:        request.OilFilter.FilterName,
 			FilterBrand:       request.OilFilter.FilterBrand,
 			FilterType:        request.OilFilter.FilterType,
@@ -159,14 +161,13 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, request d
 	return uc.mapServiceVisitToResponse(&serviceVisit), nil
 }
 
-func (uc *serviceVisitUseCase) GetServiceVisit(ctx context.Context, serviceVisitID string) (*dto.ServiceVisitResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *serviceVisitUseCase) GetServiceVisit(ctx context.Context, userID, vehicleID, visitID string) (*dto.ServiceVisitResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
-	uuidServiceVisitID, err := uuid.Parse(serviceVisitID)
+	uuidServiceVisitID, err := uuid.Parse(visitID)
 	if err != nil {
 		logger.Error(err, "Failed to parse service visit id")
 		return nil, errors.ErrInvalidServiceVisitID
@@ -188,15 +189,14 @@ func (uc *serviceVisitUseCase) GetServiceVisit(ctx context.Context, serviceVisit
 	return uc.mapServiceVisitToResponse(&serviceVisit), nil
 }
 
-func (uc *serviceVisitUseCase) ListServiceVisits(ctx context.Context, userVehicleID string) (*dto.ListServiceVisitsResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *serviceVisitUseCase) ListServiceVisits(ctx context.Context, userID, vehicleID string) (*dto.ListServiceVisitsResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
 
-	uintUserVehicleID, err := strconv.ParseUint(userVehicleID, 10, 64)
+	uintUserVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse user vehicle id")
 		return nil, errors.ErrInvalidUserVehicleID
@@ -210,7 +210,7 @@ func (uc *serviceVisitUseCase) ListServiceVisits(ctx context.Context, userVehicl
 	}
 
 	serviceVisits := []entity.ServiceVisit{}
-	err = uc.serviceVisitRepository.ListServiceVisits(ctx, userVehicleID, &serviceVisits)
+	err = uc.serviceVisitRepository.ListServiceVisits(ctx, vehicleID, &serviceVisits)
 	if err != nil {
 		logger.Error(err, "Failed to list service visits")
 		return nil, errors.ErrFailedToListServiceVisits
@@ -226,15 +226,14 @@ func (uc *serviceVisitUseCase) ListServiceVisits(ctx context.Context, userVehicl
 	}, nil
 }
 
-func (uc *serviceVisitUseCase) UpdateServiceVisit(ctx context.Context, serviceVisitID string, request dto.UpdateServiceVisitRequest) (*dto.ServiceVisitResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *serviceVisitUseCase) UpdateServiceVisit(ctx context.Context, userID, vehicleID, visitID string, request dto.UpdateServiceVisitRequest) (*dto.ServiceVisitResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
 
-	uuidServiceVisitID, err := uuid.Parse(serviceVisitID)
+	uuidServiceVisitID, err := uuid.Parse(visitID)
 	if err != nil {
 		logger.Error(err, "Failed to parse service visit id")
 		return nil, errors.ErrInvalidServiceVisitID
@@ -370,14 +369,13 @@ func (uc *serviceVisitUseCase) UpdateServiceVisit(ctx context.Context, serviceVi
 	return uc.mapServiceVisitToResponse(&serviceVisit), nil
 }
 
-func (uc *serviceVisitUseCase) DeleteServiceVisit(ctx context.Context, serviceVisitID string) error {
-	userID := ctx.Value("user_id").(string)
+func (uc *serviceVisitUseCase) DeleteServiceVisit(ctx context.Context, userID, vehicleID, visitID string) error {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return errors.ErrInvalidUserID
 	}
-	uuidServiceVisitID, err := uuid.Parse(serviceVisitID)
+	uuidServiceVisitID, err := uuid.Parse(visitID)
 	if err != nil {
 		logger.Error(err, "Failed to parse service visit id")
 		return errors.ErrInvalidServiceVisitID
@@ -405,14 +403,13 @@ func (uc *serviceVisitUseCase) DeleteServiceVisit(ctx context.Context, serviceVi
 	return nil
 }
 
-func (uc *serviceVisitUseCase) GetLastServiceVisit(ctx context.Context, userVehicleID string) (*dto.ServiceVisitResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *serviceVisitUseCase) GetLastServiceVisit(ctx context.Context, userID, vehicleID string) (*dto.ServiceVisitResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
 		return nil, errors.ErrInvalidUserID
 	}
-	uintUserVehicleID, err := strconv.ParseUint(userVehicleID, 10, 64)
+	uintUserVehicleID, err := strconv.ParseUint(vehicleID, 10, 64)
 	if err != nil {
 		logger.Error(err, "Failed to parse user vehicle id")
 		return nil, errors.ErrInvalidUserVehicleID
@@ -443,7 +440,7 @@ func (uc *serviceVisitUseCase) mapServiceVisitToResponse(serviceVisit *entity.Se
 		ID:             serviceVisit.ID,
 		UserVehicleID:  serviceVisit.UserVehicleID,
 		ServiceMileage: serviceVisit.ServiceMileage,
-		ServiceDate:    serviceVisit.ServiceDate,
+		ServiceDate:    serviceVisit.ServiceDate.Format("2006-01-02"),
 		ServiceCenter:  serviceVisit.ServiceCenter,
 		Notes:          serviceVisit.Notes,
 	}
@@ -458,7 +455,7 @@ func (uc *serviceVisitUseCase) mapServiceVisitToResponse(serviceVisit *entity.Se
 			OilViscosity:      serviceVisit.OilChange.OilViscosity,
 			OilCapacity:       serviceVisit.OilChange.OilCapacity,
 			NextChangeMileage: serviceVisit.OilChange.NextChangeMileage,
-			NextChangeDate:    serviceVisit.OilChange.NextChangeDate,
+			NextChangeDate:    serviceVisit.OilChange.NextChangeDate.Format("2006-01-02"),
 			Notes:             serviceVisit.OilChange.Notes,
 		}
 	}
@@ -472,7 +469,7 @@ func (uc *serviceVisitUseCase) mapServiceVisitToResponse(serviceVisit *entity.Se
 			FilterType:        serviceVisit.OilFilter.FilterType,
 			FilterPartNumber:  serviceVisit.OilFilter.FilterPartNumber,
 			NextChangeMileage: serviceVisit.OilFilter.NextChangeMileage,
-			NextChangeDate:    serviceVisit.OilFilter.NextChangeDate,
+			NextChangeDate:    serviceVisit.OilFilter.NextChangeDate.Format("2006-01-02"),
 			Notes:             serviceVisit.OilFilter.Notes,
 		}
 	}

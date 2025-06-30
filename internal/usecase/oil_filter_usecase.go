@@ -3,24 +3,19 @@ package usecase
 import (
 	"context"
 	"strconv"
-	"time"
 
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/repository"
-	"github.com/amirdashtii/AutoBan/internal/validation"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
 	"github.com/google/uuid"
 )
 
 type OilFilterUseCase interface {
-	CreateOilFilter(ctx context.Context, request dto.CreateOilFilterRequest) (*dto.OilFilterResponse, error)
-	GetOilFilter(ctx context.Context, id string) (*dto.OilFilterResponse, error)
-	ListOilFilters(ctx context.Context, userVehicleID string) (*dto.ListOilFiltersResponse, error)
-	UpdateOilFilter(ctx context.Context, id string, request dto.UpdateOilFilterRequest) (*dto.OilFilterResponse, error)
-	DeleteOilFilter(ctx context.Context, id string) error
-	GetLastOilFilter(ctx context.Context, userVehicleID string) (*dto.OilFilterResponse, error)
+	ListOilFilters(ctx context.Context, userID, userVehicleID string) (*dto.ListOilFiltersResponse, error)
+	GetLastOilFilter(ctx context.Context, userID, userVehicleID string) (*dto.OilFilterResponse, error)
+	GetOilFilter(ctx context.Context, userID, userVehicleID, oilFilterID string) (*dto.OilFilterResponse, error)
 }
 
 type oilFilterUseCase struct {
@@ -34,122 +29,7 @@ func NewOilFilterUseCase() OilFilterUseCase {
 	return &oilFilterUseCase{oilFilterRepository: oilFilterRepository, vehicleRepository: vehicleRepository}
 }
 
-func (uc *oilFilterUseCase) CreateOilFilter(ctx context.Context, request dto.CreateOilFilterRequest) (*dto.OilFilterResponse, error) {
-	userID := ctx.Value("user_id").(string)
-	uuidUserID, err := uuid.Parse(userID)
-	if err != nil {
-		logger.Error(err, "Failed to parse user id")
-		return nil, errors.ErrInvalidUserID
-	}
-
-	userVehicle := entity.UserVehicle{}
-	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, request.UserVehicleID, &userVehicle)
-	if err != nil {
-		logger.Error(err, "User vehicle not owned by user")
-		return nil, errors.ErrUserVehicleNotOwned
-	}
-
-	err = validation.ValidateOilFilterCreateRequest(request)
-	if err != nil {
-		logger.Error(err, "Failed to validate oil filter create request")
-		return nil, errors.ErrInvalidOilFilterCreateRequest
-	}
-
-	changeDate, err := time.Parse("2006-01-02", request.ChangeDate)
-	if err != nil {
-		logger.Error(err, "Failed to parse change date")
-		return nil, errors.ErrInvalidDate
-	}
-
-	var nextChangeDate time.Time
-	if request.NextChangeDate != "" {
-		nextChangeDate, err = time.Parse("2006-01-02", request.NextChangeDate)
-		if err != nil {
-			logger.Error(err, "Failed to parse next change date")
-			return nil, errors.ErrInvalidDate
-		}
-	}
-
-	oilFilter := entity.OilFilter{
-		UserID:            uuidUserID,
-		UserVehicleID:     request.UserVehicleID,
-		FilterName:        request.FilterName,
-		FilterBrand:       request.FilterBrand,
-		FilterType:        request.FilterType,
-		FilterPartNumber:  request.FilterPartNumber,
-		ChangeMileage:     request.ChangeMileage,
-		ChangeDate:        changeDate,
-		NextChangeMileage: request.NextChangeMileage,
-		NextChangeDate:    nextChangeDate,
-		ServiceCenter:     request.ServiceCenter,
-		Notes:             request.Notes,
-	}
-
-	err = uc.oilFilterRepository.CreateOilFilter(ctx, &oilFilter)
-	if err != nil {
-		logger.Error(err, "Failed to create oil filter")
-		return nil, errors.ErrFailedToCreateOilFilter
-	}
-
-	return &dto.OilFilterResponse{
-		ID:                oilFilter.ID,
-		UserVehicleID:     oilFilter.UserVehicleID,
-		FilterName:        oilFilter.FilterName,
-		FilterBrand:       oilFilter.FilterBrand,
-		FilterType:        oilFilter.FilterType,
-		FilterPartNumber:  oilFilter.FilterPartNumber,
-		ChangeMileage:     oilFilter.ChangeMileage,
-		ChangeDate:        oilFilter.ChangeDate,
-		NextChangeMileage: oilFilter.NextChangeMileage,
-		NextChangeDate:    oilFilter.NextChangeDate,
-		ServiceCenter:     oilFilter.ServiceCenter,
-		Notes:             oilFilter.Notes,
-	}, nil
-}
-
-func (uc *oilFilterUseCase) GetOilFilter(ctx context.Context, oilFilterID string) (*dto.OilFilterResponse, error) {
-	userID := ctx.Value("user_id").(string)
-	uuidUserID, err := uuid.Parse(userID)
-	if err != nil {
-		logger.Error(err, "Failed to parse user id")
-		return nil, errors.ErrInvalidUserID
-	}
-	uintOilFilterID, err := strconv.ParseUint(oilFilterID, 10, 64)
-	if err != nil {
-		logger.Error(err, "Failed to parse oil filter id")
-		return nil, errors.ErrInvalidOilFilterID
-	}
-
-	oilFilter := entity.OilFilter{}
-	err = uc.oilFilterRepository.GetOilFilter(ctx, uintOilFilterID, &oilFilter)
-	if err != nil {
-		logger.Error(err, "Failed to get oil filter")
-		return nil, errors.ErrFailedToGetOilFilter
-	}
-
-	if oilFilter.UserID != uuidUserID {
-		logger.Error(err, "Oil filter not owned by user")
-		return nil, errors.ErrOilFilterNotOwned
-	}
-
-	return &dto.OilFilterResponse{
-		ID:                oilFilter.ID,
-		UserVehicleID:     oilFilter.UserVehicleID,
-		FilterName:        oilFilter.FilterName,
-		FilterBrand:       oilFilter.FilterBrand,
-		FilterType:        oilFilter.FilterType,
-		FilterPartNumber:  oilFilter.FilterPartNumber,
-		ChangeMileage:     oilFilter.ChangeMileage,
-		ChangeDate:        oilFilter.ChangeDate,
-		NextChangeMileage: oilFilter.NextChangeMileage,
-		NextChangeDate:    oilFilter.NextChangeDate,
-		ServiceCenter:     oilFilter.ServiceCenter,
-		Notes:             oilFilter.Notes,
-	}, nil
-}
-
-func (uc *oilFilterUseCase) ListOilFilters(ctx context.Context, userVehicleID string) (*dto.ListOilFiltersResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *oilFilterUseCase) ListOilFilters(ctx context.Context, userID, userVehicleID string) (*dto.ListOilFiltersResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
@@ -177,20 +57,7 @@ func (uc *oilFilterUseCase) ListOilFilters(ctx context.Context, userVehicleID st
 
 	oilFiltersResponse := []dto.OilFilterResponse{}
 	for _, oilFilter := range oilFilters {
-		oilFiltersResponse = append(oilFiltersResponse, dto.OilFilterResponse{
-			ID:                oilFilter.ID,
-			UserVehicleID:     oilFilter.UserVehicleID,
-			FilterName:        oilFilter.FilterName,
-			FilterBrand:       oilFilter.FilterBrand,
-			FilterType:        oilFilter.FilterType,
-			FilterPartNumber:  oilFilter.FilterPartNumber,
-			ChangeMileage:     oilFilter.ChangeMileage,
-			ChangeDate:        oilFilter.ChangeDate,
-			NextChangeMileage: oilFilter.NextChangeMileage,
-			NextChangeDate:    oilFilter.NextChangeDate,
-			ServiceCenter:     oilFilter.ServiceCenter,
-			Notes:             oilFilter.Notes,
-		})
+		oilFiltersResponse = append(oilFiltersResponse, *uc.mapOilFilterToResponse(&oilFilter))
 	}
 
 	return &dto.ListOilFiltersResponse{
@@ -198,137 +65,7 @@ func (uc *oilFilterUseCase) ListOilFilters(ctx context.Context, userVehicleID st
 	}, nil
 }
 
-func (uc *oilFilterUseCase) UpdateOilFilter(ctx context.Context, oilFilterID string, request dto.UpdateOilFilterRequest) (*dto.OilFilterResponse, error) {
-	userID := ctx.Value("user_id").(string)
-	uuidUserID, err := uuid.Parse(userID)
-	if err != nil {
-		logger.Error(err, "Failed to parse user id")
-		return nil, errors.ErrInvalidUserID
-	}
-	uintOilFilterID, err := strconv.ParseUint(oilFilterID, 10, 64)
-	if err != nil {
-		logger.Error(err, "Failed to parse oil filter id")
-		return nil, errors.ErrInvalidOilFilterID
-	}
-
-	oilFilter := entity.OilFilter{}
-	err = uc.oilFilterRepository.GetOilFilter(ctx, uintOilFilterID, &oilFilter)
-	if err != nil {
-		logger.Error(err, "Failed to get oil filter")
-		return nil, errors.ErrFailedToGetOilFilter
-	}
-
-	if oilFilter.UserID != uuidUserID {
-		logger.Error(err, "Oil filter not owned by user")
-		return nil, errors.ErrOilFilterNotOwned
-	}
-
-	err = validation.ValidateOilFilterUpdateRequest(request)
-	if err != nil {
-		logger.Error(err, "Failed to validate oil filter update request")
-		return nil, errors.ErrInvalidOilFilterUpdateRequest
-	}
-
-	// Update fields if provided
-	if request.FilterName != nil {
-		oilFilter.FilterName = *request.FilterName
-	}
-	if request.FilterBrand != nil {
-		oilFilter.FilterBrand = *request.FilterBrand
-	}
-	if request.FilterType != nil {
-		oilFilter.FilterType = *request.FilterType
-	}
-	if request.FilterPartNumber != nil {
-		oilFilter.FilterPartNumber = *request.FilterPartNumber
-	}
-	if request.ChangeMileage != nil {
-		oilFilter.ChangeMileage = *request.ChangeMileage
-	}
-	if request.ChangeDate != nil {
-		changeDate, err := time.Parse("2006-01-02", *request.ChangeDate)
-		if err != nil {
-			logger.Error(err, "Failed to parse change date")
-			return nil, errors.ErrInvalidDate
-		}
-		oilFilter.ChangeDate = changeDate
-	}
-	if request.NextChangeMileage != nil {
-		oilFilter.NextChangeMileage = *request.NextChangeMileage
-	}
-	if request.NextChangeDate != nil {
-		nextChangeDate, err := time.Parse("2006-01-02", *request.NextChangeDate)
-		if err != nil {
-			logger.Error(err, "Failed to parse next change date")
-			return nil, errors.ErrInvalidDate
-		}
-		oilFilter.NextChangeDate = nextChangeDate
-	}
-	if request.ServiceCenter != nil {
-		oilFilter.ServiceCenter = *request.ServiceCenter
-	}
-	if request.Notes != nil {
-		oilFilter.Notes = *request.Notes
-	}
-
-	err = uc.oilFilterRepository.UpdateOilFilter(ctx, &oilFilter)
-	if err != nil {
-		logger.Error(err, "Failed to update oil filter")
-		return nil, errors.ErrFailedToUpdateOilFilter
-	}
-
-	return &dto.OilFilterResponse{
-		ID:                oilFilter.ID,
-		UserVehicleID:     oilFilter.UserVehicleID,
-		FilterName:        oilFilter.FilterName,
-		FilterBrand:       oilFilter.FilterBrand,
-		FilterType:        oilFilter.FilterType,
-		FilterPartNumber:  oilFilter.FilterPartNumber,
-		ChangeMileage:     oilFilter.ChangeMileage,
-		ChangeDate:        oilFilter.ChangeDate,
-		NextChangeMileage: oilFilter.NextChangeMileage,
-		NextChangeDate:    oilFilter.NextChangeDate,
-		ServiceCenter:     oilFilter.ServiceCenter,
-		Notes:             oilFilter.Notes,
-	}, nil
-}
-
-func (uc *oilFilterUseCase) DeleteOilFilter(ctx context.Context, oilFilterID string) error {
-	userID := ctx.Value("user_id").(string)
-	uuidUserID, err := uuid.Parse(userID)
-	if err != nil {
-		logger.Error(err, "Failed to parse user id")
-		return errors.ErrInvalidUserID
-	}
-	uintOilFilterID, err := strconv.ParseUint(oilFilterID, 10, 64)
-	if err != nil {
-		logger.Error(err, "Failed to parse oil filter id")
-		return errors.ErrInvalidOilFilterID
-	}
-
-	oilFilter := entity.OilFilter{}
-	err = uc.oilFilterRepository.GetOilFilter(ctx, uintOilFilterID, &oilFilter)
-	if err != nil {
-		logger.Error(err, "Failed to get oil filter")
-		return errors.ErrFailedToGetOilFilter
-	}
-
-	if oilFilter.UserID != uuidUserID {
-		logger.Error(err, "Oil filter not owned by user")
-		return errors.ErrOilFilterNotOwned
-	}
-
-	err = uc.oilFilterRepository.DeleteOilFilter(ctx, &oilFilter)
-	if err != nil {
-		logger.Error(err, "Failed to delete oil filter")
-		return errors.ErrFailedToDeleteOilFilter
-	}
-
-	return nil
-}
-
-func (uc *oilFilterUseCase) GetLastOilFilter(ctx context.Context, userVehicleID string) (*dto.OilFilterResponse, error) {
-	userID := ctx.Value("user_id").(string)
+func (uc *oilFilterUseCase) GetLastOilFilter(ctx context.Context, userID, userVehicleID string) (*dto.OilFilterResponse, error) {
 	uuidUserID, err := uuid.Parse(userID)
 	if err != nil {
 		logger.Error(err, "Failed to parse user id")
@@ -354,6 +91,37 @@ func (uc *oilFilterUseCase) GetLastOilFilter(ctx context.Context, userVehicleID 
 		return nil, errors.ErrFailedToGetOilFilter
 	}
 
+	return uc.mapOilFilterToResponse(&oilFilter), nil
+}
+
+func (uc *oilFilterUseCase) GetOilFilter(ctx context.Context, userID, userVehicleID, oilFilterID string) (*dto.OilFilterResponse, error) {
+	uuidUserID, err := uuid.Parse(userID)
+	if err != nil {
+		logger.Error(err, "Failed to parse user id")
+		return nil, errors.ErrInvalidUserID
+	}
+	uintOilFilterID, err := strconv.ParseUint(oilFilterID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse oil filter id")
+		return nil, errors.ErrInvalidOilFilterID
+	}
+
+	oilFilter := entity.OilFilter{}
+	err = uc.oilFilterRepository.GetOilFilter(ctx, uintOilFilterID, &oilFilter)
+	if err != nil {
+		logger.Error(err, "Failed to get oil filter")
+		return nil, errors.ErrFailedToGetOilFilter
+	}
+
+	if oilFilter.UserID != uuidUserID {
+		logger.Error(err, "Oil filter not owned by user")
+		return nil, errors.ErrOilFilterNotOwned
+	}
+
+	return uc.mapOilFilterToResponse(&oilFilter), nil
+}
+
+func (uc *oilFilterUseCase) mapOilFilterToResponse(oilFilter *entity.OilFilter) *dto.OilFilterResponse {
 	return &dto.OilFilterResponse{
 		ID:                oilFilter.ID,
 		UserVehicleID:     oilFilter.UserVehicleID,
@@ -362,10 +130,10 @@ func (uc *oilFilterUseCase) GetLastOilFilter(ctx context.Context, userVehicleID 
 		FilterType:        oilFilter.FilterType,
 		FilterPartNumber:  oilFilter.FilterPartNumber,
 		ChangeMileage:     oilFilter.ChangeMileage,
-		ChangeDate:        oilFilter.ChangeDate,
+		ChangeDate:        oilFilter.ChangeDate.Format("2006-01-02"),
 		NextChangeMileage: oilFilter.NextChangeMileage,
-		NextChangeDate:    oilFilter.NextChangeDate,
+		NextChangeDate:    oilFilter.NextChangeDate.Format("2006-01-02"),
 		ServiceCenter:     oilFilter.ServiceCenter,
 		Notes:             oilFilter.Notes,
-	}, nil
+	}
 }

@@ -1,9 +1,5 @@
 package dto
 
-import (
-	"time"
-)
-
 // CreateOilFilterRequest represents the request for creating a new oil filter change
 // @Description Oil filter change creation request
 type CreateOilFilterRequest struct {
@@ -74,11 +70,11 @@ type OilFilterResponse struct {
 	// Mileage when filter was changed
 	ChangeMileage uint `json:"change_mileage"`
 	// Date when filter was changed
-	ChangeDate time.Time `json:"change_date"`
+	ChangeDate string `json:"change_date"`
 	// Next change mileage
 	NextChangeMileage uint `json:"next_change_mileage"`
 	// Next change date
-	NextChangeDate time.Time `json:"next_change_date"`
+	NextChangeDate string `json:"next_change_date"`
 	// Service center where filter was changed
 	ServiceCenter string `json:"service_center"`
 	// Additional notes

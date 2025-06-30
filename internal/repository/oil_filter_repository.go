@@ -27,19 +27,19 @@ func NewOilFilterRepository() OilFilterRepository {
 }
 
 func (r *OilFilterRepositoryImpl) CreateOilFilter(ctx context.Context, oilFilter *entity.OilFilter) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").Create(oilFilter).Error
+	return r.db.WithContext(ctx).Create(oilFilter).Error
 }
 
 func (r *OilFilterRepositoryImpl) GetOilFilter(ctx context.Context, id uint64, oilFilter *entity.OilFilter) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").Where("id = ?", id).First(oilFilter).Error
+	return r.db.WithContext(ctx).Where("id = ?", id).First(oilFilter).Error
 }
 
 func (r *OilFilterRepositoryImpl) ListOilFilters(ctx context.Context, userVehicleID uint64, oilFilters *[]entity.OilFilter) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").Where("user_vehicle_id = ?", userVehicleID).Order("change_date DESC").Find(oilFilters).Error
+	return r.db.WithContext(ctx).Where("user_vehicle_id = ?", userVehicleID).Order("change_date DESC").Find(oilFilters).Error
 }
 
 func (r *OilFilterRepositoryImpl) UpdateOilFilter(ctx context.Context, oilFilter *entity.OilFilter) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").Save(oilFilter).Error
+	return r.db.WithContext(ctx).Save(oilFilter).Error
 }
 
 func (r *OilFilterRepositoryImpl) DeleteOilFilter(ctx context.Context, oilFilter *entity.OilFilter) error {
@@ -47,5 +47,5 @@ func (r *OilFilterRepositoryImpl) DeleteOilFilter(ctx context.Context, oilFilter
 }
 
 func (r *OilFilterRepositoryImpl) GetLastOilFilter(ctx context.Context, userVehicleID uint64, oilFilter *entity.OilFilter) error {
-	return r.db.WithContext(ctx).Preload("UserVehicle").Where("user_vehicle_id = ?", userVehicleID).Order("change_date DESC").First(oilFilter).Error
+	return r.db.WithContext(ctx).Where("user_vehicle_id = ?", userVehicleID).Order("change_date DESC").First(oilFilter).Error
 }
