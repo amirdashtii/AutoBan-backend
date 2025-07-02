@@ -595,330 +595,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/vehicles/brands": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Brands"
-                ],
-                "summary": "Create a new vehicle brand",
-                "parameters": [
-                    {
-                        "description": "Vehicle Brand",
-                        "name": "brand",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleBrandRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleBrandResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/vehicles/brands/{brandId}/models": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Models"
-                ],
-                "summary": "Create a new vehicle model",
-                "parameters": [
-                    {
-                        "description": "Vehicle Model",
-                        "name": "model",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleModelRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleModelResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/vehicles/brands/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Brands"
-                ],
-                "summary": "Update a vehicle brand",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Brand ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Vehicle Brand",
-                        "name": "brand",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateVehicleBrandRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleBrandResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Brands"
-                ],
-                "summary": "Delete a vehicle brand",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Brand ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/admin/vehicles/generations": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new vehicle generation",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Generations"
-                ],
-                "summary": "Create a new vehicle generation",
-                "parameters": [
-                    {
-                        "description": "Vehicle Generation",
-                        "name": "generation",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/vehicles/generations/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a vehicle generation",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Generations"
-                ],
-                "summary": "Update a vehicle generation",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle generation ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Vehicle Generation",
-                        "name": "generation",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a vehicle generation",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Generations"
-                ],
-                "summary": "Delete a vehicle generation",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Generation ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/admin/vehicles/models/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Models"
-                ],
-                "summary": "Update a vehicle model",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Model ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Vehicle Model",
-                        "name": "model",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateVehicleModelRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleModelResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin - Models"
-                ],
-                "summary": "Delete a vehicle model",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Model ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
         "/admin/vehicles/types": {
             "post": {
                 "security": [
@@ -958,7 +634,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/vehicles/types/{id}": {
+        "/admin/vehicles/types/{type_id}": {
             "put": {
                 "security": [
                     {
@@ -977,7 +653,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Vehicle Type ID",
-                        "name": "id",
+                        "name": "type_id",
                         "in": "path",
                         "required": true
                     },
@@ -1018,7 +694,450 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Vehicle Type ID",
-                        "name": "id",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types/{type_id}/brands": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Brands"
+                ],
+                "summary": "Create a new vehicle brand",
+                "parameters": [
+                    {
+                        "description": "Vehicle Brand",
+                        "name": "brand",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleBrandRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleBrandResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types/{type_id}/brands/{brand_id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Brands"
+                ],
+                "summary": "Update a vehicle brand",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Brand",
+                        "name": "brand",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVehicleBrandRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleBrandResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Brands"
+                ],
+                "summary": "Delete a vehicle brand",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types/{type_id}/brands/{brand_id}/models": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Models"
+                ],
+                "summary": "Create a new vehicle model",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Model",
+                        "name": "model",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleModelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleModelResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Models"
+                ],
+                "summary": "Update a vehicle model",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Model",
+                        "name": "model",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVehicleModelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleModelResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Models"
+                ],
+                "summary": "Delete a vehicle model",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new vehicle generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Generations"
+                ],
+                "summary": "Create a new vehicle generation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Generation",
+                        "name": "generation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a vehicle generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Generations"
+                ],
+                "summary": "Update a vehicle generation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Generation ID",
+                        "name": "generation_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Vehicle Generation",
+                        "name": "generation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleGenerationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a vehicle generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Generations"
+                ],
+                "summary": "Delete a vehicle generation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Generation ID",
+                        "name": "generation_id",
                         "in": "path",
                         "required": true
                     }
@@ -2710,9 +2829,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/vehicles/brands": {
+        "/vehicles/hierarchy": {
             "get": {
-                "description": "Get a list of all available vehicle brands",
+                "description": "Get the complete vehicle hierarchy including all types, brands, models, and generations",
                 "consumes": [
                     "application/json"
                 ],
@@ -2720,213 +2839,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Brands"
+                    "Hierarchy"
                 ],
-                "summary": "List all vehicle brands",
-                "responses": {}
-            }
-        },
-        "/vehicles/brands/{id}": {
-            "get": {
-                "description": "Get details of a specific vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Brands"
-                ],
-                "summary": "Get vehicle brand details",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Brand ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Get complete vehicle hierarchy",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.VehicleBrandResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/vehicles/brands/{id}/models": {
-            "get": {
-                "description": "Get a list of vehicle models for a specific vehicle brand",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Models"
-                ],
-                "summary": "List vehicle models by brand",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Brand ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListVehicleModelsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/vehicles/generations": {
-            "get": {
-                "description": "Get a list of all available vehicle generations",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Generations"
-                ],
-                "summary": "List all vehicle generations",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListVehicleGenerationsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/vehicles/generations/{id}": {
-            "get": {
-                "description": "Get details of a specific vehicle generation",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Generations"
-                ],
-                "summary": "Get vehicle generation details",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Generation ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/vehicles/models": {
-            "get": {
-                "description": "Get a list of all available vehicle models",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Models"
-                ],
-                "summary": "List all vehicle models",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListVehicleModelsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/vehicles/models/{id}": {
-            "get": {
-                "description": "Get details of a specific vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Models"
-                ],
-                "summary": "Get vehicle model details",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Model ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.VehicleModelResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/vehicles/models/{id}/generations": {
-            "get": {
-                "description": "Get a list of vehicle generations for a specific vehicle model",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Generations"
-                ],
-                "summary": "List vehicle generations by model",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Vehicle Model ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListVehicleGenerationsResponse"
+                            "$ref": "#/definitions/dto.CompleteVehicleHierarchyResponse"
                         }
                     }
                 }
@@ -2955,7 +2875,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/vehicles/types/{id}": {
+        "/vehicles/types/{type_id}": {
             "get": {
                 "description": "Get details of a specific vehicle type",
                 "consumes": [
@@ -2972,7 +2892,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Vehicle Type ID",
-                        "name": "id",
+                        "name": "type_id",
                         "in": "path",
                         "required": true
                     }
@@ -2987,7 +2907,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/vehicles/types/{id}/brands": {
+        "/vehicles/types/{type_id}/brands": {
             "get": {
                 "description": "Get a list of vehicle brands for a specific vehicle type",
                 "consumes": [
@@ -3004,7 +2924,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Vehicle Type ID",
-                        "name": "id",
+                        "name": "type_id",
                         "in": "path",
                         "required": true
                     }
@@ -3014,6 +2934,229 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.ListVehicleBrandsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles/types/{type_id}/brands/{brand_id}": {
+            "get": {
+                "description": "Get details of a specific vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Brands"
+                ],
+                "summary": "Get vehicle brand details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleBrandResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles/types/{type_id}/brands/{brand_id}/models": {
+            "get": {
+                "description": "Get a list of vehicle models for a specific vehicle brand",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Models"
+                ],
+                "summary": "List vehicle models by brand",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListVehicleModelsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}": {
+            "get": {
+                "description": "Get details of a specific vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Models"
+                ],
+                "summary": "Get vehicle model details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleModelResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations": {
+            "get": {
+                "description": "Get a list of vehicle generations for a specific vehicle model",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Generations"
+                ],
+                "summary": "List vehicle generations by model",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListVehicleGenerationsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id}": {
+            "get": {
+                "description": "Get details of a specific vehicle generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Generations"
+                ],
+                "summary": "Get vehicle generation details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle Type ID",
+                        "name": "type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Brand ID",
+                        "name": "brand_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Model ID",
+                        "name": "model_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Vehicle Generation ID",
+                        "name": "generation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
                         }
                     }
                 }
@@ -3062,6 +3205,35 @@ const docTemplate = `{
                         "Deleted"
                     ],
                     "example": "Active"
+                }
+            }
+        },
+        "dto.CompleteVehicleHierarchyResponse": {
+            "description": "Complete vehicle hierarchy with all types, brands, models, and generations",
+            "type": "object",
+            "properties": {
+                "total_brands": {
+                    "description": "Total count of vehicle brands",
+                    "type": "integer"
+                },
+                "total_generations": {
+                    "description": "Total count of vehicle generations",
+                    "type": "integer"
+                },
+                "total_models": {
+                    "description": "Total count of vehicle models",
+                    "type": "integer"
+                },
+                "total_types": {
+                    "description": "Total count of vehicle types",
+                    "type": "integer"
+                },
+                "vehicle_types": {
+                    "description": "List of all vehicle types with their complete hierarchy",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.VehicleTypeTreeResponse"
+                    }
                 }
             }
         },
@@ -3173,8 +3345,7 @@ const docTemplate = `{
             "description": "Vehicle brand creation request",
             "type": "object",
             "required": [
-                "name",
-                "vehicle_type_id"
+                "name"
             ],
             "properties": {
                 "description": {
@@ -3186,11 +3357,6 @@ const docTemplate = `{
                     "description": "Name of the vehicle brand",
                     "type": "string",
                     "example": "Toyota"
-                },
-                "vehicle_type_id": {
-                    "description": "ID of the vehicle type",
-                    "type": "integer",
-                    "example": 1
                 }
             }
         },
@@ -3198,7 +3364,6 @@ const docTemplate = `{
             "description": "Vehicle generation creation request",
             "type": "object",
             "required": [
-                "model_id",
                 "name"
             ],
             "properties": {
@@ -3237,11 +3402,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "V6"
                 },
-                "model_id": {
-                    "description": "ID of the vehicle model",
-                    "type": "integer",
-                    "example": 1
-                },
                 "name": {
                     "description": "Name of the vehicle generation",
                     "type": "string",
@@ -3268,15 +3428,9 @@ const docTemplate = `{
             "description": "Vehicle model creation request",
             "type": "object",
             "required": [
-                "brand_id",
                 "name"
             ],
             "properties": {
-                "brand_id": {
-                    "description": "ID of the vehicle brand",
-                    "type": "integer",
-                    "example": 1
-                },
                 "description": {
                     "description": "Description of the vehicle model",
                     "type": "string",
@@ -4314,14 +4468,6 @@ const docTemplate = `{
                     "description": "Current mileage of the user vehicle",
                     "type": "integer"
                 },
-                "generation": {
-                    "description": "Vehicle generation",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.VehicleGenerationResponse"
-                        }
-                    ]
-                },
                 "generation_id": {
                     "description": "ID of the vehicle generation",
                     "type": "integer"
@@ -4372,17 +4518,34 @@ const docTemplate = `{
                     "description": "Name of the vehicle brand",
                     "type": "string"
                 },
-                "type": {
-                    "description": "Vehicle type",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.VehicleTypeResponse"
-                        }
-                    ]
-                },
                 "vehicle_type_id": {
                     "description": "ID of the vehicle type",
                     "type": "integer"
+                }
+            }
+        },
+        "dto.VehicleBrandTreeResponse": {
+            "description": "Vehicle brand in hierarchical tree",
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description of the vehicle brand",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the vehicle brand",
+                    "type": "integer"
+                },
+                "models": {
+                    "description": "List of models for this brand",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.VehicleModelTreeResponse"
+                    }
+                },
+                "name": {
+                    "description": "Name of the vehicle brand",
+                    "type": "string"
                 }
             }
         },
@@ -4426,13 +4589,59 @@ const docTemplate = `{
                     "description": "ID of the vehicle model",
                     "type": "integer"
                 },
-                "model_info": {
-                    "description": "Vehicle model",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.VehicleModelResponse"
-                        }
-                    ]
+                "name": {
+                    "description": "Name of the vehicle generation",
+                    "type": "string"
+                },
+                "special_features": {
+                    "description": "Special features of the vehicle generation",
+                    "type": "string"
+                },
+                "start_year": {
+                    "description": "Start year of the vehicle generation",
+                    "type": "integer"
+                },
+                "transmission": {
+                    "description": "Transmission of the vehicle generation",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.VehicleGenerationTreeResponse": {
+            "description": "Vehicle generation in hierarchical tree",
+            "type": "object",
+            "properties": {
+                "assembler": {
+                    "description": "Assembler of the vehicle generation",
+                    "type": "string"
+                },
+                "assembly_type": {
+                    "description": "Assembly type of the vehicle generation",
+                    "type": "string"
+                },
+                "body_style": {
+                    "description": "Body style of the vehicle generation",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description of the vehicle generation",
+                    "type": "string"
+                },
+                "end_year": {
+                    "description": "End year of the vehicle generation",
+                    "type": "integer"
+                },
+                "engine_size": {
+                    "description": "Engine size of the vehicle generation",
+                    "type": "integer"
+                },
+                "engine_type": {
+                    "description": "Engine type of the vehicle generation",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the vehicle generation",
+                    "type": "integer"
                 },
                 "name": {
                     "description": "Name of the vehicle generation",
@@ -4456,14 +4665,6 @@ const docTemplate = `{
             "description": "Vehicle model response",
             "type": "object",
             "properties": {
-                "brand": {
-                    "description": "Vehicle brand",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.VehicleBrandResponse"
-                        }
-                    ]
-                },
                 "brand_id": {
                     "description": "ID of the vehicle brand",
                     "type": "integer"
@@ -4490,10 +4691,68 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.VehicleModelTreeResponse": {
+            "description": "Vehicle model in hierarchical tree",
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description of the vehicle model",
+                    "type": "string"
+                },
+                "end_year": {
+                    "description": "End year of the vehicle model",
+                    "type": "integer"
+                },
+                "generations": {
+                    "description": "List of generations for this model",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.VehicleGenerationTreeResponse"
+                    }
+                },
+                "id": {
+                    "description": "ID of the vehicle model",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the vehicle model",
+                    "type": "string"
+                },
+                "start_year": {
+                    "description": "Start year of the vehicle model",
+                    "type": "integer"
+                }
+            }
+        },
         "dto.VehicleTypeResponse": {
             "description": "Vehicle type response",
             "type": "object",
             "properties": {
+                "description": {
+                    "description": "Description of the vehicle type",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the vehicle type",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the vehicle type",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.VehicleTypeTreeResponse": {
+            "description": "Vehicle type in hierarchical tree",
+            "type": "object",
+            "properties": {
+                "brands": {
+                    "description": "List of brands for this type",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.VehicleBrandTreeResponse"
+                    }
+                },
                 "description": {
                     "description": "Description of the vehicle type",
                     "type": "string"

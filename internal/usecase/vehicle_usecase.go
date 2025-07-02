@@ -49,6 +49,9 @@ type VehicleUseCase interface {
 	GetUserVehicle(ctx context.Context, userID, vehicleID string) (*dto.UserVehicleResponse, error)
 	UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UpdateUserVehicleRequest) (*dto.UserVehicleResponse, error)
 	DeleteUserVehicle(ctx context.Context, userID, vehicleID string) error
+
+	// Complete hierarchy
+	GetCompleteVehicleHierarchy(ctx context.Context) (*dto.CompleteVehicleHierarchyResponse, error)
 }
 
 type vehicleUseCase struct {
@@ -200,11 +203,6 @@ func (uc *vehicleUseCase) GetBrand(ctx context.Context, typeID, brandID string) 
 		VehicleTypeID: brand.VehicleTypeID,
 		Name:          brand.Name,
 		Description:   brand.Description,
-		Type: dto.VehicleTypeResponse{
-			ID:          brand.VehicleType.ID,
-			Name:        brand.VehicleType.Name,
-			Description: brand.VehicleType.Description,
-		},
 	}, nil
 }
 
@@ -227,11 +225,6 @@ func (uc *vehicleUseCase) ListBrands(ctx context.Context, typeID string) (*dto.L
 			VehicleTypeID: brand.VehicleTypeID,
 			Name:          brand.Name,
 			Description:   brand.Description,
-			Type: dto.VehicleTypeResponse{
-				ID:          brand.VehicleType.ID,
-				Name:        brand.VehicleType.Name,
-				Description: brand.VehicleType.Description,
-			},
 		})
 	}
 	return &dto.ListVehicleBrandsResponse{Brands: brandsResponse}, nil
@@ -264,11 +257,6 @@ func (uc *vehicleUseCase) CreateBrand(ctx context.Context, typeID string, reques
 		VehicleTypeID: brand.VehicleTypeID,
 		Name:          brand.Name,
 		Description:   brand.Description,
-		Type: dto.VehicleTypeResponse{
-			ID:          brand.VehicleType.ID,
-			Name:        brand.VehicleType.Name,
-			Description: brand.VehicleType.Description,
-		},
 	}, nil
 }
 
@@ -315,11 +303,6 @@ func (uc *vehicleUseCase) UpdateBrand(ctx context.Context, typeID, brandID strin
 		VehicleTypeID: brand.VehicleTypeID,
 		Name:          brand.Name,
 		Description:   brand.Description,
-		Type: dto.VehicleTypeResponse{
-			ID:          brand.VehicleType.ID,
-			Name:        brand.VehicleType.Name,
-			Description: brand.VehicleType.Description,
-		},
 	}, nil
 }
 
@@ -368,17 +351,6 @@ func (uc *vehicleUseCase) ListModels(ctx context.Context, typeID, brandID string
 			BrandID:     model.BrandID,
 			StartYear:   model.StartYear,
 			EndYear:     model.EndYear,
-			Brand: dto.VehicleBrandResponse{
-				ID:            model.Brand.ID,
-				VehicleTypeID: model.Brand.VehicleTypeID,
-				Name:          model.Brand.Name,
-				Description:   model.Brand.Description,
-				Type: dto.VehicleTypeResponse{
-					ID:          model.Brand.VehicleType.ID,
-					Name:        model.Brand.VehicleType.Name,
-					Description: model.Brand.VehicleType.Description,
-				},
-			},
 		})
 	}
 	return &dto.ListVehicleModelsResponse{Models: modelsResponse}, nil
@@ -411,17 +383,6 @@ func (uc *vehicleUseCase) GetModel(ctx context.Context, typeID, brandID, modelID
 		BrandID:     model.BrandID,
 		StartYear:   model.StartYear,
 		EndYear:     model.EndYear,
-		Brand: dto.VehicleBrandResponse{
-			ID:            model.Brand.ID,
-			VehicleTypeID: model.Brand.VehicleTypeID,
-			Name:          model.Brand.Name,
-			Description:   model.Brand.Description,
-			Type: dto.VehicleTypeResponse{
-				ID:          model.Brand.VehicleType.ID,
-				Name:        model.Brand.VehicleType.Name,
-				Description: model.Brand.VehicleType.Description,
-			},
-		},
 	}, nil
 }
 
@@ -457,17 +418,6 @@ func (uc *vehicleUseCase) CreateModel(ctx context.Context, typeID, brandID strin
 		BrandID:     model.BrandID,
 		StartYear:   model.StartYear,
 		EndYear:     model.EndYear,
-		Brand: dto.VehicleBrandResponse{
-			ID:            model.Brand.ID,
-			VehicleTypeID: model.Brand.VehicleTypeID,
-			Name:          model.Brand.Name,
-			Description:   model.Brand.Description,
-			Type: dto.VehicleTypeResponse{
-				ID:          model.Brand.VehicleType.ID,
-				Name:        model.Brand.VehicleType.Name,
-				Description: model.Brand.VehicleType.Description,
-			},
-		},
 	}, nil
 }
 
@@ -521,17 +471,6 @@ func (uc *vehicleUseCase) UpdateModel(ctx context.Context, typeID, brandID, mode
 		BrandID:     model.BrandID,
 		StartYear:   model.StartYear,
 		EndYear:     model.EndYear,
-		Brand: dto.VehicleBrandResponse{
-			ID:            model.Brand.ID,
-			VehicleTypeID: model.Brand.VehicleTypeID,
-			Name:          model.Brand.Name,
-			Description:   model.Brand.Description,
-			Type: dto.VehicleTypeResponse{
-				ID:          model.Brand.VehicleType.ID,
-				Name:        model.Brand.VehicleType.Name,
-				Description: model.Brand.VehicleType.Description,
-			},
-		},
 	}, nil
 }
 
@@ -595,25 +534,6 @@ func (uc *vehicleUseCase) GetGeneration(ctx context.Context, typeID, brandID, mo
 		EngineSize:      generation.EngineSize,
 		BodyStyle:       generation.BodyStyle,
 		SpecialFeatures: generation.SpecialFeatures,
-		ModelInfo: dto.VehicleModelResponse{
-			ID:          generation.ModelInfo.ID,
-			Name:        generation.ModelInfo.Name,
-			Description: generation.ModelInfo.Description,
-			BrandID:     generation.ModelInfo.BrandID,
-			StartYear:   generation.ModelInfo.StartYear,
-			EndYear:     generation.ModelInfo.EndYear,
-			Brand: dto.VehicleBrandResponse{
-				ID:            generation.ModelInfo.Brand.ID,
-				VehicleTypeID: generation.ModelInfo.Brand.VehicleTypeID,
-				Name:          generation.ModelInfo.Brand.Name,
-				Description:   generation.ModelInfo.Brand.Description,
-				Type: dto.VehicleTypeResponse{
-					ID:          generation.ModelInfo.Brand.VehicleType.ID,
-					Name:        generation.ModelInfo.Brand.VehicleType.Name,
-					Description: generation.ModelInfo.Brand.VehicleType.Description,
-				},
-			},
-		},
 	}, nil
 }
 
@@ -649,25 +569,6 @@ func (uc *vehicleUseCase) ListGenerations(ctx context.Context, typeID, brandID, 
 			EngineSize:      generation.EngineSize,
 			BodyStyle:       generation.BodyStyle,
 			SpecialFeatures: generation.SpecialFeatures,
-			ModelInfo: dto.VehicleModelResponse{
-				ID:          generation.ModelInfo.ID,
-				Name:        generation.ModelInfo.Name,
-				Description: generation.ModelInfo.Description,
-				BrandID:     generation.ModelInfo.BrandID,
-				StartYear:   generation.ModelInfo.StartYear,
-				EndYear:     generation.ModelInfo.EndYear,
-				Brand: dto.VehicleBrandResponse{
-					ID:            generation.ModelInfo.Brand.ID,
-					VehicleTypeID: generation.ModelInfo.Brand.VehicleTypeID,
-					Name:          generation.ModelInfo.Brand.Name,
-					Description:   generation.ModelInfo.Brand.Description,
-					Type: dto.VehicleTypeResponse{
-						ID:          generation.ModelInfo.Brand.VehicleType.ID,
-						Name:        generation.ModelInfo.Brand.VehicleType.Name,
-						Description: generation.ModelInfo.Brand.VehicleType.Description,
-					},
-				},
-			},
 		})
 	}
 	return &dto.ListVehicleGenerationsResponse{Generations: generationsResponse}, nil
@@ -721,25 +622,6 @@ func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, typeID, brandID,
 		EngineSize:      generation.EngineSize,
 		BodyStyle:       generation.BodyStyle,
 		SpecialFeatures: generation.SpecialFeatures,
-		ModelInfo: dto.VehicleModelResponse{
-			ID:          generation.ModelInfo.ID,
-			Name:        generation.ModelInfo.Name,
-			Description: generation.ModelInfo.Description,
-			BrandID:     generation.ModelInfo.BrandID,
-			StartYear:   generation.ModelInfo.StartYear,
-			EndYear:     generation.ModelInfo.EndYear,
-			Brand: dto.VehicleBrandResponse{
-				ID:            generation.ModelInfo.Brand.ID,
-				VehicleTypeID: generation.ModelInfo.Brand.VehicleTypeID,
-				Name:          generation.ModelInfo.Brand.Name,
-				Description:   generation.ModelInfo.Brand.Description,
-				Type: dto.VehicleTypeResponse{
-					ID:          generation.ModelInfo.Brand.VehicleType.ID,
-					Name:        generation.ModelInfo.Brand.VehicleType.Name,
-					Description: generation.ModelInfo.Brand.VehicleType.Description,
-				},
-			},
-		},
 	}, nil
 }
 
@@ -822,25 +704,6 @@ func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, typeID, brandID,
 		EngineSize:      generation.EngineSize,
 		BodyStyle:       generation.BodyStyle,
 		SpecialFeatures: generation.SpecialFeatures,
-		ModelInfo: dto.VehicleModelResponse{
-			ID:          generation.ModelInfo.ID,
-			Name:        generation.ModelInfo.Name,
-			Description: generation.ModelInfo.Description,
-			BrandID:     generation.ModelInfo.BrandID,
-			StartYear:   generation.ModelInfo.StartYear,
-			EndYear:     generation.ModelInfo.EndYear,
-			Brand: dto.VehicleBrandResponse{
-				ID:            generation.ModelInfo.Brand.ID,
-				VehicleTypeID: generation.ModelInfo.Brand.VehicleTypeID,
-				Name:          generation.ModelInfo.Brand.Name,
-				Description:   generation.ModelInfo.Brand.Description,
-				Type: dto.VehicleTypeResponse{
-					ID:          generation.ModelInfo.Brand.VehicleType.ID,
-					Name:        generation.ModelInfo.Brand.VehicleType.Name,
-					Description: generation.ModelInfo.Brand.VehicleType.Description,
-				},
-			},
-		},
 	}, nil
 }
 
@@ -853,7 +716,7 @@ func (uc *vehicleUseCase) DeleteGeneration(ctx context.Context, typeID, brandID,
 		logger.Error(err, "Failed to parse vehicle generation id")
 		return errors.ErrInvalidVehicleGenerationID
 	}
-	
+
 	generation := entity.VehicleGeneration{}
 	generation.ID = uintGenerationID
 	err = uc.vehicleRepository.DeleteGeneration(ctx, &generation)
@@ -911,40 +774,6 @@ func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, req
 		VIN:            userVehicle.VIN,
 		CurrentMileage: userVehicle.CurrentMileage,
 		PurchaseDate:   userVehicle.PurchaseDate,
-		Generation: dto.VehicleGenerationResponse{
-			ID:              userVehicle.Generation.ID,
-			Name:            userVehicle.Generation.Name,
-			Description:     userVehicle.Generation.Description,
-			ModelID:         userVehicle.Generation.ModelID,
-			StartYear:       userVehicle.Generation.StartYear,
-			EndYear:         userVehicle.Generation.EndYear,
-			EngineType:      userVehicle.Generation.EngineType,
-			AssemblyType:    userVehicle.Generation.AssemblyType,
-			Assembler:       userVehicle.Generation.Assembler,
-			Transmission:    userVehicle.Generation.Transmission,
-			EngineSize:      userVehicle.Generation.EngineSize,
-			BodyStyle:       userVehicle.Generation.BodyStyle,
-			SpecialFeatures: userVehicle.Generation.SpecialFeatures,
-			ModelInfo: dto.VehicleModelResponse{
-				ID:          userVehicle.Generation.ModelInfo.ID,
-				Name:        userVehicle.Generation.ModelInfo.Name,
-				Description: userVehicle.Generation.ModelInfo.Description,
-				BrandID:     userVehicle.Generation.ModelInfo.BrandID,
-				StartYear:   userVehicle.Generation.ModelInfo.StartYear,
-				EndYear:     userVehicle.Generation.ModelInfo.EndYear,
-				Brand: dto.VehicleBrandResponse{
-					ID:            userVehicle.Generation.ModelInfo.Brand.ID,
-					VehicleTypeID: userVehicle.Generation.ModelInfo.Brand.VehicleTypeID,
-					Name:          userVehicle.Generation.ModelInfo.Brand.Name,
-					Description:   userVehicle.Generation.ModelInfo.Brand.Description,
-					Type: dto.VehicleTypeResponse{
-						ID:          userVehicle.Generation.ModelInfo.Brand.VehicleType.ID,
-						Name:        userVehicle.Generation.ModelInfo.Brand.VehicleType.Name,
-						Description: userVehicle.Generation.ModelInfo.Brand.VehicleType.Description,
-					},
-				},
-			},
-		},
 	}, nil
 }
 
@@ -973,40 +802,6 @@ func (uc *vehicleUseCase) ListUserVehicles(ctx context.Context, userID string) (
 			VIN:            userVehicle.VIN,
 			CurrentMileage: userVehicle.CurrentMileage,
 			PurchaseDate:   userVehicle.PurchaseDate,
-			Generation: dto.VehicleGenerationResponse{
-				ID:              userVehicle.Generation.ID,
-				Name:            userVehicle.Generation.Name,
-				Description:     userVehicle.Generation.Description,
-				ModelID:         userVehicle.Generation.ModelID,
-				StartYear:       userVehicle.Generation.StartYear,
-				EndYear:         userVehicle.Generation.EndYear,
-				EngineType:      userVehicle.Generation.EngineType,
-				AssemblyType:    userVehicle.Generation.AssemblyType,
-				Assembler:       userVehicle.Generation.Assembler,
-				Transmission:    userVehicle.Generation.Transmission,
-				EngineSize:      userVehicle.Generation.EngineSize,
-				BodyStyle:       userVehicle.Generation.BodyStyle,
-				SpecialFeatures: userVehicle.Generation.SpecialFeatures,
-				ModelInfo: dto.VehicleModelResponse{
-					ID:          userVehicle.Generation.ModelInfo.ID,
-					Name:        userVehicle.Generation.ModelInfo.Name,
-					Description: userVehicle.Generation.ModelInfo.Description,
-					BrandID:     userVehicle.Generation.ModelInfo.BrandID,
-					StartYear:   userVehicle.Generation.ModelInfo.StartYear,
-					EndYear:     userVehicle.Generation.ModelInfo.EndYear,
-					Brand: dto.VehicleBrandResponse{
-						ID:            userVehicle.Generation.ModelInfo.Brand.ID,
-						VehicleTypeID: userVehicle.Generation.ModelInfo.Brand.VehicleTypeID,
-						Name:          userVehicle.Generation.ModelInfo.Brand.Name,
-						Description:   userVehicle.Generation.ModelInfo.Brand.Description,
-						Type: dto.VehicleTypeResponse{
-							ID:          userVehicle.Generation.ModelInfo.Brand.VehicleType.ID,
-							Name:        userVehicle.Generation.ModelInfo.Brand.VehicleType.Name,
-							Description: userVehicle.Generation.ModelInfo.Brand.VehicleType.Description,
-						},
-					},
-				},
-			},
 		})
 	}
 	return &dto.ListUserVehiclesResponse{Vehicles: userVehiclesResponse}, nil
@@ -1025,6 +820,11 @@ func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID 
 		return nil, errors.ErrInvalidVehicleID
 	}
 	err = uc.vehicleRepository.GetUserVehicle(ctx, uuidUserID, uintVehicleID, &userVehicle)
+	if err != nil {
+		logger.Error(err, "Failed to get user vehicle")
+		return nil, errors.ErrFailedToGetUserVehicle
+	}
+
 	return &dto.UserVehicleResponse{
 		ID:             userVehicle.ID,
 		UserID:         userVehicle.UserID,
@@ -1036,40 +836,6 @@ func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID 
 		VIN:            userVehicle.VIN,
 		CurrentMileage: userVehicle.CurrentMileage,
 		PurchaseDate:   userVehicle.PurchaseDate,
-		Generation: dto.VehicleGenerationResponse{
-			ID:              userVehicle.Generation.ID,
-			Name:            userVehicle.Generation.Name,
-			Description:     userVehicle.Generation.Description,
-			ModelID:         userVehicle.Generation.ModelID,
-			StartYear:       userVehicle.Generation.StartYear,
-			EndYear:         userVehicle.Generation.EndYear,
-			EngineType:      userVehicle.Generation.EngineType,
-			AssemblyType:    userVehicle.Generation.AssemblyType,
-			Assembler:       userVehicle.Generation.Assembler,
-			Transmission:    userVehicle.Generation.Transmission,
-			EngineSize:      userVehicle.Generation.EngineSize,
-			BodyStyle:       userVehicle.Generation.BodyStyle,
-			SpecialFeatures: userVehicle.Generation.SpecialFeatures,
-			ModelInfo: dto.VehicleModelResponse{
-				ID:          userVehicle.Generation.ModelInfo.ID,
-				Name:        userVehicle.Generation.ModelInfo.Name,
-				Description: userVehicle.Generation.ModelInfo.Description,
-				BrandID:     userVehicle.Generation.ModelInfo.BrandID,
-				StartYear:   userVehicle.Generation.ModelInfo.StartYear,
-				EndYear:     userVehicle.Generation.ModelInfo.EndYear,
-				Brand: dto.VehicleBrandResponse{
-					ID:            userVehicle.Generation.ModelInfo.Brand.ID,
-					VehicleTypeID: userVehicle.Generation.ModelInfo.Brand.VehicleTypeID,
-					Name:          userVehicle.Generation.ModelInfo.Brand.Name,
-					Description:   userVehicle.Generation.ModelInfo.Brand.Description,
-					Type: dto.VehicleTypeResponse{
-						ID:          userVehicle.Generation.ModelInfo.Brand.VehicleType.ID,
-						Name:        userVehicle.Generation.ModelInfo.Brand.VehicleType.Name,
-						Description: userVehicle.Generation.ModelInfo.Brand.VehicleType.Description,
-					},
-				},
-			},
-		},
 	}, nil
 }
 
@@ -1144,40 +910,6 @@ func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicle
 		VIN:            userVehicle.VIN,
 		CurrentMileage: userVehicle.CurrentMileage,
 		PurchaseDate:   userVehicle.PurchaseDate,
-		Generation: dto.VehicleGenerationResponse{
-			ID:              userVehicle.Generation.ID,
-			Name:            userVehicle.Generation.Name,
-			Description:     userVehicle.Generation.Description,
-			ModelID:         userVehicle.Generation.ModelID,
-			StartYear:       userVehicle.Generation.StartYear,
-			EndYear:         userVehicle.Generation.EndYear,
-			EngineType:      userVehicle.Generation.EngineType,
-			AssemblyType:    userVehicle.Generation.AssemblyType,
-			Assembler:       userVehicle.Generation.Assembler,
-			Transmission:    userVehicle.Generation.Transmission,
-			EngineSize:      userVehicle.Generation.EngineSize,
-			BodyStyle:       userVehicle.Generation.BodyStyle,
-			SpecialFeatures: userVehicle.Generation.SpecialFeatures,
-			ModelInfo: dto.VehicleModelResponse{
-				ID:          userVehicle.Generation.ModelInfo.ID,
-				Name:        userVehicle.Generation.ModelInfo.Name,
-				Description: userVehicle.Generation.ModelInfo.Description,
-				BrandID:     userVehicle.Generation.ModelInfo.BrandID,
-				StartYear:   userVehicle.Generation.ModelInfo.StartYear,
-				EndYear:     userVehicle.Generation.ModelInfo.EndYear,
-				Brand: dto.VehicleBrandResponse{
-					ID:            userVehicle.Generation.ModelInfo.Brand.ID,
-					VehicleTypeID: userVehicle.Generation.ModelInfo.Brand.VehicleTypeID,
-					Name:          userVehicle.Generation.ModelInfo.Brand.Name,
-					Description:   userVehicle.Generation.ModelInfo.Brand.Description,
-					Type: dto.VehicleTypeResponse{
-						ID:          userVehicle.Generation.ModelInfo.Brand.VehicleType.ID,
-						Name:        userVehicle.Generation.ModelInfo.Brand.VehicleType.Name,
-						Description: userVehicle.Generation.ModelInfo.Brand.VehicleType.Description,
-					},
-				},
-			},
-		},
 	}, nil
 }
 
@@ -1204,4 +936,89 @@ func (uc *vehicleUseCase) DeleteUserVehicle(ctx context.Context, userID, vehicle
 		return errors.ErrFailedToDeleteUserVehicle
 	}
 	return nil
+}
+
+// Complete hierarchy
+func (uc *vehicleUseCase) GetCompleteVehicleHierarchy(ctx context.Context) (*dto.CompleteVehicleHierarchyResponse, error) {
+	vehicleTypes, err := uc.vehicleRepository.GetCompleteVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to get complete vehicle hierarchy")
+		return nil, errors.ErrFailedToListVehicleTypes
+	}
+
+	// Convert entities to DTO tree structure
+	vehicleTypeTrees := []dto.VehicleTypeTreeResponse{}
+	totalTypes := 0
+	totalBrands := 0
+	totalModels := 0
+	totalGenerations := 0
+
+	for _, vehicleType := range vehicleTypes {
+		totalTypes++
+
+		brandTrees := []dto.VehicleBrandTreeResponse{}
+		for _, brand := range vehicleType.VehicleBrands {
+			totalBrands++
+
+			modelTrees := []dto.VehicleModelTreeResponse{}
+			for _, model := range brand.VehicleModels {
+				totalModels++
+
+				generationTrees := []dto.VehicleGenerationTreeResponse{}
+				for _, generation := range model.VehicleGenerations {
+					totalGenerations++
+
+					generationTree := dto.VehicleGenerationTreeResponse{
+						ID:              generation.ID,
+						Name:            generation.Name,
+						Description:     generation.Description,
+						StartYear:       generation.StartYear,
+						EndYear:         generation.EndYear,
+						EngineType:      generation.EngineType,
+						AssemblyType:    generation.AssemblyType,
+						Assembler:       generation.Assembler,
+						Transmission:    generation.Transmission,
+						EngineSize:      generation.EngineSize,
+						BodyStyle:       generation.BodyStyle,
+						SpecialFeatures: generation.SpecialFeatures,
+					}
+					generationTrees = append(generationTrees, generationTree)
+				}
+
+				modelTree := dto.VehicleModelTreeResponse{
+					ID:          model.ID,
+					Name:        model.Name,
+					Description: model.Description,
+					StartYear:   model.StartYear,
+					EndYear:     model.EndYear,
+					Generations: generationTrees,
+				}
+				modelTrees = append(modelTrees, modelTree)
+			}
+
+			brandTree := dto.VehicleBrandTreeResponse{
+				ID:          brand.ID,
+				Name:        brand.Name,
+				Description: brand.Description,
+				Models:      modelTrees,
+			}
+			brandTrees = append(brandTrees, brandTree)
+		}
+
+		vehicleTypeTree := dto.VehicleTypeTreeResponse{
+			ID:          vehicleType.ID,
+			Name:        vehicleType.Name,
+			Description: vehicleType.Description,
+			Brands:      brandTrees,
+		}
+		vehicleTypeTrees = append(vehicleTypeTrees, vehicleTypeTree)
+	}
+
+	return &dto.CompleteVehicleHierarchyResponse{
+		VehicleTypes:     vehicleTypeTrees,
+		TotalTypes:       totalTypes,
+		TotalBrands:      totalBrands,
+		TotalModels:      totalModels,
+		TotalGenerations: totalGenerations,
+	}, nil
 }

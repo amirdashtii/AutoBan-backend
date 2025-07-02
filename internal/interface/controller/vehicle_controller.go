@@ -26,6 +26,9 @@ func VehicleRoutes(router *gin.Engine) {
 	// Public routes for vehicle catalog
 	vehicleGroup := router.Group("/api/v1/vehicles")
 	{
+		// Complete hierarchy
+		vehicleGroup.GET("/hierarchy", c.GetCompleteHierarchy)
+
 		// Vehicle Types
 		vehicleGroup.GET("/types", c.ListTypes)
 		vehicleGroup.GET("/types/:type_id", c.GetType)
@@ -81,6 +84,22 @@ func VehicleRoutes(router *gin.Engine) {
 }
 
 // Public endpoints
+
+// @Summary     Get complete vehicle hierarchy
+// @Description Get the complete vehicle hierarchy including all types, brands, models, and generations
+// @Tags        Hierarchy
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} dto.CompleteVehicleHierarchyResponse
+// @Router      /vehicles/hierarchy [get]
+func (c *VehicleController) GetCompleteHierarchy(ctx *gin.Context) {
+	hierarchy, err := c.vehicleUseCase.GetCompleteVehicleHierarchy(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	ctx.JSON(http.StatusOK, hierarchy)
+}
 
 // @Summary     List all vehicle types
 // @Description Get a list of all available vehicle types

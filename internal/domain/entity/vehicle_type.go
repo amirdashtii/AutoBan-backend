@@ -12,38 +12,44 @@ type VehicleType struct {
 
 	Name        string `json:"name" gorm:"index;not null;unique"`
 	Description string `json:"description"`
+
+	// Relationships
+	VehicleBrands []VehicleBrand `json:"vehicle_brands,omitempty" gorm:"foreignKey:VehicleTypeID;constraint:OnDelete:CASCADE"`
 }
 
 // VehicleBrand represents the manufacturer of vehicles
 type VehicleBrand struct {
 	BaseModel
 
-	Name          string      `json:"name" gorm:"index;not null;unique"`
+	Name          string      `json:"name" gorm:"index;not null;uniqueIndex:idx_type_name"`
 	Description   string      `json:"description"`
-	VehicleTypeID uint64      `json:"vehicle_type_id" gorm:"not null"`
-	VehicleType   VehicleType `json:"vehicle_type" gorm:"foreignKey:VehicleTypeID"`
+	VehicleTypeID uint64      `json:"vehicle_type_id" gorm:"not null;uniqueIndex:idx_type_name"`
+
+	// Relationships
+	VehicleModels []VehicleModel `json:"vehicle_models,omitempty" gorm:"foreignKey:BrandID;constraint:OnDelete:CASCADE"`
 }
 
 // VehicleModel represents specific models of vehicles
 type VehicleModel struct {
 	BaseModel
 
-	Name        string       `json:"name" gorm:"index;not null;unique"`
+	Name        string       `json:"name" gorm:"index;not null;uniqueIndex:idx_brand_name"`
 	Description string       `json:"description"`
-	BrandID     uint64       `json:"brand_id" gorm:"not null"`
-	Brand       VehicleBrand `json:"brand" gorm:"foreignKey:BrandID"`
+	BrandID     uint64       `json:"brand_id" gorm:"not null;uniqueIndex:idx_brand_name"`
 	StartYear   int          `json:"start_year"` // First year of production
 	EndYear     int          `json:"end_year"`   // Last year of production (0 if still in production)
+
+	// Relationships
+	VehicleGenerations []VehicleGeneration `json:"vehicle_generations,omitempty" gorm:"foreignKey:ModelID;constraint:OnDelete:CASCADE"`
 }
 
 // VehicleGeneration represents different generations/versions of a model
 type VehicleGeneration struct {
 	BaseModel
 
-	Name         string       `json:"name" gorm:"index;not null;unique"`
+	Name         string       `json:"name" gorm:"index;not null;uniqueIndex:idx_model_name"`
 	Description  string       `json:"description"`
-	ModelID      uint64       `json:"model_id" gorm:"not null"`
-	ModelInfo    VehicleModel `json:"model" gorm:"foreignKey:ModelID"`
+	ModelID      uint64       `json:"model_id" gorm:"not null;uniqueIndex:idx_model_name"`
 	StartYear    int          `json:"start_year"`    // First year of production
 	EndYear      int          `json:"end_year"`      // Last year of production (0 if still in production)
 	EngineType   string       `json:"engine_type"`   // Gasoline, Diesel, Hybrid, Electric
@@ -64,7 +70,6 @@ type UserVehicle struct {
 	UserID         uuid.UUID         `json:"user_id" gorm:"type:uuid;not null"`
 	Name           string            `json:"name" gorm:"not null"`
 	GenerationID   uint64            `json:"generation_id" gorm:"not null"`
-	Generation     VehicleGeneration `json:"generation" gorm:"foreignKey:GenerationID"`
 	ProductionYear int               `json:"production_year"`
 	Color          string            `json:"color"`
 	LicensePlate   string            `json:"license_plate"`

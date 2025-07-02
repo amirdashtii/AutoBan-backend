@@ -68,8 +68,6 @@ type VehicleBrandResponse struct {
 	Description string `json:"description"`
 	// ID of the vehicle type
 	VehicleTypeID uint64 `json:"vehicle_type_id"`
-	// Vehicle type
-	Type VehicleTypeResponse `json:"type"`
 }
 
 // Model
@@ -116,8 +114,6 @@ type VehicleModelResponse struct {
 	StartYear int `json:"start_year"`
 	// End year of the vehicle model
 	EndYear int `json:"end_year"`
-	// Vehicle brand
-	Brand VehicleBrandResponse `json:"brand"`
 }
 
 // Generation
@@ -206,8 +202,6 @@ type VehicleGenerationResponse struct {
 	BodyStyle string `json:"body_style"`
 	// Special features of the vehicle generation
 	SpecialFeatures string `json:"special_features"`
-	// Vehicle model
-	ModelInfo VehicleModelResponse `json:"model_info"`
 }
 
 // UserVehicle
@@ -276,8 +270,6 @@ type UserVehicleResponse struct {
 	CurrentMileage int `json:"current_mileage"`
 	// Purchase date of the user vehicle
 	PurchaseDate time.Time `json:"purchase_date"`
-	// Vehicle generation
-	Generation VehicleGenerationResponse `json:"generation"`
 }
 
 // ListVehicleTypesResponse represents the response for listing vehicle types
@@ -313,4 +305,93 @@ type ListVehicleGenerationsResponse struct {
 type ListUserVehiclesResponse struct {
 	// List of user vehicles
 	Vehicles []UserVehicleResponse `json:"vehicles"`
+}
+
+// Hierarchical Vehicle DTOs for complete tree structure
+
+// VehicleGenerationTreeResponse represents a vehicle generation in the tree structure
+// @Description Vehicle generation in hierarchical tree
+type VehicleGenerationTreeResponse struct {
+	// ID of the vehicle generation
+	ID uint64 `json:"id"`
+	// Name of the vehicle generation
+	Name string `json:"name"`
+	// Description of the vehicle generation
+	Description string `json:"description"`
+	// Start year of the vehicle generation
+	StartYear int `json:"start_year"`
+	// End year of the vehicle generation
+	EndYear int `json:"end_year"`
+	// Engine type of the vehicle generation
+	EngineType string `json:"engine_type"`
+	// Assembly type of the vehicle generation
+	AssemblyType string `json:"assembly_type"`
+	// Assembler of the vehicle generation
+	Assembler string `json:"assembler"`
+	// Transmission of the vehicle generation
+	Transmission string `json:"transmission"`
+	// Engine size of the vehicle generation
+	EngineSize int `json:"engine_size"`
+	// Body style of the vehicle generation
+	BodyStyle string `json:"body_style"`
+	// Special features of the vehicle generation
+	SpecialFeatures string `json:"special_features"`
+}
+
+// VehicleModelTreeResponse represents a vehicle model in the tree structure
+// @Description Vehicle model in hierarchical tree
+type VehicleModelTreeResponse struct {
+	// ID of the vehicle model
+	ID uint64 `json:"id"`
+	// Name of the vehicle model
+	Name string `json:"name"`
+	// Description of the vehicle model
+	Description string `json:"description"`
+	// Start year of the vehicle model
+	StartYear int `json:"start_year"`
+	// End year of the vehicle model
+	EndYear int `json:"end_year"`
+	// List of generations for this model
+	Generations []VehicleGenerationTreeResponse `json:"generations"`
+}
+
+// VehicleBrandTreeResponse represents a vehicle brand in the tree structure
+// @Description Vehicle brand in hierarchical tree
+type VehicleBrandTreeResponse struct {
+	// ID of the vehicle brand
+	ID uint64 `json:"id"`
+	// Name of the vehicle brand
+	Name string `json:"name"`
+	// Description of the vehicle brand
+	Description string `json:"description"`
+	// List of models for this brand
+	Models []VehicleModelTreeResponse `json:"models"`
+}
+
+// VehicleTypeTreeResponse represents a vehicle type in the tree structure
+// @Description Vehicle type in hierarchical tree
+type VehicleTypeTreeResponse struct {
+	// ID of the vehicle type
+	ID uint64 `json:"id"`
+	// Name of the vehicle type
+	Name string `json:"name"`
+	// Description of the vehicle type
+	Description string `json:"description"`
+	// List of brands for this type
+	Brands []VehicleBrandTreeResponse `json:"brands"`
+}
+
+// CompleteVehicleHierarchyResponse represents the complete vehicle hierarchy
+// @Description Complete vehicle hierarchy with all types, brands, models, and generations
+type CompleteVehicleHierarchyResponse struct {
+	// List of all vehicle types with their complete hierarchy
+	VehicleTypes []VehicleTypeTreeResponse `json:"vehicle_types"`
+	// Total count of vehicle types
+	TotalTypes int `json:"total_types"`
+	// Total count of vehicle brands
+	TotalBrands int `json:"total_brands"`
+	// Total count of vehicle models
+	TotalModels int `json:"total_models"`
+	// Total count of vehicle generations
+	TotalGenerations int `json:"total_generations"`
 }
