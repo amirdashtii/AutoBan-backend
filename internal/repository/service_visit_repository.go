@@ -43,38 +43,7 @@ func (r *ServiceVisitRepositoryImpl) UpdateServiceVisit(ctx context.Context, ser
 }
 
 func (r *ServiceVisitRepositoryImpl) DeleteServiceVisit(ctx context.Context, serviceVisit *entity.ServiceVisit) error {
-	db := r.db.WithContext(ctx)
-	tx := db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	
-	if serviceVisit.OilChangeID != nil {	
-		oilChange := entity.OilChange{}
-		oilChange.ID = *serviceVisit.OilChangeID
-		err := tx.Delete(&oilChange).Error
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-	if serviceVisit.OilFilterID != nil {
-		oilFilter := entity.OilFilter{}
-		oilFilter.ID = *serviceVisit.OilFilterID
-		err := tx.Delete(&oilFilter).Error	
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-	
-	if err := tx.Delete(serviceVisit).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-	return tx.Commit().Error
+	return r.db.WithContext(ctx).Delete(serviceVisit).Error
 }
 
 func (r *ServiceVisitRepositoryImpl) GetLastServiceVisit(ctx context.Context, serviceVisit *entity.ServiceVisit) error {

@@ -128,11 +128,15 @@ func ValidateVehicleTypeCreateRequest(request dto.CreateVehicleTypeRequest) erro
 }
 
 func ValidateVehicleTypeUpdateRequest(request dto.UpdateVehicleTypeRequest) error {
-	if request.Name == nil && request.Description == nil {
+	if request.NameFa == nil && request.NameEn == nil && request.DescriptionFa == nil && request.DescriptionEn == nil {
 		return errors.New("no fields to update")
 	}
 
-	if request.Name != nil && *request.Name == "" {
+	if request.NameFa != nil && *request.NameFa == "" {
+		return errors.New("name is required")
+	}
+
+	if request.NameEn != nil && *request.NameEn == "" {
 		return errors.New("name is required")
 	}
 
@@ -170,12 +174,16 @@ func ValidateVehicleBrandCreateRequest(request dto.CreateVehicleBrandRequest) er
 
 func ValidateVehicleBrandUpdateRequest(request dto.UpdateVehicleBrandRequest) error {
 	// Check if at least one field has a value
-	if request.VehicleTypeID == nil && request.Name == nil && request.Description == nil {
+	if request.VehicleTypeID == nil && request.NameFa == nil && request.NameEn == nil && request.DescriptionFa == nil && request.DescriptionEn == nil {
 		return errors.New("no fields to update")
 	}
 
 	// If Name is provided, validate it's not empty
-	if request.Name != nil && *request.Name == "" {
+	if request.NameFa != nil && *request.NameFa == "" {
+		return errors.New("name is required")
+	}
+
+	if request.NameEn != nil && *request.NameEn == "" {
 		return errors.New("name is required")
 	}
 
@@ -222,31 +230,19 @@ func ValidateVehicleModelCreateRequest(request dto.CreateVehicleModelRequest) er
 
 func ValidateVehicleModelUpdateRequest(request dto.UpdateVehicleModelRequest) error {
 	// Check if at least one field has a value
-	if request.BrandID == nil && request.Name == nil && request.Description == nil && request.StartYear == nil && request.EndYear == nil {
+	if request.BrandID == nil && request.NameFa == nil && request.NameEn == nil && request.DescriptionFa == nil && request.DescriptionEn == nil {
 		return errors.New("no fields to update")
 	}
 
 	// If Name is provided, validate it's not empty
-	if request.Name != nil && *request.Name == "" {
+	if request.NameFa != nil && *request.NameFa == "" {
 		return errors.New("name is required")
 	}
 
-	validate := validator.New()
-	validate.RegisterValidation("year", validateYear)
-	err := validate.Struct(request)
-	if err != nil {
-		if validationErrors, ok := err.(validator.ValidationErrors); ok {
-			for _, fieldError := range validationErrors {
-				switch fieldError.Field() {
-				case "StartYear":
-					return errors.New("invalid start year format")
-				case "EndYear":
-					return errors.New("invalid end year format")
-				}
-			}
-		}
-		return errors.New("validation failed")
+	if request.NameEn != nil && *request.NameEn == "" {
+		return errors.New("name is required")
 	}
+
 	return nil
 }
 
@@ -276,15 +272,21 @@ func ValidateVehicleGenerationCreateRequest(request dto.CreateVehicleGenerationR
 
 func ValidateVehicleGenerationUpdateRequest(request dto.UpdateVehicleGenerationRequest) error {
 	// Check if at least one field has a value
-	if request.Name == nil && request.Description == nil && request.ModelID == nil &&
-		request.StartYear == nil && request.EndYear == nil && request.EngineType == nil &&
-		request.AssemblyType == nil && request.Assembler == nil && request.Transmission == nil &&
-		request.EngineSize == nil && request.BodyStyle == nil && request.SpecialFeatures == nil {
+	if request.ModelID == nil && request.NameFa == nil && request.NameEn == nil && request.DescriptionFa == nil && request.DescriptionEn == nil &&
+		request.StartYear == nil && request.EndYear == nil && request.Engine == nil &&
+		request.EngineVolume == nil && request.Cylinders == nil && request.DrivetrainFa == nil &&
+		request.DrivetrainEn == nil && request.Gearbox == nil && request.FuelType == nil &&
+		request.Battery == nil && request.Seller == nil && request.AssemblyType == nil &&
+		request.Assembler == nil {
 		return errors.New("no fields to update")
 	}
 
 	// If Name is provided, validate it's not empty
-	if request.Name != nil && *request.Name == "" {
+	if request.NameFa != nil && *request.NameFa == "" {
+		return errors.New("name is required")
+	}
+
+	if request.NameEn != nil && *request.NameEn == "" {
 		return errors.New("name is required")
 	}
 

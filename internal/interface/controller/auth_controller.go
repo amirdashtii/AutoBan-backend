@@ -89,7 +89,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, response)
+	ctx.JSON(http.StatusOK, response)
 }
 
 // @Summary     Get user sessions

@@ -78,14 +78,14 @@ func ParseStatusType(s string) StatusType {
 type User struct {
 	BaseEntity
 
-	PhoneNumber string     `gorm:"index;unique;not null" json:"phone_number"`
-	Password    string     `json:"password" gorm:"not null"`
-	FirstName   string     `json:"first_name"`
-	LastName    string     `json:"last_name"`
-	Birthday    time.Time  `json:"birthday"`
-	Email       string     `gorm:"unique" json:"email"`
-	Status      StatusType `json:"status"`
-	Role        RoleType   `json:"role"`
+	PhoneNumber string     `gorm:"index;unique;not null"`
+	Password    string     `gorm:"not null"`
+	FirstName   string
+	LastName    string
+	Birthday    time.Time
+	Email       string     `gorm:"unique"`
+	Status      StatusType
+	Role        RoleType
 }
 
 // NewUser creates a new user with default values

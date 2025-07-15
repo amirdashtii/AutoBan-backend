@@ -3345,18 +3345,29 @@ const docTemplate = `{
             "description": "Vehicle brand creation request",
             "type": "object",
             "required": [
-                "name"
+                "name_en",
+                "name_fa"
             ],
             "properties": {
-                "description": {
+                "description_en": {
                     "description": "Description of the vehicle brand",
                     "type": "string",
                     "example": "A popular Japanese car brand"
                 },
-                "name": {
+                "description_fa": {
+                    "description": "Description of the vehicle brand",
+                    "type": "string",
+                    "example": "برند خودرویی از کشور ژاپن"
+                },
+                "name_en": {
                     "description": "Name of the vehicle brand",
                     "type": "string",
                     "example": "Toyota"
+                },
+                "name_fa": {
+                    "description": "Name of the vehicle brand",
+                    "type": "string",
+                    "example": "تویوتا"
                 }
             }
         },
@@ -3364,7 +3375,8 @@ const docTemplate = `{
             "description": "Vehicle generation creation request",
             "type": "object",
             "required": [
-                "name"
+                "name_en",
+                "name_fa"
             ],
             "properties": {
                 "assembler": {
@@ -3377,50 +3389,88 @@ const docTemplate = `{
                     "type": "string",
                     "example": "CKD"
                 },
-                "body_style": {
-                    "description": "Body style of the vehicle generation",
+                "battery": {
+                    "description": "Battery of the vehicle generation",
+                    "type": "string",
+                    "example": "Li-ion"
+                },
+                "body_style_en": {
                     "type": "string",
                     "example": "Sedan"
                 },
-                "description": {
+                "body_style_fa": {
+                    "description": "Body style of the vehicle generation",
+                    "type": "string",
+                    "example": "سدان"
+                },
+                "cylinders": {
+                    "description": "Cylinders of the vehicle generation",
+                    "type": "integer",
+                    "example": 4
+                },
+                "description_en": {
                     "description": "Description of the vehicle generation",
                     "type": "string",
                     "example": "A brief description of the generation"
+                },
+                "description_fa": {
+                    "description": "Description of the vehicle generation",
+                    "type": "string",
+                    "example": "A brief description of the generation"
+                },
+                "drivetrain_en": {
+                    "type": "string",
+                    "example": "4WD"
+                },
+                "drivetrain_fa": {
+                    "description": "Drivetrain of the vehicle generation",
+                    "type": "string",
+                    "example": "دودیفرانسیل"
                 },
                 "end_year": {
                     "description": "End year of the vehicle generation",
                     "type": "integer",
                     "example": 2022
                 },
-                "engine_size": {
-                    "description": "Engine size of the vehicle generation",
-                    "type": "integer",
-                    "example": 3000
-                },
-                "engine_type": {
-                    "description": "Engine type of the vehicle generation",
+                "engine": {
+                    "description": "Engine of the vehicle generation",
                     "type": "string",
-                    "example": "V6"
+                    "example": "1.6 TDI"
                 },
-                "name": {
+                "engine_volume": {
+                    "description": "Engine volume of the vehicle generation",
+                    "type": "integer",
+                    "example": 1600
+                },
+                "fuel_type": {
+                    "description": "Fuel type of the vehicle generation",
+                    "type": "string",
+                    "example": "Gasoline"
+                },
+                "gearbox": {
+                    "description": "Gearbox of the vehicle generation",
+                    "type": "string",
+                    "example": "Automatic"
+                },
+                "name_en": {
                     "description": "Name of the vehicle generation",
                     "type": "string",
                     "example": "Generation Name"
                 },
-                "special_features": {
-                    "description": "Special features of the vehicle generation",
+                "name_fa": {
+                    "description": "Name of the vehicle generation",
                     "type": "string",
-                    "example": "Leather seats, Sunroof"
+                    "example": "Generation Name"
+                },
+                "seller": {
+                    "description": "Seller of the vehicle generation",
+                    "type": "string",
+                    "example": "Toyota"
                 },
                 "start_year": {
                     "description": "Start year of the vehicle generation",
                     "type": "integer",
                     "example": 2020
-                },
-                "transmission": {
-                    "description": "Transmission of the vehicle generation",
-                    "type": "string",
-                    "example": "Automatic"
                 }
             }
         },
@@ -3428,28 +3478,29 @@ const docTemplate = `{
             "description": "Vehicle model creation request",
             "type": "object",
             "required": [
-                "name"
+                "name_en",
+                "name_fa"
             ],
             "properties": {
-                "description": {
+                "description_en": {
                     "description": "Description of the vehicle model",
                     "type": "string",
                     "example": "A mid-size sedan"
                 },
-                "end_year": {
-                    "description": "End year of the vehicle model",
-                    "type": "integer",
-                    "example": 2022
+                "description_fa": {
+                    "description": "Description of the vehicle model",
+                    "type": "string",
+                    "example": "A mid-size sedan"
                 },
-                "name": {
+                "name_en": {
                     "description": "Name of the vehicle model",
                     "type": "string",
                     "example": "Camry"
                 },
-                "start_year": {
-                    "description": "Start year of the vehicle model",
-                    "type": "integer",
-                    "example": 2020
+                "name_fa": {
+                    "description": "Name of the vehicle model",
+                    "type": "string",
+                    "example": "Camry"
                 }
             }
         },
@@ -3457,18 +3508,29 @@ const docTemplate = `{
             "description": "Vehicle type creation request",
             "type": "object",
             "required": [
-                "name"
+                "name_en",
+                "name_fa"
             ],
             "properties": {
-                "description": {
-                    "description": "Description of the vehicle type",
+                "description_en": {
+                    "description": "Description of the vehicle type in English",
                     "type": "string",
                     "example": "A standard passenger car"
                 },
-                "name": {
-                    "description": "Name of the vehicle type",
+                "description_fa": {
+                    "description": "Description of the vehicle type in Persian",
                     "type": "string",
-                    "example": "car"
+                    "example": "خودروی سواری استاندارد"
+                },
+                "name_en": {
+                    "description": "Name of the vehicle type in English",
+                    "type": "string",
+                    "example": "Car"
+                },
+                "name_fa": {
+                    "description": "Name of the vehicle type in Persian",
+                    "type": "string",
+                    "example": "خودرو"
                 }
             }
         },
@@ -4346,15 +4408,25 @@ const docTemplate = `{
             "description": "Vehicle brand update request",
             "type": "object",
             "properties": {
-                "description": {
+                "description_en": {
                     "description": "Description of the vehicle brand",
                     "type": "string",
                     "example": "A popular Japanese car brand"
                 },
-                "name": {
+                "description_fa": {
+                    "description": "Description of the vehicle brand",
+                    "type": "string",
+                    "example": "برند خودرویی از کشور ژاپن"
+                },
+                "name_en": {
                     "description": "Name of the vehicle brand",
                     "type": "string",
                     "example": "Toyota"
+                },
+                "name_fa": {
+                    "description": "Name of the vehicle brand",
+                    "type": "string",
+                    "example": "تویوتا"
                 },
                 "vehicle_type_id": {
                     "description": "ID of the vehicle type",
@@ -4372,25 +4444,25 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1
                 },
-                "description": {
+                "description_en": {
                     "description": "Description of the vehicle model",
                     "type": "string",
                     "example": "A mid-size sedan"
                 },
-                "end_year": {
-                    "description": "End year of the vehicle model",
-                    "type": "integer",
-                    "example": 2022
+                "description_fa": {
+                    "description": "Description of the vehicle model",
+                    "type": "string",
+                    "example": "A mid-size sedan"
                 },
-                "name": {
+                "name_en": {
                     "description": "Name of the vehicle model",
                     "type": "string",
                     "example": "Camry"
                 },
-                "start_year": {
-                    "description": "Start year of the vehicle model",
-                    "type": "integer",
-                    "example": 2020
+                "name_fa": {
+                    "description": "Name of the vehicle model",
+                    "type": "string",
+                    "example": "Camry"
                 }
             }
         },
@@ -4398,15 +4470,25 @@ const docTemplate = `{
             "description": "Vehicle type update request",
             "type": "object",
             "properties": {
-                "description": {
-                    "description": "Description of the vehicle type",
+                "description_en": {
+                    "description": "Description of the vehicle type in English",
                     "type": "string",
                     "example": "A standard passenger car"
                 },
-                "name": {
-                    "description": "Name of the vehicle type",
+                "description_fa": {
+                    "description": "Description of the vehicle type in Persian",
                     "type": "string",
-                    "example": "sedan"
+                    "example": "خودروی سواری استاندارد"
+                },
+                "name_en": {
+                    "description": "Name of the vehicle type in English",
+                    "type": "string",
+                    "example": "Car"
+                },
+                "name_fa": {
+                    "description": "Name of the vehicle type in Persian",
+                    "type": "string",
+                    "example": "خودرو"
                 }
             }
         },
@@ -4506,7 +4588,11 @@ const docTemplate = `{
             "description": "Vehicle brand response",
             "type": "object",
             "properties": {
-                "description": {
+                "description_en": {
+                    "description": "Description of the vehicle brand",
+                    "type": "string"
+                },
+                "description_fa": {
                     "description": "Description of the vehicle brand",
                     "type": "string"
                 },
@@ -4514,7 +4600,11 @@ const docTemplate = `{
                     "description": "ID of the vehicle brand",
                     "type": "integer"
                 },
-                "name": {
+                "name_en": {
+                    "description": "Name of the vehicle brand",
+                    "type": "string"
+                },
+                "name_fa": {
                     "description": "Name of the vehicle brand",
                     "type": "string"
                 },
@@ -4528,7 +4618,11 @@ const docTemplate = `{
             "description": "Vehicle brand in hierarchical tree",
             "type": "object",
             "properties": {
-                "description": {
+                "description_en": {
+                    "description": "Description of the vehicle brand",
+                    "type": "string"
+                },
+                "description_fa": {
                     "description": "Description of the vehicle brand",
                     "type": "string"
                 },
@@ -4543,7 +4637,11 @@ const docTemplate = `{
                         "$ref": "#/definitions/dto.VehicleModelTreeResponse"
                     }
                 },
-                "name": {
+                "name_en": {
+                    "description": "Name of the vehicle brand",
+                    "type": "string"
+                },
+                "name_fa": {
                     "description": "Name of the vehicle brand",
                     "type": "string"
                 }
@@ -4561,24 +4659,55 @@ const docTemplate = `{
                     "description": "Assembly type of the vehicle generation",
                     "type": "string"
                 },
-                "body_style": {
+                "battery": {
+                    "description": "Battery of the vehicle generation",
+                    "type": "string"
+                },
+                "body_style_en": {
                     "description": "Body style of the vehicle generation",
                     "type": "string"
                 },
-                "description": {
+                "body_style_fa": {
+                    "description": "Body style of the vehicle generation",
+                    "type": "string"
+                },
+                "cylinders": {
+                    "description": "Cylinders of the vehicle generation",
+                    "type": "integer"
+                },
+                "description_en": {
                     "description": "Description of the vehicle generation",
+                    "type": "string"
+                },
+                "description_fa": {
+                    "description": "Description of the vehicle generation",
+                    "type": "string"
+                },
+                "drivetrain_en": {
+                    "type": "string"
+                },
+                "drivetrain_fa": {
+                    "description": "Drivetrain of the vehicle generation",
                     "type": "string"
                 },
                 "end_year": {
                     "description": "End year of the vehicle generation",
                     "type": "integer"
                 },
-                "engine_size": {
-                    "description": "Engine size of the vehicle generation",
+                "engine": {
+                    "description": "Engine of the vehicle generation",
+                    "type": "string"
+                },
+                "engine_volume": {
+                    "description": "Engine volume of the vehicle generation",
                     "type": "integer"
                 },
-                "engine_type": {
-                    "description": "Engine type of the vehicle generation",
+                "fuel_type": {
+                    "description": "Fuel type of the vehicle generation",
+                    "type": "string"
+                },
+                "gearbox": {
+                    "description": "Gearbox of the vehicle generation",
                     "type": "string"
                 },
                 "id": {
@@ -4589,21 +4718,21 @@ const docTemplate = `{
                     "description": "ID of the vehicle model",
                     "type": "integer"
                 },
-                "name": {
+                "name_en": {
                     "description": "Name of the vehicle generation",
                     "type": "string"
                 },
-                "special_features": {
-                    "description": "Special features of the vehicle generation",
+                "name_fa": {
+                    "description": "Name of the vehicle generation",
+                    "type": "string"
+                },
+                "seller": {
+                    "description": "Seller of the vehicle generation",
                     "type": "string"
                 },
                 "start_year": {
                     "description": "Start year of the vehicle generation",
                     "type": "integer"
-                },
-                "transmission": {
-                    "description": "Transmission of the vehicle generation",
-                    "type": "string"
                 }
             }
         },
@@ -4619,45 +4748,80 @@ const docTemplate = `{
                     "description": "Assembly type of the vehicle generation",
                     "type": "string"
                 },
-                "body_style": {
+                "battery": {
+                    "description": "Battery of the vehicle generation",
+                    "type": "string"
+                },
+                "body_style_en": {
                     "description": "Body style of the vehicle generation",
                     "type": "string"
                 },
-                "description": {
+                "body_style_fa": {
+                    "description": "Body style of the vehicle generation",
+                    "type": "string"
+                },
+                "cylinders": {
+                    "description": "Cylinders of the vehicle generation",
+                    "type": "integer"
+                },
+                "description_en": {
                     "description": "Description of the vehicle generation",
+                    "type": "string"
+                },
+                "description_fa": {
+                    "description": "Description of the vehicle generation",
+                    "type": "string"
+                },
+                "drivetrain_en": {
+                    "type": "string"
+                },
+                "drivetrain_fa": {
+                    "description": "Drivetrain of the vehicle generation",
                     "type": "string"
                 },
                 "end_year": {
                     "description": "End year of the vehicle generation",
                     "type": "integer"
                 },
-                "engine_size": {
-                    "description": "Engine size of the vehicle generation",
+                "engine": {
+                    "description": "Engine type of the vehicle generation",
+                    "type": "string"
+                },
+                "engine_volume": {
+                    "description": "Engine volume of the vehicle generation",
                     "type": "integer"
                 },
-                "engine_type": {
-                    "description": "Engine type of the vehicle generation",
+                "fuel_type": {
+                    "description": "Fuel type of the vehicle generation",
+                    "type": "string"
+                },
+                "gearbox": {
+                    "description": "Gearbox of the vehicle generation",
                     "type": "string"
                 },
                 "id": {
                     "description": "ID of the vehicle generation",
                     "type": "integer"
                 },
-                "name": {
+                "model_id": {
+                    "description": "ID of the vehicle model",
+                    "type": "integer"
+                },
+                "name_en": {
                     "description": "Name of the vehicle generation",
                     "type": "string"
                 },
-                "special_features": {
-                    "description": "Special features of the vehicle generation",
+                "name_fa": {
+                    "description": "Name of the vehicle generation",
+                    "type": "string"
+                },
+                "seller": {
+                    "description": "Seller of the vehicle generation",
                     "type": "string"
                 },
                 "start_year": {
                     "description": "Start year of the vehicle generation",
                     "type": "integer"
-                },
-                "transmission": {
-                    "description": "Transmission of the vehicle generation",
-                    "type": "string"
                 }
             }
         },
@@ -4669,25 +4833,25 @@ const docTemplate = `{
                     "description": "ID of the vehicle brand",
                     "type": "integer"
                 },
-                "description": {
+                "description_en": {
                     "description": "Description of the vehicle model",
                     "type": "string"
                 },
-                "end_year": {
-                    "description": "End year of the vehicle model",
-                    "type": "integer"
+                "description_fa": {
+                    "description": "Description of the vehicle model",
+                    "type": "string"
                 },
                 "id": {
                     "description": "ID of the vehicle model",
                     "type": "integer"
                 },
-                "name": {
+                "name_en": {
                     "description": "Name of the vehicle model",
                     "type": "string"
                 },
-                "start_year": {
-                    "description": "Start year of the vehicle model",
-                    "type": "integer"
+                "name_fa": {
+                    "description": "Name of the vehicle model",
+                    "type": "string"
                 }
             }
         },
@@ -4695,13 +4859,17 @@ const docTemplate = `{
             "description": "Vehicle model in hierarchical tree",
             "type": "object",
             "properties": {
-                "description": {
+                "brand_id": {
+                    "description": "ID of the vehicle brand",
+                    "type": "integer"
+                },
+                "description_en": {
                     "description": "Description of the vehicle model",
                     "type": "string"
                 },
-                "end_year": {
-                    "description": "End year of the vehicle model",
-                    "type": "integer"
+                "description_fa": {
+                    "description": "Description of the vehicle model",
+                    "type": "string"
                 },
                 "generations": {
                     "description": "List of generations for this model",
@@ -4714,13 +4882,13 @@ const docTemplate = `{
                     "description": "ID of the vehicle model",
                     "type": "integer"
                 },
-                "name": {
+                "name_en": {
                     "description": "Name of the vehicle model",
                     "type": "string"
                 },
-                "start_year": {
-                    "description": "Start year of the vehicle model",
-                    "type": "integer"
+                "name_fa": {
+                    "description": "Name of the vehicle model",
+                    "type": "string"
                 }
             }
         },
@@ -4728,16 +4896,24 @@ const docTemplate = `{
             "description": "Vehicle type response",
             "type": "object",
             "properties": {
-                "description": {
-                    "description": "Description of the vehicle type",
+                "description_en": {
+                    "description": "Description of the vehicle type in English",
+                    "type": "string"
+                },
+                "description_fa": {
+                    "description": "Description of the vehicle type in Persian",
                     "type": "string"
                 },
                 "id": {
                     "description": "ID of the vehicle type",
                     "type": "integer"
                 },
-                "name": {
-                    "description": "Name of the vehicle type",
+                "name_en": {
+                    "description": "Name of the vehicle type in English",
+                    "type": "string"
+                },
+                "name_fa": {
+                    "description": "Name of the vehicle type in Persian",
                     "type": "string"
                 }
             }
@@ -4753,7 +4929,11 @@ const docTemplate = `{
                         "$ref": "#/definitions/dto.VehicleBrandTreeResponse"
                     }
                 },
-                "description": {
+                "description_en": {
+                    "description": "Description of the vehicle type",
+                    "type": "string"
+                },
+                "description_fa": {
                     "description": "Description of the vehicle type",
                     "type": "string"
                 },
@@ -4761,7 +4941,11 @@ const docTemplate = `{
                     "description": "ID of the vehicle type",
                     "type": "integer"
                 },
-                "name": {
+                "name_en": {
+                    "description": "Name of the vehicle type",
+                    "type": "string"
+                },
+                "name_fa": {
                     "description": "Name of the vehicle type",
                     "type": "string"
                 }

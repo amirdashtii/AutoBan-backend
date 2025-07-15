@@ -134,16 +134,25 @@ definitions:
   dto.CreateVehicleBrandRequest:
     description: Vehicle brand creation request
     properties:
-      description:
+      description_en:
         description: Description of the vehicle brand
         example: A popular Japanese car brand
         type: string
-      name:
+      description_fa:
+        description: Description of the vehicle brand
+        example: برند خودرویی از کشور ژاپن
+        type: string
+      name_en:
         description: Name of the vehicle brand
         example: Toyota
         type: string
+      name_fa:
+        description: Name of the vehicle brand
+        example: تویوتا
+        type: string
     required:
-    - name
+    - name_en
+    - name_fa
     type: object
   dto.CreateVehicleGenerationRequest:
     description: Vehicle generation creation request
@@ -156,80 +165,121 @@ definitions:
         description: Assembly type of the vehicle generation
         example: CKD
         type: string
-      body_style:
-        description: Body style of the vehicle generation
+      battery:
+        description: Battery of the vehicle generation
+        example: Li-ion
+        type: string
+      body_style_en:
         example: Sedan
         type: string
-      description:
+      body_style_fa:
+        description: Body style of the vehicle generation
+        example: سدان
+        type: string
+      cylinders:
+        description: Cylinders of the vehicle generation
+        example: 4
+        type: integer
+      description_en:
         description: Description of the vehicle generation
         example: A brief description of the generation
+        type: string
+      description_fa:
+        description: Description of the vehicle generation
+        example: A brief description of the generation
+        type: string
+      drivetrain_en:
+        example: 4WD
+        type: string
+      drivetrain_fa:
+        description: Drivetrain of the vehicle generation
+        example: دودیفرانسیل
         type: string
       end_year:
         description: End year of the vehicle generation
         example: 2022
         type: integer
-      engine_size:
-        description: Engine size of the vehicle generation
-        example: 3000
-        type: integer
-      engine_type:
-        description: Engine type of the vehicle generation
-        example: V6
+      engine:
+        description: Engine of the vehicle generation
+        example: 1.6 TDI
         type: string
-      name:
+      engine_volume:
+        description: Engine volume of the vehicle generation
+        example: 1600
+        type: integer
+      fuel_type:
+        description: Fuel type of the vehicle generation
+        example: Gasoline
+        type: string
+      gearbox:
+        description: Gearbox of the vehicle generation
+        example: Automatic
+        type: string
+      name_en:
         description: Name of the vehicle generation
         example: Generation Name
         type: string
-      special_features:
-        description: Special features of the vehicle generation
-        example: Leather seats, Sunroof
+      name_fa:
+        description: Name of the vehicle generation
+        example: Generation Name
+        type: string
+      seller:
+        description: Seller of the vehicle generation
+        example: Toyota
         type: string
       start_year:
         description: Start year of the vehicle generation
         example: 2020
         type: integer
-      transmission:
-        description: Transmission of the vehicle generation
-        example: Automatic
-        type: string
     required:
-    - name
+    - name_en
+    - name_fa
     type: object
   dto.CreateVehicleModelRequest:
     description: Vehicle model creation request
     properties:
-      description:
+      description_en:
         description: Description of the vehicle model
         example: A mid-size sedan
         type: string
-      end_year:
-        description: End year of the vehicle model
-        example: 2022
-        type: integer
-      name:
+      description_fa:
+        description: Description of the vehicle model
+        example: A mid-size sedan
+        type: string
+      name_en:
         description: Name of the vehicle model
         example: Camry
         type: string
-      start_year:
-        description: Start year of the vehicle model
-        example: 2020
-        type: integer
+      name_fa:
+        description: Name of the vehicle model
+        example: Camry
+        type: string
     required:
-    - name
+    - name_en
+    - name_fa
     type: object
   dto.CreateVehicleTypeRequest:
     description: Vehicle type creation request
     properties:
-      description:
-        description: Description of the vehicle type
+      description_en:
+        description: Description of the vehicle type in English
         example: A standard passenger car
         type: string
-      name:
-        description: Name of the vehicle type
-        example: car
+      description_fa:
+        description: Description of the vehicle type in Persian
+        example: خودروی سواری استاندارد
+        type: string
+      name_en:
+        description: Name of the vehicle type in English
+        example: Car
+        type: string
+      name_fa:
+        description: Name of the vehicle type in Persian
+        example: خودرو
         type: string
     required:
-    - name
+    - name_en
+    - name_fa
     type: object
   dto.GetProfileResponse:
     description: User profile information response
@@ -886,13 +936,21 @@ definitions:
   dto.UpdateVehicleBrandRequest:
     description: Vehicle brand update request
     properties:
-      description:
+      description_en:
         description: Description of the vehicle brand
         example: A popular Japanese car brand
         type: string
-      name:
+      description_fa:
+        description: Description of the vehicle brand
+        example: برند خودرویی از کشور ژاپن
+        type: string
+      name_en:
         description: Name of the vehicle brand
         example: Toyota
+        type: string
+      name_fa:
+        description: Name of the vehicle brand
+        example: تویوتا
         type: string
       vehicle_type_id:
         description: ID of the vehicle type
@@ -906,33 +964,41 @@ definitions:
         description: ID of the vehicle brand
         example: 1
         type: integer
-      description:
+      description_en:
         description: Description of the vehicle model
         example: A mid-size sedan
         type: string
-      end_year:
-        description: End year of the vehicle model
-        example: 2022
-        type: integer
-      name:
+      description_fa:
+        description: Description of the vehicle model
+        example: A mid-size sedan
+        type: string
+      name_en:
         description: Name of the vehicle model
         example: Camry
         type: string
-      start_year:
-        description: Start year of the vehicle model
-        example: 2020
-        type: integer
+      name_fa:
+        description: Name of the vehicle model
+        example: Camry
+        type: string
     type: object
   dto.UpdateVehicleTypeRequest:
     description: Vehicle type update request
     properties:
-      description:
-        description: Description of the vehicle type
+      description_en:
+        description: Description of the vehicle type in English
         example: A standard passenger car
         type: string
-      name:
-        description: Name of the vehicle type
-        example: sedan
+      description_fa:
+        description: Description of the vehicle type in Persian
+        example: خودروی سواری استاندارد
+        type: string
+      name_en:
+        description: Name of the vehicle type in English
+        example: Car
+        type: string
+      name_fa:
+        description: Name of the vehicle type in Persian
+        example: خودرو
         type: string
     type: object
   dto.User:
@@ -1008,13 +1074,19 @@ definitions:
   dto.VehicleBrandResponse:
     description: Vehicle brand response
     properties:
-      description:
+      description_en:
+        description: Description of the vehicle brand
+        type: string
+      description_fa:
         description: Description of the vehicle brand
         type: string
       id:
         description: ID of the vehicle brand
         type: integer
-      name:
+      name_en:
+        description: Name of the vehicle brand
+        type: string
+      name_fa:
         description: Name of the vehicle brand
         type: string
       vehicle_type_id:
@@ -1024,7 +1096,10 @@ definitions:
   dto.VehicleBrandTreeResponse:
     description: Vehicle brand in hierarchical tree
     properties:
-      description:
+      description_en:
+        description: Description of the vehicle brand
+        type: string
+      description_fa:
         description: Description of the vehicle brand
         type: string
       id:
@@ -1035,7 +1110,10 @@ definitions:
         items:
           $ref: '#/definitions/dto.VehicleModelTreeResponse'
         type: array
-      name:
+      name_en:
+        description: Name of the vehicle brand
+        type: string
+      name_fa:
         description: Name of the vehicle brand
         type: string
     type: object
@@ -1048,20 +1126,43 @@ definitions:
       assembly_type:
         description: Assembly type of the vehicle generation
         type: string
-      body_style:
+      battery:
+        description: Battery of the vehicle generation
+        type: string
+      body_style_en:
         description: Body style of the vehicle generation
         type: string
-      description:
+      body_style_fa:
+        description: Body style of the vehicle generation
+        type: string
+      cylinders:
+        description: Cylinders of the vehicle generation
+        type: integer
+      description_en:
         description: Description of the vehicle generation
+        type: string
+      description_fa:
+        description: Description of the vehicle generation
+        type: string
+      drivetrain_en:
+        type: string
+      drivetrain_fa:
+        description: Drivetrain of the vehicle generation
         type: string
       end_year:
         description: End year of the vehicle generation
         type: integer
-      engine_size:
-        description: Engine size of the vehicle generation
+      engine:
+        description: Engine of the vehicle generation
+        type: string
+      engine_volume:
+        description: Engine volume of the vehicle generation
         type: integer
-      engine_type:
-        description: Engine type of the vehicle generation
+      fuel_type:
+        description: Fuel type of the vehicle generation
+        type: string
+      gearbox:
+        description: Gearbox of the vehicle generation
         type: string
       id:
         description: ID of the vehicle generation
@@ -1069,18 +1170,18 @@ definitions:
       model_id:
         description: ID of the vehicle model
         type: integer
-      name:
+      name_en:
         description: Name of the vehicle generation
         type: string
-      special_features:
-        description: Special features of the vehicle generation
+      name_fa:
+        description: Name of the vehicle generation
+        type: string
+      seller:
+        description: Seller of the vehicle generation
         type: string
       start_year:
         description: Start year of the vehicle generation
         type: integer
-      transmission:
-        description: Transmission of the vehicle generation
-        type: string
     type: object
   dto.VehicleGenerationTreeResponse:
     description: Vehicle generation in hierarchical tree
@@ -1091,36 +1192,62 @@ definitions:
       assembly_type:
         description: Assembly type of the vehicle generation
         type: string
-      body_style:
+      battery:
+        description: Battery of the vehicle generation
+        type: string
+      body_style_en:
         description: Body style of the vehicle generation
         type: string
-      description:
+      body_style_fa:
+        description: Body style of the vehicle generation
+        type: string
+      cylinders:
+        description: Cylinders of the vehicle generation
+        type: integer
+      description_en:
         description: Description of the vehicle generation
+        type: string
+      description_fa:
+        description: Description of the vehicle generation
+        type: string
+      drivetrain_en:
+        type: string
+      drivetrain_fa:
+        description: Drivetrain of the vehicle generation
         type: string
       end_year:
         description: End year of the vehicle generation
         type: integer
-      engine_size:
-        description: Engine size of the vehicle generation
-        type: integer
-      engine_type:
+      engine:
         description: Engine type of the vehicle generation
+        type: string
+      engine_volume:
+        description: Engine volume of the vehicle generation
+        type: integer
+      fuel_type:
+        description: Fuel type of the vehicle generation
+        type: string
+      gearbox:
+        description: Gearbox of the vehicle generation
         type: string
       id:
         description: ID of the vehicle generation
         type: integer
-      name:
+      model_id:
+        description: ID of the vehicle model
+        type: integer
+      name_en:
         description: Name of the vehicle generation
         type: string
-      special_features:
-        description: Special features of the vehicle generation
+      name_fa:
+        description: Name of the vehicle generation
+        type: string
+      seller:
+        description: Seller of the vehicle generation
         type: string
       start_year:
         description: Start year of the vehicle generation
         type: integer
-      transmission:
-        description: Transmission of the vehicle generation
-        type: string
     type: object
   dto.VehicleModelResponse:
     description: Vehicle model response
@@ -1128,31 +1255,34 @@ definitions:
       brand_id:
         description: ID of the vehicle brand
         type: integer
-      description:
+      description_en:
         description: Description of the vehicle model
         type: string
-      end_year:
-        description: End year of the vehicle model
-        type: integer
+      description_fa:
+        description: Description of the vehicle model
+        type: string
       id:
         description: ID of the vehicle model
         type: integer
-      name:
+      name_en:
         description: Name of the vehicle model
         type: string
-      start_year:
-        description: Start year of the vehicle model
-        type: integer
+      name_fa:
+        description: Name of the vehicle model
+        type: string
     type: object
   dto.VehicleModelTreeResponse:
     description: Vehicle model in hierarchical tree
     properties:
-      description:
+      brand_id:
+        description: ID of the vehicle brand
+        type: integer
+      description_en:
         description: Description of the vehicle model
         type: string
-      end_year:
-        description: End year of the vehicle model
-        type: integer
+      description_fa:
+        description: Description of the vehicle model
+        type: string
       generations:
         description: List of generations for this model
         items:
@@ -1161,24 +1291,30 @@ definitions:
       id:
         description: ID of the vehicle model
         type: integer
-      name:
+      name_en:
         description: Name of the vehicle model
         type: string
-      start_year:
-        description: Start year of the vehicle model
-        type: integer
+      name_fa:
+        description: Name of the vehicle model
+        type: string
     type: object
   dto.VehicleTypeResponse:
     description: Vehicle type response
     properties:
-      description:
-        description: Description of the vehicle type
+      description_en:
+        description: Description of the vehicle type in English
+        type: string
+      description_fa:
+        description: Description of the vehicle type in Persian
         type: string
       id:
         description: ID of the vehicle type
         type: integer
-      name:
-        description: Name of the vehicle type
+      name_en:
+        description: Name of the vehicle type in English
+        type: string
+      name_fa:
+        description: Name of the vehicle type in Persian
         type: string
     type: object
   dto.VehicleTypeTreeResponse:
@@ -1189,13 +1325,19 @@ definitions:
         items:
           $ref: '#/definitions/dto.VehicleBrandTreeResponse'
         type: array
-      description:
+      description_en:
+        description: Description of the vehicle type
+        type: string
+      description_fa:
         description: Description of the vehicle type
         type: string
       id:
         description: ID of the vehicle type
         type: integer
-      name:
+      name_en:
+        description: Name of the vehicle type
+        type: string
+      name_fa:
         description: Name of the vehicle type
         type: string
     type: object

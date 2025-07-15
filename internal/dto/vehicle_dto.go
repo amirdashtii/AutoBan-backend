@@ -10,19 +10,27 @@ import (
 // CreateVehicleTypeRequest represents the request for creating a new vehicle type
 // @Description Vehicle type creation request
 type CreateVehicleTypeRequest struct {
-	// Name of the vehicle type
-	Name string `json:"name" validate:"required" example:"car"`
-	// Description of the vehicle type
-	Description string `json:"description" example:"A standard passenger car"`
+	// Name of the vehicle type in Persian
+	NameFa string `json:"name_fa" validate:"required" example:"خودرو"`
+	// Name of the vehicle type in English
+	NameEn string `json:"name_en" validate:"required" example:"Car"`
+	// Description of the vehicle type in Persian
+	DescriptionFa string `json:"description_fa" example:"خودروی سواری استاندارد"`
+	// Description of the vehicle type in English
+	DescriptionEn string `json:"description_en" example:"A standard passenger car"`
 }
 
 // UpdateVehicleTypeRequest represents the request for updating vehicle type
 // @Description Vehicle type update request
 type UpdateVehicleTypeRequest struct {
-	// Name of the vehicle type
-	Name *string `json:"name" example:"sedan"`
-	// Description of the vehicle type
-	Description *string `json:"description" example:"A standard passenger car"`
+	// Name of the vehicle type in Persian
+	NameFa *string `json:"name_fa" example:"خودرو"`
+	// Name of the vehicle type in English
+	NameEn *string `json:"name_en" example:"Car"`
+	// Description of the vehicle type in Persian
+	DescriptionFa *string `json:"description_fa" example:"خودروی سواری استاندارد"`
+	// Description of the vehicle type in English
+	DescriptionEn *string `json:"description_en" example:"A standard passenger car"`
 }
 
 // VehicleTypeResponse represents the response for vehicle type data
@@ -30,10 +38,14 @@ type UpdateVehicleTypeRequest struct {
 type VehicleTypeResponse struct {
 	// ID of the vehicle type
 	ID uint64 `json:"id"`
-	// Name of the vehicle type
-	Name string `json:"name"`
-	// Description of the vehicle type
-	Description string `json:"description"`
+	// Name of the vehicle type in Persian
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle type in English
+	NameEn string `json:"name_en"`
+	// Description of the vehicle type in Persian
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle type in English
+	DescriptionEn string `json:"description_en"`
 }
 
 // Brand
@@ -41,9 +53,13 @@ type VehicleTypeResponse struct {
 // @Description Vehicle brand creation request
 type CreateVehicleBrandRequest struct {
 	// Name of the vehicle brand
-	Name string `json:"name" validate:"required" example:"Toyota"`
+	NameFa string `json:"name_fa" validate:"required" example:"تویوتا"`
+	// Name of the vehicle brand
+	NameEn string `json:"name_en" validate:"required" example:"Toyota"`
 	// Description of the vehicle brand
-	Description string `json:"description" example:"A popular Japanese car brand"`
+	DescriptionFa string `json:"description_fa" example:"برند خودرویی از کشور ژاپن"`
+	// Description of the vehicle brand
+	DescriptionEn string `json:"description_en" example:"A popular Japanese car brand"`
 }
 
 // UpdateVehicleBrandRequest represents the request for updating vehicle brand
@@ -52,9 +68,13 @@ type UpdateVehicleBrandRequest struct {
 	// ID of the vehicle type
 	VehicleTypeID *uint64 `json:"vehicle_type_id" example:"1"`
 	// Name of the vehicle brand
-	Name *string `json:"name" example:"Toyota"`
+	NameFa *string `json:"name_fa" example:"تویوتا"`
+	// Name of the vehicle brand
+	NameEn *string `json:"name_en" example:"Toyota"`
 	// Description of the vehicle brand
-	Description *string `json:"description" example:"A popular Japanese car brand"`
+	DescriptionFa *string `json:"description_fa" example:"برند خودرویی از کشور ژاپن"`
+	// Description of the vehicle brand
+	DescriptionEn *string `json:"description_en" example:"A popular Japanese car brand"`
 }
 
 // VehicleBrandResponse represents the response for vehicle brand data
@@ -62,12 +82,16 @@ type UpdateVehicleBrandRequest struct {
 type VehicleBrandResponse struct {
 	// ID of the vehicle brand
 	ID uint64 `json:"id"`
-	// Name of the vehicle brand
-	Name string `json:"name"`
-	// Description of the vehicle brand
-	Description string `json:"description"`
 	// ID of the vehicle type
 	VehicleTypeID uint64 `json:"vehicle_type_id"`
+	// Name of the vehicle brand
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle brand
+	NameEn string `json:"name_en"`
+	// Description of the vehicle brand
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle brand
+	DescriptionEn string `json:"description_en"`
 }
 
 // Model
@@ -75,13 +99,13 @@ type VehicleBrandResponse struct {
 // @Description Vehicle model creation request
 type CreateVehicleModelRequest struct {
 	// Name of the vehicle model
-	Name string `json:"name" validate:"required" example:"Camry"`
+	NameFa string `json:"name_fa" validate:"required" example:"Camry"`
+	// Name of the vehicle model
+	NameEn string `json:"name_en" validate:"required" example:"Camry"`
 	// Description of the vehicle model
-	Description string `json:"description" example:"A mid-size sedan"`
-	// Start year of the vehicle model
-	StartYear int `json:"start_year" validate:"omitempty,year" example:"2020"`
-	// End year of the vehicle model
-	EndYear int `json:"end_year" validate:"omitempty,year" example:"2022"`
+	DescriptionFa string `json:"description_fa" example:"A mid-size sedan"`
+	// Description of the vehicle model
+	DescriptionEn string `json:"description_en" example:"A mid-size sedan"`
 }
 
 // UpdateVehicleModelRequest represents the request for updating vehicle model
@@ -90,13 +114,13 @@ type UpdateVehicleModelRequest struct {
 	// ID of the vehicle brand
 	BrandID *uint64 `json:"brand_id" example:"1"`
 	// Name of the vehicle model
-	Name *string `json:"name" example:"Camry"`
+	NameFa *string `json:"name_fa" example:"Camry"`
+	// Name of the vehicle model
+	NameEn *string `json:"name_en" example:"Camry"`
 	// Description of the vehicle model
-	Description *string `json:"description" example:"A mid-size sedan"`
-	// Start year of the vehicle model
-	StartYear *int `json:"start_year" validate:"omitempty,year" example:"2020"`
-	// End year of the vehicle model
-	EndYear *int `json:"end_year" validate:"omitempty,year" example:"2022"`
+	DescriptionFa *string `json:"description_fa" example:"A mid-size sedan"`
+	// Description of the vehicle model
+	DescriptionEn *string `json:"description_en" example:"A mid-size sedan"`
 }
 
 // VehicleModelResponse represents the response for vehicle model data
@@ -104,16 +128,16 @@ type UpdateVehicleModelRequest struct {
 type VehicleModelResponse struct {
 	// ID of the vehicle model
 	ID uint64 `json:"id"`
-	// Name of the vehicle model
-	Name string `json:"name"`
-	// Description of the vehicle model
-	Description string `json:"description"`
 	// ID of the vehicle brand
 	BrandID uint64 `json:"brand_id"`
-	// Start year of the vehicle model
-	StartYear int `json:"start_year"`
-	// End year of the vehicle model
-	EndYear int `json:"end_year"`
+	// Name of the vehicle model
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle model
+	NameEn string `json:"name_en"`
+	// Description of the vehicle model
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle model
+	DescriptionEn string `json:"description_en"`
 }
 
 // Generation
@@ -121,56 +145,85 @@ type VehicleModelResponse struct {
 // @Description Vehicle generation creation request
 type CreateVehicleGenerationRequest struct {
 	// Name of the vehicle generation
-	Name string `json:"name" validate:"required" example:"Generation Name"`
+	NameFa string `json:"name_fa" validate:"required" example:"Generation Name"`
+	// Name of the vehicle generation
+	NameEn string `json:"name_en" validate:"required" example:"Generation Name"`
 	// Description of the vehicle generation
-	Description string `json:"description" example:"A brief description of the generation"`
+	DescriptionFa string `json:"description_fa" example:"A brief description of the generation"`
+	// Description of the vehicle generation
+	DescriptionEn string `json:"description_en" example:"A brief description of the generation"`
 	// Start year of the vehicle generation
 	StartYear int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle generation
 	EndYear int `json:"end_year" validate:"omitempty,year" example:"2022"`
-	// Engine type of the vehicle generation
-	EngineType string `json:"engine_type" example:"V6"`
+	// Body style of the vehicle generation
+	BodyStyleFa  string `json:"body_style_fa" example:"سدان"`
+	BodyStyleEn  string `json:"body_style_en" example:"Sedan"`
+	// Engine of the vehicle generation
+	Engine       string `json:"engine" example:"1.6 TDI"`
+	// Engine volume of the vehicle generation
+	EngineVolume int    `json:"engine_volume" example:"1600"`
+	// Cylinders of the vehicle generation
+	Cylinders    int    `json:"cylinders" example:"4"`
+	// Drivetrain of the vehicle generation
+	DrivetrainFa string `json:"drivetrain_fa" example:"دودیفرانسیل"`
+	DrivetrainEn string `json:"drivetrain_en" example:"4WD"`
+	// Gearbox of the vehicle generation
+	Gearbox      string `json:"gearbox" example:"Automatic"`
+	// Fuel type of the vehicle generation
+	FuelType     string `json:"fuel_type" example:"Gasoline"`
+	// Battery of the vehicle generation
+	Battery      string `json:"battery" example:"Li-ion"`
+	// Seller of the vehicle generation
+	Seller       string `json:"seller" example:"Toyota"`
 	// Assembly type of the vehicle generation
 	AssemblyType string `json:"assembly_type" example:"CKD"`
 	// Assembler of the vehicle generation
 	Assembler string `json:"assembler" example:"Toyota"`
-	// Transmission of the vehicle generation
-	Transmission string `json:"transmission" example:"Automatic"`
-	// Engine size of the vehicle generation
-	EngineSize int `json:"engine_size" example:"3000"`
-	// Body style of the vehicle generation
-	BodyStyle string `json:"body_style" example:"Sedan"`
-	// Special features of the vehicle generation
-	SpecialFeatures string `json:"special_features" example:"Leather seats, Sunroof"`
 }
 
 // UpdateVehicleGenerationRequest represents the request for updating vehicle generation
 // @Description Vehicle generation update request
 type UpdateVehicleGenerationRequest struct {
-	// Name of the vehicle generation
-	Name *string `json:"name" example:"Generation Name"`
-	// Description of the vehicle generation
-	Description *string `json:"description" example:"A brief description of the generation"`
 	// ID of the vehicle model
 	ModelID *uint64 `json:"model_id" example:"1"`
+	// Name of the vehicle generation
+	NameFa *string `json:"name_fa" example:"Generation Name"`
+	// Name of the vehicle generation
+	NameEn *string `json:"name_en" example:"Generation Name"`
+	// Description of the vehicle generation
+	DescriptionFa *string `json:"description_fa" example:"A brief description of the generation"`
+	// Description of the vehicle generation
+	DescriptionEn *string `json:"description_en" example:"A brief description of the generation"`
 	// Start year of the vehicle generation
 	StartYear *int `json:"start_year" validate:"omitempty,year" example:"2020"`
 	// End year of the vehicle generation
 	EndYear *int `json:"end_year" validate:"omitempty,year" example:"2022"`
-	// Engine type of the vehicle generation
-	EngineType *string `json:"engine_type" example:"V6"`
+	// Body style of the vehicle generation
+	BodyStyleFa *string `json:"body_style_fa" example:"سدان"`
+	BodyStyleEn *string `json:"body_style_en" example:"Sedan"`
+	// Engine of the vehicle generation
+	Engine *string `json:"engine" example:"1.6 TDI"`
+	// Engine volume of the vehicle generation
+	EngineVolume *int `json:"engine_volume" example:"1600"`
+	// Cylinders of the vehicle generation
+	Cylinders *int `json:"cylinders" example:"4"`
+	// Drivetrain of the vehicle generation
+	DrivetrainFa *string `json:"drivetrain_fa" example:"دودیفرانسیل"`
+	DrivetrainEn *string `json:"drivetrain_en" example:"4WD"`
+	// Gearbox of the vehicle generation
+	Gearbox *string `json:"gearbox" example:"Automatic"`
+	// Fuel type of the vehicle generation
+	FuelType *string `json:"fuel_type" example:"Gasoline"`
+	// Battery of the vehicle generation
+	Battery *string `json:"battery" example:"Li-ion"`
+	// Seller of the vehicle generation
+	Seller *string `json:"seller" example:"Toyota"`
 	// Assembly type of the vehicle generation
 	AssemblyType *string `json:"assembly_type" example:"CKD"`
 	// Assembler of the vehicle generation
 	Assembler *string `json:"assembler" example:"Toyota"`
-	// Transmission of the vehicle generation
-	Transmission *string `json:"transmission" example:"Automatic"`
-	// Engine size of the vehicle generation
-	EngineSize *int `json:"engine_size" example:"3000"`
-	// Body style of the vehicle generation
-	BodyStyle *string `json:"body_style" example:"Sedan"`
-	// Special features of the vehicle generation
-	SpecialFeatures *string `json:"special_features" example:"Leather seats, Sunroof"`
+	
 }
 
 // VehicleGenerationResponse represents the response for vehicle generation data
@@ -178,30 +231,45 @@ type UpdateVehicleGenerationRequest struct {
 type VehicleGenerationResponse struct {
 	// ID of the vehicle generation
 	ID uint64 `json:"id"`
-	// Name of the vehicle generation
-	Name string `json:"name"`
-	// Description of the vehicle generation
-	Description string `json:"description"`
 	// ID of the vehicle model
 	ModelID uint64 `json:"model_id"`
+	// Name of the vehicle generation
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle generation
+	NameEn string `json:"name_en"`
+	// Description of the vehicle generation
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle generation
+	DescriptionEn string `json:"description_en"`
 	// Start year of the vehicle generation
 	StartYear int `json:"start_year"`
 	// End year of the vehicle generation
 	EndYear int `json:"end_year"`
-	// Engine type of the vehicle generation
-	EngineType string `json:"engine_type"`
+	// Body style of the vehicle generation
+	BodyStyleFa string `json:"body_style_fa"`
+	// Body style of the vehicle generation
+	BodyStyleEn string `json:"body_style_en"`
+	// Engine of the vehicle generation
+	Engine string `json:"engine"`
+	// Engine volume of the vehicle generation
+	EngineVolume int `json:"engine_volume"`
+	// Cylinders of the vehicle generation
+	Cylinders int `json:"cylinders"`
+	// Drivetrain of the vehicle generation
+	DrivetrainFa string `json:"drivetrain_fa"`
+	DrivetrainEn string `json:"drivetrain_en"`
+	// Gearbox of the vehicle generation
+	Gearbox string `json:"gearbox"`
+	// Fuel type of the vehicle generation
+	FuelType string `json:"fuel_type"`
+	// Battery of the vehicle generation
+	Battery string `json:"battery"`
+	// Seller of the vehicle generation
+	Seller string `json:"seller"`
 	// Assembly type of the vehicle generation
 	AssemblyType string `json:"assembly_type"`
 	// Assembler of the vehicle generation
 	Assembler string `json:"assembler"`
-	// Transmission of the vehicle generation
-	Transmission string `json:"transmission"`
-	// Engine size of the vehicle generation
-	EngineSize int `json:"engine_size"`
-	// Body style of the vehicle generation
-	BodyStyle string `json:"body_style"`
-	// Special features of the vehicle generation
-	SpecialFeatures string `json:"special_features"`
 }
 
 // UserVehicle
@@ -314,28 +382,45 @@ type ListUserVehiclesResponse struct {
 type VehicleGenerationTreeResponse struct {
 	// ID of the vehicle generation
 	ID uint64 `json:"id"`
+	// ID of the vehicle model
+	ModelID uint64 `json:"model_id"`
 	// Name of the vehicle generation
-	Name string `json:"name"`
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle generation
+	NameEn string `json:"name_en"`
 	// Description of the vehicle generation
-	Description string `json:"description"`
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle generation
+	DescriptionEn string `json:"description_en"`
 	// Start year of the vehicle generation
 	StartYear int `json:"start_year"`
 	// End year of the vehicle generation
 	EndYear int `json:"end_year"`
+	// Body style of the vehicle generation
+	BodyStyleFa string `json:"body_style_fa"`
+	// Body style of the vehicle generation
+	BodyStyleEn string `json:"body_style_en"`
 	// Engine type of the vehicle generation
-	EngineType string `json:"engine_type"`
+	Engine string `json:"engine"`
+	// Engine volume of the vehicle generation
+	EngineVolume int `json:"engine_volume"`
+	// Cylinders of the vehicle generation
+	Cylinders int `json:"cylinders"`
+	// Drivetrain of the vehicle generation
+	DrivetrainFa string `json:"drivetrain_fa"`
+	DrivetrainEn string `json:"drivetrain_en"`
+	// Gearbox of the vehicle generation
+	Gearbox string `json:"gearbox"`
+	// Fuel type of the vehicle generation
+	FuelType string `json:"fuel_type"`
+	// Battery of the vehicle generation
+	Battery string `json:"battery"`
+	// Seller of the vehicle generation
+	Seller string `json:"seller"`
 	// Assembly type of the vehicle generation
 	AssemblyType string `json:"assembly_type"`
 	// Assembler of the vehicle generation
 	Assembler string `json:"assembler"`
-	// Transmission of the vehicle generation
-	Transmission string `json:"transmission"`
-	// Engine size of the vehicle generation
-	EngineSize int `json:"engine_size"`
-	// Body style of the vehicle generation
-	BodyStyle string `json:"body_style"`
-	// Special features of the vehicle generation
-	SpecialFeatures string `json:"special_features"`
 }
 
 // VehicleModelTreeResponse represents a vehicle model in the tree structure
@@ -343,14 +428,16 @@ type VehicleGenerationTreeResponse struct {
 type VehicleModelTreeResponse struct {
 	// ID of the vehicle model
 	ID uint64 `json:"id"`
+	// ID of the vehicle brand
+	BrandID uint64 `json:"brand_id"`
 	// Name of the vehicle model
-	Name string `json:"name"`
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle model
+	NameEn string `json:"name_en"`
 	// Description of the vehicle model
-	Description string `json:"description"`
-	// Start year of the vehicle model
-	StartYear int `json:"start_year"`
-	// End year of the vehicle model
-	EndYear int `json:"end_year"`
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle model
+	DescriptionEn string `json:"description_en"`
 	// List of generations for this model
 	Generations []VehicleGenerationTreeResponse `json:"generations"`
 }
@@ -361,9 +448,13 @@ type VehicleBrandTreeResponse struct {
 	// ID of the vehicle brand
 	ID uint64 `json:"id"`
 	// Name of the vehicle brand
-	Name string `json:"name"`
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle brand
+	NameEn string `json:"name_en"`
 	// Description of the vehicle brand
-	Description string `json:"description"`
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle brand
+	DescriptionEn string `json:"description_en"`
 	// List of models for this brand
 	Models []VehicleModelTreeResponse `json:"models"`
 }
@@ -374,9 +465,13 @@ type VehicleTypeTreeResponse struct {
 	// ID of the vehicle type
 	ID uint64 `json:"id"`
 	// Name of the vehicle type
-	Name string `json:"name"`
+	NameFa string `json:"name_fa"`
+	// Name of the vehicle type
+	NameEn string `json:"name_en"`
 	// Description of the vehicle type
-	Description string `json:"description"`
+	DescriptionFa string `json:"description_fa"`
+	// Description of the vehicle type
+	DescriptionEn string `json:"description_en"`
 	// List of brands for this type
 	Brands []VehicleBrandTreeResponse `json:"brands"`
 }

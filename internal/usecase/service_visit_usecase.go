@@ -83,17 +83,17 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, userID, v
 	}
 	serviceVisit.ID = uuid.New()
 
-	// Create oil change if provided
 	if request.OilChange != nil {
-		oilChange := entity.OilChange{
+		serviceVisit.OilChange = entity.OilChange{
 			UserID:            uuidUserID,
 			UserVehicleID:     uintVehicleID,
+			ServiceVisitID:    serviceVisit.ID,
 			OilName:           request.OilChange.OilName,
 			OilBrand:          request.OilChange.OilBrand,
 			OilType:           request.OilChange.OilType,
 			OilViscosity:      request.OilChange.OilViscosity,
-			ChangeMileage:     request.ServiceMileage, // Use service mileage
-			ChangeDate:        serviceDate,            // Use service date
+			ChangeMileage:     request.ServiceMileage,
+			ChangeDate:        serviceDate,
 			OilCapacity:       request.OilChange.OilCapacity,
 			NextChangeMileage: request.OilChange.NextChangeMileage,
 			ServiceCenter:     request.ServiceCenter,
@@ -106,29 +106,21 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, userID, v
 				logger.Error(err, "Failed to parse oil change next change date")
 				return nil, errors.ErrInvalidDate
 			}
-			oilChange.NextChangeDate = nextChangeDate
+			serviceVisit.OilChange.NextChangeDate = nextChangeDate
 		}
-
-		err = uc.oilChangeRepository.CreateOilChange(ctx, &oilChange)
-		if err != nil {
-			logger.Error(err, "Failed to create oil change for service visit")
-			return nil, errors.ErrFailedToCreateOilChange
-		}
-
-		serviceVisit.OilChangeID = &oilChange.ID
 	}
 
-	// Create oil filter if provided
 	if request.OilFilter != nil {
-		oilFilter := entity.OilFilter{
+		serviceVisit.OilFilter = entity.OilFilter{
 			UserID:            uuidUserID,
 			UserVehicleID:     uintVehicleID,
+			ServiceVisitID:    serviceVisit.ID,
 			FilterName:        request.OilFilter.FilterName,
 			FilterBrand:       request.OilFilter.FilterBrand,
 			FilterType:        request.OilFilter.FilterType,
 			FilterPartNumber:  request.OilFilter.FilterPartNumber,
-			ChangeMileage:     request.ServiceMileage, // Use service mileage
-			ChangeDate:        serviceDate,            // Use service date
+			ChangeMileage:     request.ServiceMileage,
+			ChangeDate:        serviceDate,
 			NextChangeMileage: request.OilFilter.NextChangeMileage,
 			ServiceCenter:     request.ServiceCenter,
 			Notes:             request.OilFilter.Notes,
@@ -140,22 +132,14 @@ func (uc *serviceVisitUseCase) CreateServiceVisit(ctx context.Context, userID, v
 				logger.Error(err, "Failed to parse oil filter next change date")
 				return nil, errors.ErrInvalidDate
 			}
-			oilFilter.NextChangeDate = nextChangeDate
+			serviceVisit.OilFilter.NextChangeDate = nextChangeDate
 		}
 
-		err = uc.oilFilterRepository.CreateOilFilter(ctx, &oilFilter)
+		err = uc.serviceVisitRepository.CreateServiceVisit(ctx, &serviceVisit)
 		if err != nil {
-			logger.Error(err, "Failed to create oil filter for service visit")
-			return nil, errors.ErrFailedToCreateOilFilter
+			logger.Error(err, "Failed to create service visit")
+			return nil, errors.ErrFailedToCreateServiceVisit
 		}
-
-		serviceVisit.OilFilterID = &oilFilter.ID
-	}
-
-	err = uc.serviceVisitRepository.CreateServiceVisit(ctx, &serviceVisit)
-	if err != nil {
-		logger.Error(err, "Failed to create service visit")
-		return nil, errors.ErrFailedToCreateServiceVisit
 	}
 
 	return uc.mapServiceVisitToResponse(&serviceVisit), nil
@@ -278,10 +262,9 @@ func (uc *serviceVisitUseCase) UpdateServiceVisit(ctx context.Context, userID, v
 	}
 
 	// Update oil change if provided
-	if request.OilChange != nil && serviceVisit.OilChangeID != nil {
+	if request.OilChange != nil {
 		oilChange := entity.OilChange{}
-		oilChange.ID = *serviceVisit.OilChangeID
-
+		
 		// Update oil change fields if provided
 		if request.OilChange.OilName != nil {
 			oilChange.OilName = *request.OilChange.OilName
@@ -313,17 +296,12 @@ func (uc *serviceVisitUseCase) UpdateServiceVisit(ctx context.Context, userID, v
 			oilChange.Notes = *request.OilChange.Notes
 		}
 
-		err = uc.oilChangeRepository.UpdateOilChange(ctx, &oilChange)
-		if err != nil {
-			logger.Error(err, "Failed to update oil change")
-			return nil, errors.ErrFailedToUpdateOilChange
-		}
+		serviceVisit.OilChange = oilChange
 	}
 
 	// Update oil filter if provided
-	if request.OilFilter != nil && serviceVisit.OilFilterID != nil {
+	if request.OilFilter != nil {
 		oilFilter := entity.OilFilter{}
-		oilFilter.ID = *serviceVisit.OilFilterID
 
 		// Update oil filter fields if provided
 		if request.OilFilter.FilterName != nil {
@@ -353,11 +331,7 @@ func (uc *serviceVisitUseCase) UpdateServiceVisit(ctx context.Context, userID, v
 			oilFilter.Notes = *request.OilFilter.Notes
 		}
 
-		err = uc.oilFilterRepository.UpdateOilFilter(ctx, &oilFilter)
-		if err != nil {
-			logger.Error(err, "Failed to update oil filter")
-			return nil, errors.ErrFailedToUpdateOilFilter
-		}
+		serviceVisit.OilFilter = oilFilter
 	}
 
 	err = uc.serviceVisitRepository.UpdateServiceVisit(ctx, &serviceVisit)
@@ -446,7 +420,7 @@ func (uc *serviceVisitUseCase) mapServiceVisitToResponse(serviceVisit *entity.Se
 	}
 
 	// Map oil change if exists
-	if serviceVisit.OilChange != nil {
+	if serviceVisit.OilChange != (entity.OilChange{}) {
 		response.OilChange = &dto.ServiceVisitOilChangeResponse{
 			ID:                serviceVisit.OilChange.ID,
 			OilName:           serviceVisit.OilChange.OilName,
@@ -461,7 +435,7 @@ func (uc *serviceVisitUseCase) mapServiceVisitToResponse(serviceVisit *entity.Se
 	}
 
 	// Map oil filter if exists
-	if serviceVisit.OilFilter != nil {
+	if serviceVisit.OilFilter != (entity.OilFilter{}) {
 		response.OilFilter = &dto.ServiceVisitOilFilterResponse{
 			ID:                serviceVisit.OilFilter.ID,
 			FilterName:        serviceVisit.OilFilter.FilterName,
