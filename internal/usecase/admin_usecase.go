@@ -36,7 +36,8 @@ func NewAdminUseCase() AdminUseCase {
 }
 
 func (u *adminUseCase) ListUsers(ctx context.Context) (*dto.ListUserResponse, error) {
-	users, err := u.adminRepository.ListUsers(ctx)
+	users := []entity.User{}
+	err := u.adminRepository.ListUsers(ctx, &users)
 	if err != nil {
 		logger.Error(err, "Failed to list users")
 		return nil, errors.ErrFailedToListUsers

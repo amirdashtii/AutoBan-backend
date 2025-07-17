@@ -12,8 +12,8 @@ import (
 
 type AuthRepository interface {
 	Register(ctx context.Context, user *entity.User) error
-	FindByPhoneNumber(ctx context.Context, phoneNumber string) (*entity.User, error)
-	FindByID(ctx context.Context, id string) (*entity.User, error)
+	FindByPhoneNumber(ctx context.Context, user *entity.User) error
+	FindByID(ctx context.Context, user *entity.User) error
 }
 
 type authRepository struct {
@@ -36,26 +36,24 @@ func (r *authRepository) Register(ctx context.Context, user *entity.User) error 
 	return nil
 }
 
-func (r *authRepository) FindByPhoneNumber(ctx context.Context, phoneNumber string) (*entity.User, error) {
-	var user entity.User
-	err := r.db.WithContext(ctx).Where("phone_number = ?", phoneNumber).First(&user).Error
+func (r *authRepository) FindByPhoneNumber(ctx context.Context, user *entity.User) error {
+	err := r.db.WithContext(ctx).Where("phone_number = ?", user.PhoneNumber).First(user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, errors.ErrUserNotFound
+			return errors.ErrUserNotFound
 		}
-		return nil, errors.ErrInternalServerError
+		return errors.ErrInternalServerError
 	}
-	return &user, nil
+		return nil
 }
 
-func (r *authRepository) FindByID(ctx context.Context, id string) (*entity.User, error) {
-	var user entity.User
-	err := r.db.WithContext(ctx).Where("id = ?", id).First(&user).Error
+func (r *authRepository) FindByID(ctx context.Context, user *entity.User) error {
+	err := r.db.WithContext(ctx).Where("id = ?", user.ID).First(user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, errors.ErrUserNotFound
+			return errors.ErrUserNotFound
 		}
-		return nil, errors.ErrInternalServerError
+		return errors.ErrInternalServerError
 	}
-	return &user, nil
+	return nil
 }

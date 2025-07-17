@@ -78,13 +78,7 @@ func (uc *vehicleUseCase) ListVehicleTypes(ctx context.Context) (*dto.ListVehicl
 	}
 	vehicleTypesResponse := []dto.VehicleTypeResponse{}
 	for _, vehicleType := range vehicleTypes {
-		vehicleTypesResponse = append(vehicleTypesResponse, dto.VehicleTypeResponse{
-			ID:            vehicleType.ID,
-			NameFa:        vehicleType.NameFa,
-			NameEn:        vehicleType.NameEn,
-			DescriptionFa: vehicleType.DescriptionFa,
-			DescriptionEn: vehicleType.DescriptionEn,
-		})
+		vehicleTypesResponse = append(vehicleTypesResponse, *uc.convertToVehicleTypeResponse(vehicleType))
 	}
 
 	return &dto.ListVehicleTypesResponse{
@@ -106,13 +100,7 @@ func (uc *vehicleUseCase) GetVehicleType(ctx context.Context, typeID string) (*d
 		logger.Error(err, "Failed to get vehicle type")
 		return nil, errors.ErrFailedToGetVehicleType
 	}
-	return &dto.VehicleTypeResponse{
-		ID:            vehicleType.ID,
-		NameFa:        vehicleType.NameFa,
-		NameEn:        vehicleType.NameEn,
-		DescriptionFa: vehicleType.DescriptionFa,
-		DescriptionEn: vehicleType.DescriptionEn,
-	}, nil
+	return uc.convertToVehicleTypeResponse(vehicleType), nil
 }
 
 func (uc *vehicleUseCase) CreateVehicleType(ctx context.Context, request dto.CreateVehicleTypeRequest) (*dto.VehicleTypeResponse, error) {
@@ -133,13 +121,15 @@ func (uc *vehicleUseCase) CreateVehicleType(ctx context.Context, request dto.Cre
 		logger.Error(err, "Failed to create vehicle type")
 		return nil, errors.ErrFailedToCreateVehicleType
 	}
-	return &dto.VehicleTypeResponse{
-		ID:            vehicleType.ID,
-		NameFa:        vehicleType.NameFa,
-		NameEn:        vehicleType.NameEn,
-		DescriptionFa: vehicleType.DescriptionFa,
-		DescriptionEn: vehicleType.DescriptionEn,
-	}, nil
+
+	// Invalidate cache after creating new vehicle type
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleTypeResponse(vehicleType), nil
 }
 
 func (uc *vehicleUseCase) UpdateVehicleType(ctx context.Context, typeID string, request dto.UpdateVehicleTypeRequest) (*dto.VehicleTypeResponse, error) {
@@ -174,13 +164,15 @@ func (uc *vehicleUseCase) UpdateVehicleType(ctx context.Context, typeID string, 
 		logger.Error(err, "Failed to update vehicle type")
 		return nil, errors.ErrFailedToUpdateVehicleType
 	}
-	return &dto.VehicleTypeResponse{
-		ID:            vehicleType.ID,
-		NameFa:        vehicleType.NameFa,
-		NameEn:        vehicleType.NameEn,
-		DescriptionFa: vehicleType.DescriptionFa,
-		DescriptionEn: vehicleType.DescriptionEn,
-	}, nil
+
+	// Invalidate cache after updating vehicle type
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleTypeResponse(vehicleType), nil
 }
 
 func (uc *vehicleUseCase) DeleteVehicleType(ctx context.Context, typeID string) error {
@@ -196,7 +188,25 @@ func (uc *vehicleUseCase) DeleteVehicleType(ctx context.Context, typeID string) 
 		logger.Error(err, "Failed to delete vehicle type")
 		return errors.ErrFailedToDeleteVehicleType
 	}
+
+	// Invalidate cache after deleting vehicle type
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
 	return nil
+}
+
+func (uc *vehicleUseCase) convertToVehicleTypeResponse(vehicleType entity.VehicleType) *dto.VehicleTypeResponse {
+	return &dto.VehicleTypeResponse{
+		ID:            vehicleType.ID,
+		NameFa:        vehicleType.NameFa,
+		NameEn:        vehicleType.NameEn,
+		DescriptionFa: vehicleType.DescriptionFa,
+		DescriptionEn: vehicleType.DescriptionEn,
+	}
 }
 
 // Brands
@@ -219,14 +229,7 @@ func (uc *vehicleUseCase) GetBrand(ctx context.Context, typeID, brandID string) 
 		logger.Error(err, "Failed to get vehicle brand")
 		return nil, errors.ErrFailedToGetVehicleBrand
 	}
-	return &dto.VehicleBrandResponse{
-		ID:            brand.ID,
-		VehicleTypeID: brand.VehicleTypeID,
-		NameFa:        brand.NameFa,
-		NameEn:        brand.NameEn,
-		DescriptionFa: brand.DescriptionFa,
-		DescriptionEn: brand.DescriptionEn,
-	}, nil
+	return uc.convertToVehicleBrandResponse(brand), nil
 }
 
 func (uc *vehicleUseCase) ListBrands(ctx context.Context, typeID string) (*dto.ListVehicleBrandsResponse, error) {
@@ -243,14 +246,7 @@ func (uc *vehicleUseCase) ListBrands(ctx context.Context, typeID string) (*dto.L
 	}
 	brandsResponse := []dto.VehicleBrandResponse{}
 	for _, brand := range brands {
-		brandsResponse = append(brandsResponse, dto.VehicleBrandResponse{
-			ID:            brand.ID,
-			VehicleTypeID: brand.VehicleTypeID,
-			NameFa:        brand.NameFa,
-			NameEn:        brand.NameEn,
-			DescriptionFa: brand.DescriptionFa,
-			DescriptionEn: brand.DescriptionEn,
-		})
+		brandsResponse = append(brandsResponse, *uc.convertToVehicleBrandResponse(brand))
 	}
 	return &dto.ListVehicleBrandsResponse{Brands: brandsResponse}, nil
 }
@@ -279,14 +275,15 @@ func (uc *vehicleUseCase) CreateBrand(ctx context.Context, typeID string, reques
 		logger.Error(err, "Failed to create vehicle brand")
 		return nil, errors.ErrFailedToCreateVehicleBrand
 	}
-	return &dto.VehicleBrandResponse{
-		ID:            brand.ID,
-		VehicleTypeID: brand.VehicleTypeID,
-		NameFa:        brand.NameFa,
-		NameEn:        brand.NameEn,
-		DescriptionFa: brand.DescriptionFa,
-		DescriptionEn: brand.DescriptionEn,
-	}, nil
+
+	// Invalidate cache after creating new brand
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleBrandResponse(brand), nil
 }
 
 func (uc *vehicleUseCase) UpdateBrand(ctx context.Context, typeID, brandID string, request dto.UpdateVehicleBrandRequest) (*dto.VehicleBrandResponse, error) {
@@ -333,14 +330,14 @@ func (uc *vehicleUseCase) UpdateBrand(ctx context.Context, typeID, brandID strin
 		return nil, errors.ErrFailedToUpdateVehicleBrand
 	}
 
-	return &dto.VehicleBrandResponse{
-		ID:            brand.ID,
-		VehicleTypeID: brand.VehicleTypeID,
-		NameFa:        brand.NameFa,
-		NameEn:        brand.NameEn,
-		DescriptionFa: brand.DescriptionFa,
-		DescriptionEn: brand.DescriptionEn,
-	}, nil
+	// Invalidate cache after updating brand
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleBrandResponse(brand), nil
 }
 
 func (uc *vehicleUseCase) DeleteBrand(ctx context.Context, typeID, brandID string) error {
@@ -362,7 +359,26 @@ func (uc *vehicleUseCase) DeleteBrand(ctx context.Context, typeID, brandID strin
 		logger.Error(err, "Failed to delete vehicle brand")
 		return errors.ErrFailedToDeleteVehicleBrand
 	}
+
+	// Invalidate cache after deleting brand
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
 	return nil
+}
+
+func (uc *vehicleUseCase) convertToVehicleBrandResponse(brand entity.VehicleBrand) *dto.VehicleBrandResponse {
+	return &dto.VehicleBrandResponse{
+		ID:            brand.ID,
+		VehicleTypeID: brand.VehicleTypeID,
+		NameFa:        brand.NameFa,
+		NameEn:        brand.NameEn,
+		DescriptionFa: brand.DescriptionFa,
+		DescriptionEn: brand.DescriptionEn,
+	}
 }
 
 // Models
@@ -381,14 +397,7 @@ func (uc *vehicleUseCase) ListModels(ctx context.Context, typeID, brandID string
 	}
 	modelsResponse := []dto.VehicleModelResponse{}
 	for _, model := range models {
-		modelsResponse = append(modelsResponse, dto.VehicleModelResponse{
-			ID:            model.ID,
-			BrandID:       model.BrandID,
-			NameFa:        model.NameFa,
-			NameEn:        model.NameEn,
-			DescriptionFa: model.DescriptionFa,
-			DescriptionEn: model.DescriptionEn,
-		})
+		modelsResponse = append(modelsResponse, *uc.convertToVehicleModelResponse(model))
 	}
 	return &dto.ListVehicleModelsResponse{Models: modelsResponse}, nil
 }
@@ -413,14 +422,7 @@ func (uc *vehicleUseCase) GetModel(ctx context.Context, typeID, brandID, modelID
 		logger.Error(err, "Failed to get vehicle model")
 		return nil, errors.ErrFailedToGetVehicleModel
 	}
-	return &dto.VehicleModelResponse{
-		ID:            model.ID,
-		BrandID:       model.BrandID,
-		NameFa:        model.NameFa,
-		NameEn:        model.NameEn,
-		DescriptionFa: model.DescriptionFa,
-		DescriptionEn: model.DescriptionEn,
-	}, nil
+	return uc.convertToVehicleModelResponse(model), nil
 }
 
 func (uc *vehicleUseCase) CreateModel(ctx context.Context, typeID, brandID string, request dto.CreateVehicleModelRequest) (*dto.VehicleModelResponse, error) {
@@ -448,14 +450,15 @@ func (uc *vehicleUseCase) CreateModel(ctx context.Context, typeID, brandID strin
 		logger.Error(err, "Failed to create vehicle model")
 		return nil, errors.ErrFailedToCreateVehicleModel
 	}
-	return &dto.VehicleModelResponse{
-		ID:            model.ID,
-		BrandID:       model.BrandID,
-		NameFa:        model.NameFa,
-		NameEn:        model.NameEn,
-		DescriptionFa: model.DescriptionFa,
-		DescriptionEn: model.DescriptionEn,
-	}, nil
+
+	// Invalidate cache after creating new model
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleModelResponse(model), nil
 }
 
 func (uc *vehicleUseCase) UpdateModel(ctx context.Context, typeID, brandID, modelID string, request dto.UpdateVehicleModelRequest) (*dto.VehicleModelResponse, error) {
@@ -501,14 +504,15 @@ func (uc *vehicleUseCase) UpdateModel(ctx context.Context, typeID, brandID, mode
 		logger.Error(err, "Failed to update vehicle model")
 		return nil, errors.ErrFailedToUpdateVehicleModel
 	}
-	return &dto.VehicleModelResponse{
-		ID:            model.ID,
-		BrandID:       model.BrandID,
-		NameFa:        model.NameFa,
-		NameEn:        model.NameEn,
-		DescriptionFa: model.DescriptionFa,
-		DescriptionEn: model.DescriptionEn,
-	}, nil
+
+	// Invalidate cache after updating model
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleModelResponse(model), nil
 }
 
 func (uc *vehicleUseCase) DeleteModel(ctx context.Context, typeID, brandID, modelID string) error {
@@ -531,7 +535,26 @@ func (uc *vehicleUseCase) DeleteModel(ctx context.Context, typeID, brandID, mode
 		logger.Error(err, "Failed to delete vehicle model")
 		return errors.ErrFailedToDeleteVehicleModel
 	}
+
+	// Invalidate cache after deleting model
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
 	return nil
+}
+
+func (uc *vehicleUseCase) convertToVehicleModelResponse(model entity.VehicleModel) *dto.VehicleModelResponse {
+	return &dto.VehicleModelResponse{
+		ID:            model.ID,
+		BrandID:       model.BrandID,
+		NameFa:        model.NameFa,
+		NameEn:        model.NameEn,
+		DescriptionFa: model.DescriptionFa,
+		DescriptionEn: model.DescriptionEn,
+	}
 }
 
 // Generations
@@ -557,29 +580,7 @@ func (uc *vehicleUseCase) GetGeneration(ctx context.Context, typeID, brandID, mo
 		logger.Error(err, "Failed to get vehicle generation")
 		return nil, errors.ErrFailedToGetVehicleGeneration
 	}
-	return &dto.VehicleGenerationResponse{
-		ID:            generation.ID,
-		NameFa:        generation.NameFa,
-		NameEn:        generation.NameEn,
-		DescriptionFa: generation.DescriptionFa,
-		DescriptionEn: generation.DescriptionEn,
-		ModelID:       generation.ModelID,
-		StartYear:     generation.StartYear,
-		EndYear:       generation.EndYear,
-		BodyStyleFa:   generation.BodyStyleFa,
-		BodyStyleEn:   generation.BodyStyleEn,
-		Engine:        generation.Engine,
-		EngineVolume:  generation.EngineVolume,
-		Cylinders:     generation.Cylinders,
-		DrivetrainFa:  generation.DrivetrainFa,
-		DrivetrainEn:  generation.DrivetrainEn,
-		Gearbox:       generation.Gearbox,
-		FuelType:      generation.FuelType,
-		Battery:       generation.Battery,
-		Seller:        generation.Seller,
-		AssemblyType:  generation.AssemblyType,
-		Assembler:     generation.Assembler,
-	}, nil
+	return uc.convertToVehicleGenerationResponse(generation), nil
 }
 
 func (uc *vehicleUseCase) ListGenerations(ctx context.Context, typeID, brandID, modelID string) (*dto.ListVehicleGenerationsResponse, error) {
@@ -600,29 +601,7 @@ func (uc *vehicleUseCase) ListGenerations(ctx context.Context, typeID, brandID, 
 
 	generationsResponse := []dto.VehicleGenerationResponse{}
 	for _, generation := range generations {
-		generationsResponse = append(generationsResponse, dto.VehicleGenerationResponse{
-			ID:            generation.ID,
-			NameFa:        generation.NameFa,
-			NameEn:        generation.NameEn,
-			DescriptionFa: generation.DescriptionFa,
-			DescriptionEn: generation.DescriptionEn,
-			ModelID:       generation.ModelID,
-			StartYear:     generation.StartYear,
-			EndYear:       generation.EndYear,
-			BodyStyleFa:   generation.BodyStyleFa,
-			BodyStyleEn:   generation.BodyStyleEn,
-			Engine:        generation.Engine,
-			EngineVolume:  generation.EngineVolume,
-			Cylinders:     generation.Cylinders,
-			DrivetrainFa:  generation.DrivetrainFa,
-			DrivetrainEn:  generation.DrivetrainEn,
-			Gearbox:       generation.Gearbox,
-			FuelType:      generation.FuelType,
-			Battery:       generation.Battery,
-			Seller:        generation.Seller,
-			AssemblyType:  generation.AssemblyType,
-			Assembler:     generation.Assembler,
-		})
+		generationsResponse = append(generationsResponse, *uc.convertToVehicleGenerationResponse(generation))
 	}
 	return &dto.ListVehicleGenerationsResponse{Generations: generationsResponse}, nil
 }
@@ -669,28 +648,15 @@ func (uc *vehicleUseCase) CreateGeneration(ctx context.Context, typeID, brandID,
 		logger.Error(err, "Failed to create vehicle generation")
 		return nil, errors.ErrFailedToCreateVehicleGeneration
 	}
-	return &dto.VehicleGenerationResponse{
-		ID:            generation.ID,
-		NameFa:        generation.NameFa,
-		NameEn:        generation.NameEn,
-		DescriptionFa: generation.DescriptionFa,
-		DescriptionEn: generation.DescriptionEn,
-		ModelID:       generation.ModelID,
-		StartYear:     generation.StartYear,
-		EndYear:       generation.EndYear,
-		BodyStyleFa:   generation.BodyStyleFa,
-		BodyStyleEn:   generation.BodyStyleEn,
-		Engine:        generation.Engine,
-		EngineVolume:  generation.EngineVolume,
-		Cylinders:     generation.Cylinders,
-		DrivetrainFa:  generation.DrivetrainFa,
-		DrivetrainEn:  generation.DrivetrainEn,
-		Gearbox:       generation.Gearbox,
-		FuelType:      generation.FuelType,
-		Battery:       generation.Battery,
-		AssemblyType:  generation.AssemblyType,
-		Assembler:     generation.Assembler,
-	}, nil
+
+	// Invalidate cache after creating new generation
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleGenerationResponse(generation), nil
 }
 
 func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, typeID, brandID, modelID, generationID string, request dto.UpdateVehicleGenerationRequest) (*dto.VehicleGenerationResponse, error) {
@@ -776,6 +742,46 @@ func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, typeID, brandID,
 		logger.Error(err, "Failed to update vehicle generation")
 		return nil, errors.ErrFailedToUpdateVehicleGeneration
 	}
+
+	// Invalidate cache after updating generation
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return uc.convertToVehicleGenerationResponse(generation), nil
+}
+
+func (uc *vehicleUseCase) DeleteGeneration(ctx context.Context, typeID, brandID, modelID, generationID string) error {
+	_ = typeID
+	_ = brandID
+	_ = modelID
+	uintGenerationID, err := strconv.ParseUint(generationID, 10, 64)
+	if err != nil {
+		logger.Error(err, "Failed to parse vehicle generation id")
+		return errors.ErrInvalidVehicleGenerationID
+	}
+
+	generation := entity.VehicleGeneration{}
+	generation.ID = uintGenerationID
+	err = uc.vehicleRepository.DeleteGeneration(ctx, &generation)
+	if err != nil {
+		logger.Error(err, "Failed to delete vehicle generation")
+		return errors.ErrFailedToDeleteVehicleGeneration
+	}
+
+	// Invalidate cache after deleting generation
+	err = uc.vehicleCacheRepository.InvalidateVehicleHierarchy(ctx)
+	if err != nil {
+		logger.Error(err, "Failed to invalidate vehicle hierarchy cache")
+		// Don't return error, just log it
+	}
+
+	return nil
+}
+
+func (uc *vehicleUseCase) convertToVehicleGenerationResponse(generation entity.VehicleGeneration) *dto.VehicleGenerationResponse {
 	return &dto.VehicleGenerationResponse{
 		ID:            generation.ID,
 		ModelID:       generation.ModelID,
@@ -798,27 +804,7 @@ func (uc *vehicleUseCase) UpdateGeneration(ctx context.Context, typeID, brandID,
 		Seller:        generation.Seller,
 		AssemblyType:  generation.AssemblyType,
 		Assembler:     generation.Assembler,
-	}, nil
-}
-
-func (uc *vehicleUseCase) DeleteGeneration(ctx context.Context, typeID, brandID, modelID, generationID string) error {
-	_ = typeID
-	_ = brandID
-	_ = modelID
-	uintGenerationID, err := strconv.ParseUint(generationID, 10, 64)
-	if err != nil {
-		logger.Error(err, "Failed to parse vehicle generation id")
-		return errors.ErrInvalidVehicleGenerationID
 	}
-
-	generation := entity.VehicleGeneration{}
-	generation.ID = uintGenerationID
-	err = uc.vehicleRepository.DeleteGeneration(ctx, &generation)
-	if err != nil {
-		logger.Error(err, "Failed to delete vehicle generation")
-		return errors.ErrFailedToDeleteVehicleGeneration
-	}
-	return nil
 }
 
 // User Vehicles
@@ -857,18 +843,7 @@ func (uc *vehicleUseCase) AddUserVehicle(ctx context.Context, userID string, req
 		logger.Error(err, "Failed to create user vehicle")
 		return nil, errors.ErrFailedToCreateUserVehicle
 	}
-	return &dto.UserVehicleResponse{
-		ID:             userVehicle.ID,
-		UserID:         userVehicle.UserID,
-		GenerationID:   userVehicle.GenerationID,
-		Name:           userVehicle.Name,
-		ProductionYear: userVehicle.ProductionYear,
-		Color:          userVehicle.Color,
-		LicensePlate:   userVehicle.LicensePlate,
-		VIN:            userVehicle.VIN,
-		CurrentMileage: userVehicle.CurrentMileage,
-		PurchaseDate:   userVehicle.PurchaseDate,
-	}, nil
+	return uc.convertToUserVehicleResponse(userVehicle), nil
 }
 
 func (uc *vehicleUseCase) ListUserVehicles(ctx context.Context, userID string) (*dto.ListUserVehiclesResponse, error) {
@@ -885,19 +860,9 @@ func (uc *vehicleUseCase) ListUserVehicles(ctx context.Context, userID string) (
 	}
 	userVehiclesResponse := []dto.UserVehicleResponse{}
 	for _, userVehicle := range userVehicles {
-		userVehiclesResponse = append(userVehiclesResponse, dto.UserVehicleResponse{
-			ID:             userVehicle.ID,
-			UserID:         userVehicle.UserID,
-			GenerationID:   userVehicle.GenerationID,
-			Name:           userVehicle.Name,
-			ProductionYear: userVehicle.ProductionYear,
-			Color:          userVehicle.Color,
-			LicensePlate:   userVehicle.LicensePlate,
-			VIN:            userVehicle.VIN,
-			CurrentMileage: userVehicle.CurrentMileage,
-			PurchaseDate:   userVehicle.PurchaseDate,
-		})
+		userVehiclesResponse = append(userVehiclesResponse, *uc.convertToUserVehicleResponse(userVehicle))
 	}
+
 	return &dto.ListUserVehiclesResponse{Vehicles: userVehiclesResponse}, nil
 }
 
@@ -919,18 +884,7 @@ func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID 
 		return nil, errors.ErrFailedToGetUserVehicle
 	}
 
-	return &dto.UserVehicleResponse{
-		ID:             userVehicle.ID,
-		UserID:         userVehicle.UserID,
-		GenerationID:   userVehicle.GenerationID,
-		Name:           userVehicle.Name,
-		ProductionYear: userVehicle.ProductionYear,
-		Color:          userVehicle.Color,
-		LicensePlate:   userVehicle.LicensePlate,
-		VIN:            userVehicle.VIN,
-		CurrentMileage: userVehicle.CurrentMileage,
-		PurchaseDate:   userVehicle.PurchaseDate,
-	}, nil
+	return uc.convertToUserVehicleResponse(userVehicle), nil
 }
 
 func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UpdateUserVehicleRequest) (*dto.UserVehicleResponse, error) {
@@ -993,18 +947,7 @@ func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicle
 		logger.Error(err, "Failed to update user vehicle")
 		return nil, errors.ErrFailedToUpdateUserVehicle
 	}
-	return &dto.UserVehicleResponse{
-		ID:             userVehicle.ID,
-		UserID:         userVehicle.UserID,
-		GenerationID:   userVehicle.GenerationID,
-		Name:           userVehicle.Name,
-		ProductionYear: userVehicle.ProductionYear,
-		Color:          userVehicle.Color,
-		LicensePlate:   userVehicle.LicensePlate,
-		VIN:            userVehicle.VIN,
-		CurrentMileage: userVehicle.CurrentMileage,
-		PurchaseDate:   userVehicle.PurchaseDate,
-	}, nil
+	return uc.convertToUserVehicleResponse(userVehicle), nil
 }
 
 func (uc *vehicleUseCase) DeleteUserVehicle(ctx context.Context, userID, vehicleID string) error {
@@ -1030,6 +973,21 @@ func (uc *vehicleUseCase) DeleteUserVehicle(ctx context.Context, userID, vehicle
 		return errors.ErrFailedToDeleteUserVehicle
 	}
 	return nil
+}
+
+func (uc *vehicleUseCase) convertToUserVehicleResponse(userVehicle entity.UserVehicle) *dto.UserVehicleResponse {
+	return &dto.UserVehicleResponse{
+		ID:             userVehicle.ID,
+		UserID:         userVehicle.UserID,
+		GenerationID:   userVehicle.GenerationID,
+		Name:           userVehicle.Name,
+		ProductionYear: userVehicle.ProductionYear,
+		Color:          userVehicle.Color,
+		LicensePlate:   userVehicle.LicensePlate,
+		VIN:            userVehicle.VIN,
+		CurrentMileage: userVehicle.CurrentMileage,
+		PurchaseDate:   userVehicle.PurchaseDate,
+	}
 }
 
 // Complete hierarchy

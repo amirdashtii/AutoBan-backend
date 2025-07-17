@@ -9,7 +9,7 @@ import (
 )
 
 type AdminRepository interface {
-	ListUsers(ctx context.Context) ([]entity.User, error)
+	ListUsers(ctx context.Context, users *[]entity.User) error
 	GetUserById(ctx context.Context, user *entity.User) error
 	UpdateUser(ctx context.Context, user *entity.User) error
 	DeleteUser(ctx context.Context, user *entity.User) error
@@ -24,12 +24,11 @@ func NewAdminRepository() AdminRepository {
 	return &adminRepository{db: db}
 }
 
-func (r *adminRepository) ListUsers(ctx context.Context) ([]entity.User, error) {
-	var users []entity.User
-	if err := r.db.WithContext(ctx).Find(&users).Error; err != nil {
-		return nil, err
+func (r *adminRepository) ListUsers(ctx context.Context, users *[]entity.User) error {
+	if err := r.db.WithContext(ctx).Find(users).Error; err != nil {
+		return err
 	}
-	return users, nil
+	return nil
 }
 
 func (r *adminRepository) GetUserById(ctx context.Context, user *entity.User) error {

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/amirdashtii/AutoBan/config"
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/internal/infrastructure/database"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
 
 	"github.com/redis/go-redis/v9"
@@ -16,11 +16,11 @@ import (
 
 type SessionRepository interface {
 	SaveSession(ctx context.Context, session *entity.Session) error
-	GetSession(ctx context.Context, userID, deviceID string) (*entity.Session, error)
-	DeleteSession(ctx context.Context, userID, deviceID string) error
+	GetSession(ctx context.Context, session *entity.Session) error
+	DeleteSession(ctx context.Context, session *entity.Session) error
 	DeleteAllSessions(ctx context.Context, userID string) error
 	IsRefreshTokenValid(ctx context.Context, token string) bool
-	GetAllSessions(ctx context.Context, userID string) ([]*entity.Session, error)
+	GetAllSessions(ctx context.Context, userID string, sessions *[]entity.Session) error
 }
 
 type sessionRepository struct {
@@ -55,28 +55,27 @@ func (r *sessionRepository) SaveSession(ctx context.Context, session *entity.Ses
 	return nil
 }
 
-func (r *sessionRepository) GetSession(ctx context.Context, userID, deviceID string) (*entity.Session, error) {
-	key := makeSessionKey(userID, deviceID)
+func (r *sessionRepository) GetSession(ctx context.Context, session *entity.Session) error {
+	key := makeSessionKey(session.UserID, session.DeviceID)
 	data, err := r.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return nil, errors.ErrTokenNotFound
+		return errors.ErrTokenNotFound
 	}
 	if err != nil {
 		logger.Error(err, "Failed to get session from Redis")
-		return nil, errors.ErrInternalServerError
+		return errors.ErrInternalServerError
 	}
 
-	var session entity.Session
-	if err := json.Unmarshal([]byte(data), &session); err != nil {
+	if err := json.Unmarshal([]byte(data), session); err != nil {
 		logger.Error(err, "Failed to unmarshal session")
-		return nil, errors.ErrInternalServerError
+		return errors.ErrInternalServerError
 	}
 
-	return &session, nil
+	return nil
 }
 
-func (r *sessionRepository) DeleteSession(ctx context.Context, userID, deviceID string) error {
-	key := makeSessionKey(userID, deviceID)
+func (r *sessionRepository) DeleteSession(ctx context.Context, session *entity.Session) error {
+	key := makeSessionKey(session.UserID, session.DeviceID)
 	err := r.client.Del(ctx, key).Err()
 	if err != nil {
 		logger.Error(err, "Failed to delete session from Redis")
@@ -131,31 +130,30 @@ func (r *sessionRepository) IsRefreshTokenValid(ctx context.Context, token strin
 	return false
 }
 
-func (r *sessionRepository) GetAllSessions(ctx context.Context, userID string) ([]*entity.Session, error) {
+func (r *sessionRepository) GetAllSessions(ctx context.Context, userID string, sessions *[]entity.Session) error {
 	pattern := fmt.Sprintf("session:%s:*", userID)
 	keys, err := r.client.Keys(ctx, pattern).Result()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var sessions []*entity.Session
 	for _, key := range keys {
 		sessionData, err := r.client.Get(ctx, key).Result()
 		if err != nil {
 			if err == redis.Nil {
 				continue
 			}
-			return nil, err
+			return err
 		}
 
 		var session entity.Session
 		err = json.Unmarshal([]byte(sessionData), &session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		sessions = append(sessions, &session)
+		*sessions = append(*sessions, session)
 	}
 
-	return sessions, nil
+	return nil
 }

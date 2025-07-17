@@ -86,7 +86,9 @@ func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dt
 		return nil, err
 	}
 
-	user, err := a.authRepository.FindByPhoneNumber(ctx, request.PhoneNumber)
+	var user entity.User
+	user.PhoneNumber = request.PhoneNumber
+	err = a.authRepository.FindByPhoneNumber(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to find user")
 		return nil, err
@@ -99,7 +101,7 @@ func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dt
 	}
 
 	deviceID := generateDeviceID()
-	tokens, err := a.GenerateTokens(ctx, user, deviceID)
+	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
 	if err != nil {
 		return nil, errors.ErrInternalServerError
 	}
@@ -141,7 +143,10 @@ func (a *authUseCase) Logout(ctx context.Context, request *dto.LogoutRequest, us
 	deviceID := claims["device_id"].(string)
 
 	// حذف نشست از Redis
-	err = a.sessionRepository.DeleteSession(ctx, userID, deviceID)
+	var session entity.Session
+	session.UserID = userID
+	session.DeviceID = deviceID
+	err = a.sessionRepository.DeleteSession(ctx, &session)
 	if err != nil {
 		return err
 	}
@@ -177,8 +182,11 @@ func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshToke
 	userID := claims["user_id"].(string)
 	deviceID := claims["device_id"].(string)
 
+	var session entity.Session
 	// چک کردن وجود نشست در Redis
-	session, err := a.sessionRepository.GetSession(ctx, userID, deviceID)
+	session.UserID = userID
+	session.DeviceID = deviceID
+	err = a.sessionRepository.GetSession(ctx, &session)
 	if err != nil {
 		logger.Error(err, "Failed to get session")
 		return nil, errors.ErrInvalidToken
@@ -190,14 +198,16 @@ func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshToke
 	}
 
 	// دریافت اطلاعات کاربر
-	user, err := a.authRepository.FindByID(ctx, userID)
+	var user entity.User
+	user.ID = uuid.MustParse(userID)
+	err = a.authRepository.FindByID(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to find user")
 		return nil, err
 	}
 
 	// ایجاد توکن‌های جدید
-	tokens, err := a.GenerateTokens(ctx, user, deviceID)
+	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
 	if err != nil {
 		logger.Error(err, "Failed to generate new access token")
 		return nil, errors.ErrInternalServerError
@@ -206,7 +216,7 @@ func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshToke
 	// بروزرسانی نشست در Redis
 	session.RefreshToken = tokens.RefreshToken
 	session.LastUsed = time.Now()
-	err = a.sessionRepository.SaveSession(ctx, session)
+	err = a.sessionRepository.SaveSession(ctx, &session)
 	if err != nil {
 		logger.Error(err, "Failed to update session")
 		return nil, errors.ErrInternalServerError
@@ -266,7 +276,8 @@ func (a *authUseCase) GenerateRefreshToken(ctx context.Context, userID string, d
 }
 
 func (a *authUseCase) GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error) {
-	sessions, err := a.sessionRepository.GetAllSessions(ctx, userID)
+	var sessions []entity.Session
+	err := a.sessionRepository.GetAllSessions(ctx, userID, &sessions)
 	if err != nil {
 		logger.Error(err, "Failed to get user sessions")
 		return nil, errors.ErrInternalServerError
