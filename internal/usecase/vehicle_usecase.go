@@ -1057,61 +1057,36 @@ func (uc *vehicleUseCase) convertToHierarchyResponse(vehicleTypes []entity.Vehic
 					totalGenerations++
 
 					generationTree := dto.VehicleGenerationTreeResponse{
-						ID:            generation.ID,
-						ModelID:       model.ID,
-						NameFa:        generation.NameFa,
-						NameEn:        generation.NameEn,
-						DescriptionFa: generation.DescriptionFa,
-						DescriptionEn: generation.DescriptionEn,
-						StartYear:     generation.StartYear,
-						EndYear:       generation.EndYear,
-						Engine:        generation.Engine,
-						EngineVolume:  generation.EngineVolume,
-						Cylinders:     generation.Cylinders,
-						DrivetrainFa:  generation.DrivetrainFa,
-						DrivetrainEn:  generation.DrivetrainEn,
-						Gearbox:       generation.Gearbox,
-						FuelType:      generation.FuelType,
-						Battery:       generation.Battery,
-						Seller:        generation.Seller,
-						AssemblyType:  generation.AssemblyType,
-						Assembler:     generation.Assembler,
-						BodyStyleFa:   generation.BodyStyleFa,
-						BodyStyleEn:   generation.BodyStyleEn,
+						ID: generation.ID,
+						NameFa: generation.NameFa,
+						NameEn: generation.NameEn,
 					}
 					generationTrees = append(generationTrees, generationTree)
 				}
 
 				modelTree := dto.VehicleModelTreeResponse{
-					ID:            model.ID,
-					BrandID:       model.BrandID,
-					NameFa:        model.NameFa,
-					NameEn:        model.NameEn,
-					DescriptionFa: model.DescriptionFa,
-					DescriptionEn: model.DescriptionEn,
-					Generations:   generationTrees,
+					ID: model.ID,
+					NameFa: model.NameFa,
+					NameEn: model.NameEn,
+					Generations: generationTrees,
 				}
 				modelTrees = append(modelTrees, modelTree)
 			}
 
 			brandTree := dto.VehicleBrandTreeResponse{
-				ID:            brand.ID,
-				NameFa:        brand.NameFa,
-				NameEn:        brand.NameEn,
-				DescriptionFa: brand.DescriptionFa,
-				DescriptionEn: brand.DescriptionEn,
-				Models:        modelTrees,
+				ID:     brand.ID,
+				NameFa: brand.NameFa,
+				NameEn: brand.NameEn,
+				Models: modelTrees,
 			}
 			brandTrees = append(brandTrees, brandTree)
 		}
 
 		vehicleTypeTree := dto.VehicleTypeTreeResponse{
-			ID:            vehicleType.ID,
-			NameFa:        vehicleType.NameFa,
-			NameEn:        vehicleType.NameEn,
-			DescriptionFa: vehicleType.DescriptionFa,
-			DescriptionEn: vehicleType.DescriptionEn,
-			Brands:        brandTrees,
+			ID:     vehicleType.ID,
+			NameFa: vehicleType.NameFa,
+			NameEn: vehicleType.NameEn,
+			Brands: brandTrees,
 		}
 		vehicleTypeTrees = append(vehicleTypeTrees, vehicleTypeTree)
 	}

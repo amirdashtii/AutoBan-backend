@@ -382,45 +382,10 @@ type ListUserVehiclesResponse struct {
 type VehicleGenerationTreeResponse struct {
 	// ID of the vehicle generation
 	ID uint64 `json:"id"`
-	// ID of the vehicle model
-	ModelID uint64 `json:"model_id"`
 	// Name of the vehicle generation
 	NameFa string `json:"name_fa"`
 	// Name of the vehicle generation
 	NameEn string `json:"name_en"`
-	// Description of the vehicle generation
-	DescriptionFa string `json:"description_fa"`
-	// Description of the vehicle generation
-	DescriptionEn string `json:"description_en"`
-	// Start year of the vehicle generation
-	StartYear int `json:"start_year"`
-	// End year of the vehicle generation
-	EndYear int `json:"end_year"`
-	// Body style of the vehicle generation
-	BodyStyleFa string `json:"body_style_fa"`
-	// Body style of the vehicle generation
-	BodyStyleEn string `json:"body_style_en"`
-	// Engine type of the vehicle generation
-	Engine string `json:"engine"`
-	// Engine volume of the vehicle generation
-	EngineVolume int `json:"engine_volume"`
-	// Cylinders of the vehicle generation
-	Cylinders int `json:"cylinders"`
-	// Drivetrain of the vehicle generation
-	DrivetrainFa string `json:"drivetrain_fa"`
-	DrivetrainEn string `json:"drivetrain_en"`
-	// Gearbox of the vehicle generation
-	Gearbox string `json:"gearbox"`
-	// Fuel type of the vehicle generation
-	FuelType string `json:"fuel_type"`
-	// Battery of the vehicle generation
-	Battery string `json:"battery"`
-	// Seller of the vehicle generation
-	Seller string `json:"seller"`
-	// Assembly type of the vehicle generation
-	AssemblyType string `json:"assembly_type"`
-	// Assembler of the vehicle generation
-	Assembler string `json:"assembler"`
 }
 
 // VehicleModelTreeResponse represents a vehicle model in the tree structure
@@ -428,16 +393,10 @@ type VehicleGenerationTreeResponse struct {
 type VehicleModelTreeResponse struct {
 	// ID of the vehicle model
 	ID uint64 `json:"id"`
-	// ID of the vehicle brand
-	BrandID uint64 `json:"brand_id"`
 	// Name of the vehicle model
 	NameFa string `json:"name_fa"`
 	// Name of the vehicle model
 	NameEn string `json:"name_en"`
-	// Description of the vehicle model
-	DescriptionFa string `json:"description_fa"`
-	// Description of the vehicle model
-	DescriptionEn string `json:"description_en"`
 	// List of generations for this model
 	Generations []VehicleGenerationTreeResponse `json:"generations"`
 }
@@ -451,10 +410,6 @@ type VehicleBrandTreeResponse struct {
 	NameFa string `json:"name_fa"`
 	// Name of the vehicle brand
 	NameEn string `json:"name_en"`
-	// Description of the vehicle brand
-	DescriptionFa string `json:"description_fa"`
-	// Description of the vehicle brand
-	DescriptionEn string `json:"description_en"`
 	// List of models for this brand
 	Models []VehicleModelTreeResponse `json:"models"`
 }
@@ -468,10 +423,6 @@ type VehicleTypeTreeResponse struct {
 	NameFa string `json:"name_fa"`
 	// Name of the vehicle type
 	NameEn string `json:"name_en"`
-	// Description of the vehicle type
-	DescriptionFa string `json:"description_fa"`
-	// Description of the vehicle type
-	DescriptionEn string `json:"description_en"`
 	// List of brands for this type
 	Brands []VehicleBrandTreeResponse `json:"brands"`
 }
