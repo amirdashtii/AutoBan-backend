@@ -28,27 +28,8 @@ type sessionRepository struct {
 }
 
 func NewSessionRepository() SessionRepository {
-	cfg, err := config.GetConfig()
-	if err != nil {
-		logger.Fatalf("Failed to get config: %v", err)
-		return nil
-	}
-
-	client := redis.NewClient(&redis.Options{
-		Addr:     cfg.Redis.Addr,
-		Password: cfg.Redis.Password,
-		DB:       cfg.Redis.DB,
-	})
-
-	// تست اتصال به Redis
-	ctx := context.Background()
-	if err := client.Ping(ctx).Err(); err != nil {
-		logger.Fatalf("Failed to connect to Redis: %v", err)
-		return nil
-	}
-
 	return &sessionRepository{
-		client: client,
+		client: database.ConnectRedis(),
 	}
 }
 

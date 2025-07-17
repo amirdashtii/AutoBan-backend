@@ -55,12 +55,17 @@ type VehicleUseCase interface {
 }
 
 type vehicleUseCase struct {
-	vehicleRepository repository.VehicleRepository
+	vehicleRepository      repository.VehicleRepository
+	vehicleCacheRepository repository.VehicleCacheRepository
 }
 
 func NewVehicleUseCase() VehicleUseCase {
 	vehicleRepository := repository.NewVehicleRepository()
-	return &vehicleUseCase{vehicleRepository: vehicleRepository}
+	vehicleCacheRepository := repository.NewVehicleCacheRepository()
+	return &vehicleUseCase{
+		vehicleRepository:      vehicleRepository,
+		vehicleCacheRepository: vehicleCacheRepository,
+	}
 }
 
 // Vehicle Types
@@ -1029,13 +1034,49 @@ func (uc *vehicleUseCase) DeleteUserVehicle(ctx context.Context, userID, vehicle
 
 // Complete hierarchy
 func (uc *vehicleUseCase) GetCompleteVehicleHierarchy(ctx context.Context) (*dto.CompleteVehicleHierarchyResponse, error) {
-	vehicleTypes, err := uc.vehicleRepository.GetCompleteVehicleHierarchy(ctx)
+	var vehicleTypes []entity.VehicleType
+
+	// Try to get from cache first
+	err := uc.vehicleCacheRepository.GetVehicleHierarchy(ctx, &vehicleTypes)
 	if err != nil {
-		logger.Error(err, "Failed to get complete vehicle hierarchy")
+		if err.Error() == "redis: nil" {
+			logger.Error(err, "Failed to get vehicle hierarchy from Redis")
+		} else if err.Error() == "json: cannot unmarshal string into Go struct field VehicleType.VehicleBrands of type []entity.VehicleBrand" {
+			logger.Error(err, "Failed to unmarshal vehicle hierarchy")
+		} else {
+			logger.Error(err, "Failed to get vehicle hierarchy from Redis")
+		}
+	} else {
+		// Cache hit - convert to response
+		logger.Info("Vehicle hierarchy retrieved from cache")
+		return uc.convertToHierarchyResponse(vehicleTypes), nil
+	}
+
+	// Cache miss - query database
+	err = uc.vehicleRepository.GetCompleteVehicleHierarchy(ctx, &vehicleTypes)
+	if err != nil {
+		logger.Error(err, "Failed to get complete vehicle hierarchy from database")
 		return nil, errors.ErrFailedToListVehicleTypes
 	}
 
-	// Convert entities to DTO tree structure
+	// Cache the result
+	err = uc.vehicleCacheRepository.SetVehicleHierarchy(ctx, vehicleTypes)
+	if err != nil {
+		if err.Error() == "json: cannot unmarshal string into Go struct field VehicleType.VehicleBrands of type []entity.VehicleBrand" {
+			logger.Error(err, "Failed to marshal vehicle hierarchy")
+		} else {
+			logger.Error(err, "Failed to cache vehicle hierarchy")
+		}
+		// Don't return error, just log it
+	} else {
+		logger.Info("Vehicle hierarchy cached successfully")
+	}
+
+	return uc.convertToHierarchyResponse(vehicleTypes), nil
+}
+
+// Helper method to convert vehicle types to response
+func (uc *vehicleUseCase) convertToHierarchyResponse(vehicleTypes []entity.VehicleType) *dto.CompleteVehicleHierarchyResponse {
 	vehicleTypeTrees := []dto.VehicleTypeTreeResponse{}
 	totalTypes := 0
 	totalBrands := 0
@@ -1123,5 +1164,5 @@ func (uc *vehicleUseCase) GetCompleteVehicleHierarchy(ctx context.Context) (*dto
 		TotalBrands:      totalBrands,
 		TotalModels:      totalModels,
 		TotalGenerations: totalGenerations,
-	}, nil
+	}
 }

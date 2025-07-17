@@ -44,7 +44,7 @@ type VehicleRepository interface {
 	DeleteUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error
 
 	// Complete hierarchy methods
-	GetCompleteVehicleHierarchy(ctx context.Context) ([]entity.VehicleType, error)
+	GetCompleteVehicleHierarchy(ctx context.Context, vehicleTypes *[]entity.VehicleType) error
 }
 
 type vehicleRepository struct {
@@ -173,12 +173,11 @@ func (r *vehicleRepository) DeleteUserVehicle(ctx context.Context, userVehicle *
 }
 
 // Complete hierarchy methods
-func (r *vehicleRepository) GetCompleteVehicleHierarchy(ctx context.Context) ([]entity.VehicleType, error) {
-	var vehicleTypes []entity.VehicleType
+func (r *vehicleRepository) GetCompleteVehicleHierarchy(ctx context.Context, vehicleTypes *[]entity.VehicleType) error {
 	err := r.db.WithContext(ctx).
 		Preload("VehicleBrands").
 		Preload("VehicleBrands.VehicleModels").
 		Preload("VehicleBrands.VehicleModels.VehicleGenerations").
 		Find(&vehicleTypes).Error
-	return vehicleTypes, err
+	return err
 }
