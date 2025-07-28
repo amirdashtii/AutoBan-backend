@@ -24,6 +24,7 @@ func OilChangeRoutes(router *gin.Engine) {
 	// Oil change management (requires authentication)
 	oilChangeGroup := router.Group("/api/v1/user/vehicles/:vehicle_id/oil-changes")
 	oilChangeGroup.Use(middleware.AuthMiddleware())
+	oilChangeGroup.Use(middleware.RequireActiveUser())
 	{
 		oilChangeGroup.GET("", c.ListOilChanges)
 		oilChangeGroup.GET("/last", c.GetLastOilChange)

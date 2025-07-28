@@ -157,25 +157,25 @@ type CreateVehicleGenerationRequest struct {
 	// End year of the vehicle generation
 	EndYear int `json:"end_year" validate:"omitempty,year" example:"2022"`
 	// Body style of the vehicle generation
-	BodyStyleFa  string `json:"body_style_fa" example:"سدان"`
-	BodyStyleEn  string `json:"body_style_en" example:"Sedan"`
+	BodyStyleFa string `json:"body_style_fa" example:"سدان"`
+	BodyStyleEn string `json:"body_style_en" example:"Sedan"`
 	// Engine of the vehicle generation
-	Engine       string `json:"engine" example:"1.6 TDI"`
+	Engine string `json:"engine" example:"1.6 TDI"`
 	// Engine volume of the vehicle generation
-	EngineVolume int    `json:"engine_volume" example:"1600"`
+	EngineVolume int `json:"engine_volume" example:"1600"`
 	// Cylinders of the vehicle generation
-	Cylinders    int    `json:"cylinders" example:"4"`
+	Cylinders int `json:"cylinders" example:"4"`
 	// Drivetrain of the vehicle generation
 	DrivetrainFa string `json:"drivetrain_fa" example:"دودیفرانسیل"`
 	DrivetrainEn string `json:"drivetrain_en" example:"4WD"`
 	// Gearbox of the vehicle generation
-	Gearbox      string `json:"gearbox" example:"Automatic"`
+	Gearbox string `json:"gearbox" example:"Automatic"`
 	// Fuel type of the vehicle generation
-	FuelType     string `json:"fuel_type" example:"Gasoline"`
+	FuelType string `json:"fuel_type" example:"Gasoline"`
 	// Battery of the vehicle generation
-	Battery      string `json:"battery" example:"Li-ion"`
+	Battery string `json:"battery" example:"Li-ion"`
 	// Seller of the vehicle generation
-	Seller       string `json:"seller" example:"Toyota"`
+	Seller string `json:"seller" example:"Toyota"`
 	// Assembly type of the vehicle generation
 	AssemblyType string `json:"assembly_type" example:"CKD"`
 	// Assembler of the vehicle generation
@@ -223,7 +223,6 @@ type UpdateVehicleGenerationRequest struct {
 	AssemblyType *string `json:"assembly_type" example:"CKD"`
 	// Assembler of the vehicle generation
 	Assembler *string `json:"assembler" example:"Toyota"`
-	
 }
 
 // VehicleGenerationResponse represents the response for vehicle generation data
@@ -285,7 +284,7 @@ type CreateUserVehicleRequest struct {
 	// Color of the user vehicle
 	Color string `json:"color" example:"Red"`
 	// License plate of the user vehicle
-	LicensePlate string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
+	LicensePlate string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"12آلف345-67"`
 	// VIN of the user vehicle
 	VIN string `json:"vin" validate:"omitempty,iranian_vin" example:"1HGCM82633A123456"`
 	// Current mileage of the user vehicle

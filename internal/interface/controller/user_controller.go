@@ -82,7 +82,12 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 	}
 	user, err := c.userUseCase.UpdateProfile(ctx, userID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		switch err {
+		case errors.ErrEmailAlreadyExists:
+			ctx.JSON(http.StatusConflict, gin.H{"error": err})
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
 		return
 	}
 
@@ -100,7 +105,7 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 // @Failure     400 {object} map[string]string "Bad Request"
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /users/me/change-password [put]	
+// @Router      /users/me/change-password [put]
 func (c *UserController) ChangePassword(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	var request dto.UpdatePasswordRequest
@@ -128,7 +133,7 @@ func (c *UserController) ChangePassword(ctx *gin.Context) {
 // @Failure     400 {object} map[string]string "Bad Request"
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     500 {object} map[string]string "Internal Server Error"
-// @Router      /users/me [delete]	
+// @Router      /users/me [delete]
 func (c *UserController) DeleteUser(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	err := c.userUseCase.DeleteUser(ctx, userID)

@@ -14,6 +14,7 @@ type AuthRepository interface {
 	Register(ctx context.Context, user *entity.User) error
 	FindByPhoneNumber(ctx context.Context, user *entity.User) error
 	FindByID(ctx context.Context, user *entity.User) error
+	UpdateUser(ctx context.Context, user *entity.User) error
 }
 
 type authRepository struct {
@@ -44,7 +45,7 @@ func (r *authRepository) FindByPhoneNumber(ctx context.Context, user *entity.Use
 		}
 		return errors.ErrInternalServerError
 	}
-		return nil
+	return nil
 }
 
 func (r *authRepository) FindByID(ctx context.Context, user *entity.User) error {
@@ -53,6 +54,14 @@ func (r *authRepository) FindByID(ctx context.Context, user *entity.User) error 
 		if err == gorm.ErrRecordNotFound {
 			return errors.ErrUserNotFound
 		}
+		return errors.ErrInternalServerError
+	}
+	return nil
+}
+
+func (r *authRepository) UpdateUser(ctx context.Context, user *entity.User) error {
+	err := r.db.WithContext(ctx).Model(&entity.User{}).Where("id = ?", user.ID).Updates(user).Error
+	if err != nil {
 		return errors.ErrInternalServerError
 	}
 	return nil

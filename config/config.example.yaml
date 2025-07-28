@@ -31,3 +31,9 @@ redis:
 # Fill in your JWT secret
 jwt:
   secret: your_jwt_secret  # Example: mysecret
+
+# SMS configuration
+# Fill in your SMS API details
+sms:
+  base_url: your_sms_base_url  # Example: https://api.sms.ir
+  x_api_key: your_sms_api_key  # Example: your_sms_api_key

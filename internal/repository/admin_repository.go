@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
+	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/infrastructure/database"
 	"gorm.io/gorm"
 )
@@ -39,8 +40,13 @@ func (r *adminRepository) GetUserById(ctx context.Context, user *entity.User) er
 }
 
 func (r *adminRepository) UpdateUser(ctx context.Context, user *entity.User) error {
-	if err := r.db.WithContext(ctx).Updates(user).Error; err != nil {
-		return err
+	err := r.db.WithContext(ctx).Updates(user).Error
+	if err != nil {
+		// Check if it's a unique constraint violation for email
+		if err == gorm.ErrDuplicatedKey {
+			return errors.ErrEmailAlreadyExists
+		}
+		return errors.ErrInternalServerError
 	}
 	return nil
 }

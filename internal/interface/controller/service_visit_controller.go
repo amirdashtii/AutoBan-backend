@@ -24,6 +24,7 @@ func ServiceVisitRoutes(router *gin.Engine) {
 	c := NewServiceVisitController()
 	userVehicleGroup := router.Group("/api/v1/user/vehicles/:vehicle_id/service-visits")
 	userVehicleGroup.Use(middleware.AuthMiddleware())
+	userVehicleGroup.Use(middleware.RequireActiveUser())
 	{
 		userVehicleGroup.POST("", c.CreateServiceVisit)
 		userVehicleGroup.GET("", c.ListServiceVisits)

@@ -30,6 +30,8 @@ func AuthRoutes(router *gin.Engine) {
 		authGroup.POST("/register", c.Register)
 		authGroup.POST("/login", c.Login)
 		authGroup.POST("/refresh-token", c.RefreshToken)
+		authGroup.POST("/send-verification-code", c.SendVerificationCode)
+		authGroup.POST("/active", c.ActiveUser)
 
 		// Protected routes
 		protected := authGroup.Use(middleware.AuthMiddleware())
@@ -45,7 +47,7 @@ func AuthRoutes(router *gin.Engine) {
 // @Accept      json
 // @Produce     json
 // @Param       request body dto.RegisterRequest true "User registration details"
-// @Success     201 {object} map[string]string
+// @Success     201 {object} dto.TokenResponse
 // @Failure     400 {object} map[string]string
 // @Failure     500 {object} map[string]string
 // @Router      /auth/register [post]
@@ -57,12 +59,22 @@ func (c *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.authUseCase.Register(ctx, &request); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	response, err := c.authUseCase.Register(ctx, &request)
+	if err != nil {
+		switch err {
+		case errors.ErrUserAlreadyExists:
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		case errors.TokenGenerationFailed:
+			ctx.JSON(http.StatusCreated, gin.H{"message": err})
+		case errors.VerificationCodeSendingFailed:
+			ctx.JSON(http.StatusCreated, response)
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
+		}
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
+	ctx.JSON(http.StatusCreated, response)
 }
 
 // @Summary     User login
@@ -203,6 +215,74 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 	response, err := c.authUseCase.RefreshToken(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+// @Summary     Send verification code
+// @Description Send verification code to user's phone number
+// @Tags        Authentication
+// @Accept      json
+// @Produce     json
+// @Param       request body dto.VerifyPhoneRequest true "Verify phone request"
+// @Success     200 {object} map[string]string
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /auth/send-verification-code [post]
+func (c *AuthController) SendVerificationCode(ctx *gin.Context) {
+	var request dto.VerifyPhoneRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Error(err, "Failed to bind request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		return
+	}
+
+	err := c.authUseCase.SendVerificationCode(ctx, &request)
+	if err != nil {
+		switch err {
+		case errors.ErrInvalidPhoneNumber:
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		case errors.ErrUserNotFound:
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
+		}
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "verify code sent successfully"})
+}
+
+// @Summary     Active user
+// @Description Active user
+// @Tags        Authentication
+// @Accept      json
+// @Produce     json
+// @Param       request body dto.VerifyCodeRequest true "Verify code request"
+// @Success     200 {object} dto.TokenResponse
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /auth/active [post]
+func (c *AuthController) ActiveUser(ctx *gin.Context) {
+	var request dto.VerifyCodeRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Error(err, "Failed to bind request")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		return
+	}
+
+	response, err := c.authUseCase.ActiveUser(ctx, &request)
+	if err != nil {
+		switch err {
+
+		case errors.ErrInvalidVerificationCode:
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		case errors.ErrVerificationCodeNotFound:
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
+		}
 		return
 	}
 

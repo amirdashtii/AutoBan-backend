@@ -31,6 +31,10 @@ type Config struct {
 		Address string `mapstructure:"address"`
 		Port    string `mapstructure:"port"`
 	} `mapstructure:"server"`
+	SMS struct {
+		BaseURL string `mapstructure:"base_url"`
+		XAPIKey string `mapstructure:"x_api_key"`
+	} `mapstructure:"sms"`
 }
 
 var (
@@ -91,6 +95,9 @@ func setDefaultValues(v *viper.Viper) {
 	v.SetDefault("redis.db", 0)
 
 	v.SetDefault("jwt.secret", "mysecretkey")
+
+	v.SetDefault("sms.base_url", "https://api.sms.ir")
+	v.SetDefault("sms.x_api_key", "Aklc5AKdy02FdA03TCwEIZeB6gJ2s0fVv80ejWhUyfS4xpbw")
 }
 
 func readYAMLConfig(v *viper.Viper) {
@@ -128,5 +135,8 @@ func readEnvConfig(v *viper.Viper) {
 		v.Set("redis.db", v.GetString("REDIS_DB"))
 
 		v.Set("jwt.secret", v.GetString("JWT_SECRET"))
+
+		v.Set("sms.base_url", v.GetString("SMS_BASE_URL"))
+		v.Set("sms.x_api_key", v.GetString("SMS_X_API_KEY"))
 	}
 }

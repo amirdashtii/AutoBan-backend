@@ -70,3 +70,37 @@ func ValidateLoginRequest(request *dto.LoginRequest) error {
 	}
 	return nil
 }
+
+func ValidateVerifyPhoneRequest(request *dto.VerifyPhoneRequest) error {
+	validate := validator.New()
+	validate.RegisterValidation("iranphone", iranPhone)
+
+	err := validate.Struct(request)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			switch err.Tag() {
+			case "iranphone":
+				return errors.ErrInvalidPhoneNumber
+			}
+		}
+	}
+	return nil
+}
+
+func ValidateVerifyCodeRequest(request *dto.VerifyCodeRequest) error {
+	validate := validator.New()
+	validate.RegisterValidation("iranphone", iranPhone)
+
+	err := validate.Struct(request)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			switch err.Tag() {
+			case "iranphone":
+				return errors.ErrInvalidPhoneNumber
+			case "len":
+				return errors.ErrInvalidVerificationCode
+			}
+		}
+	}
+	return nil
+}

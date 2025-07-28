@@ -58,3 +58,30 @@ type GetSessionsResponse struct {
 	// List of user sessions
 	Sessions []SessionResponse `json:"sessions"`
 }
+
+type VerifyPhoneRequest struct {
+	PhoneNumber string `validate:"required,iranphone" json:"phone_number" example:"09123456789"`
+}
+
+type VerifyCodeRequest struct {
+	PhoneNumber string `validate:"required,iranphone" json:"phone_number" example:"09123456789"`
+	Code        string `validate:"required,len=6" json:"code" example:"123456"`
+}
+
+type SmsIrRequest struct {
+	Mobile     string `json:"mobile" validate:"required,iranphone"`
+	TemplateId string `json:"templateId" validate:"required"`
+	Parameters []struct {
+		Name  string `json:"name" validate:"required"`
+		Value string `json:"value" validate:"required"`
+	} `json:"parameters" validate:"required,dive"`
+}
+
+type SmsIrResponse struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		MessageID int     `json:"messageId"`
+		Cost      float64 `json:"cost"`
+	} `json:"data"`
+}

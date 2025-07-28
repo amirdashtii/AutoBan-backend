@@ -94,6 +94,9 @@ func (u *userUseCase) UpdateProfile(ctx context.Context, userID string, request 
 	err = u.userRepository.UpdateProfile(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to update profile")
+		if err == errors.ErrEmailAlreadyExists {
+			return nil, err
+		}
 		return nil, errors.ErrFailedToUpdateProfile
 	}
 

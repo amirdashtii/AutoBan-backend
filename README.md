@@ -49,6 +49,8 @@ AutoBan is a vehicle maintenance management system built with Go and PostgreSQL.
 - `POST   /api/v1/auth/register` - Register a new user
 - `POST   /api/v1/auth/login` - User login
 - `POST   /api/v1/auth/refresh-token` - Refresh access token
+- `POST   /api/v1/auth/send-verifycode` - Send verify code
+- `POST   /api/v1/auth/active` - active user
 - `POST   /api/v1/auth/logout` - Logout (requires token)
 - `POST   /api/v1/auth/logout-all` - Logout from all devices (requires token)
 - `GET    /api/v1/auth/sessions` - List active sessions (requires token)

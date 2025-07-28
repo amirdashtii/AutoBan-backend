@@ -49,6 +49,7 @@ func VehicleRoutes(router *gin.Engine) {
 	// User vehicle management (requires authentication)
 	userVehicles := router.Group("/api/v1/user/vehicles")
 	userVehicles.Use(middleware.AuthMiddleware())
+	userVehicles.Use(middleware.RequireActiveUser())
 	{
 		userVehicles.POST("", c.AddUserVehicle)
 		userVehicles.GET("", c.ListUserVehicles)

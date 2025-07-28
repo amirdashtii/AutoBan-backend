@@ -1149,6 +1149,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/active": {
+            "post": {
+                "description": "Active user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Active user",
+                "parameters": [
+                    {
+                        "description": "Verify code request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.VerifyCodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Login a user with phone number and password",
@@ -1407,6 +1459,58 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/send-verification-code": {
+            "post": {
+                "description": "Send verification code to user's phone number",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send verification code",
+                "parameters": [
+                    {
+                        "description": "Verify phone request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.VerifyPhoneRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -3317,7 +3421,7 @@ const docTemplate = `{
                 "license_plate": {
                     "description": "License plate of the user vehicle",
                     "type": "string",
-                    "example": "۱۲الف۳۴۵۶۸"
+                    "example": "12آلف345-67"
                 },
                 "name": {
                     "description": "Name of the user vehicle",
@@ -4849,6 +4953,35 @@ const docTemplate = `{
                 "name_fa": {
                     "description": "Name of the vehicle type",
                     "type": "string"
+                }
+            }
+        },
+        "dto.VerifyCodeRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "phone_number"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "123456"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "09123456789"
+                }
+            }
+        },
+        "dto.VerifyPhoneRequest": {
+            "type": "object",
+            "required": [
+                "phone_number"
+            ],
+            "properties": {
+                "phone_number": {
+                    "type": "string",
+                    "example": "09123456789"
                 }
             }
         }

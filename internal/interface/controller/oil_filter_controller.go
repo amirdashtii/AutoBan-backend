@@ -25,6 +25,7 @@ func OilFilterRoutes(router *gin.Engine) {
 	// User vehicle specific oil filter routes
 	oilFilterGroup := router.Group("/api/v1/user/vehicles/:vehicle_id/oil-filters")
 	oilFilterGroup.Use(middleware.AuthMiddleware())
+	oilFilterGroup.Use(middleware.RequireActiveUser())
 	{
 		oilFilterGroup.GET("", c.ListOilFilters)
 		oilFilterGroup.GET("/last", c.GetLastOilFilter)

@@ -78,12 +78,12 @@ func ParseStatusType(s string) StatusType {
 type User struct {
 	BaseEntity
 
-	PhoneNumber string     `gorm:"index;unique;not null"`
-	Password    string     `gorm:"not null"`
+	PhoneNumber string `gorm:"index;unique;not null"`
+	Password    string `gorm:"not null"`
 	FirstName   string
 	LastName    string
 	Birthday    time.Time
-	Email       string     `gorm:"unique"`
+	Email       string `gorm:"uniqueIndex:idx_email,where:email IS NOT NULL AND email != ''"`
 	Status      StatusType
 	Role        RoleType
 }
@@ -96,7 +96,7 @@ func NewUser(phoneNumber, password string) *User {
 		},
 		PhoneNumber: phoneNumber,
 		Password:    password,
-		Status:      Active,
+		Status:      Deactivated,
 		Role:        UserRole,
 	}
 }

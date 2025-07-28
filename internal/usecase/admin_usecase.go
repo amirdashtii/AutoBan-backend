@@ -132,6 +132,9 @@ func (u *adminUseCase) UpdateUser(ctx context.Context, userID string, request dt
 	err = u.adminRepository.UpdateUser(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to update user")
+		if err == errors.ErrEmailAlreadyExists {
+			return err
+		}
 		return errors.ErrFailedToUpdateUser
 	}
 	return nil

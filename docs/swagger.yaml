@@ -109,7 +109,7 @@ definitions:
         type: integer
       license_plate:
         description: License plate of the user vehicle
-        example: ۱۲الف۳۴۵۶۸
+        example: 12آلف345-67
         type: string
       name:
         description: Name of the user vehicle
@@ -1267,6 +1267,26 @@ definitions:
         description: Name of the vehicle type
         type: string
     type: object
+  dto.VerifyCodeRequest:
+    properties:
+      code:
+        example: "123456"
+        type: string
+      phone_number:
+        example: "09123456789"
+        type: string
+    required:
+    - code
+    - phone_number
+    type: object
+  dto.VerifyPhoneRequest:
+    properties:
+      phone_number:
+        example: "09123456789"
+        type: string
+    required:
+    - phone_number
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -2005,6 +2025,40 @@ paths:
       summary: Update a vehicle generation
       tags:
       - Admin - Generations
+  /auth/active:
+    post:
+      consumes:
+      - application/json
+      description: Active user
+      parameters:
+      - description: Verify code request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VerifyCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Active user
+      tags:
+      - Authentication
   /auth/login:
     post:
       consumes:
@@ -2173,6 +2227,40 @@ paths:
         "201":
           description: Created
           schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - Authentication
+  /auth/send-verification-code:
+    post:
+      consumes:
+      - application/json
+      description: Send verification code to user's phone number
+      parameters:
+      - description: Verify phone request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VerifyPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
             additionalProperties:
               type: string
             type: object
@@ -2188,7 +2276,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Register a new user
+      summary: Send verification code
       tags:
       - Authentication
   /auth/sessions:

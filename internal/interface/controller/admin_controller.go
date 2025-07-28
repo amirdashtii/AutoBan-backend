@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/amirdashtii/AutoBan/internal/dto"
+	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/internal/middleware"
 	"github.com/amirdashtii/AutoBan/internal/usecase"
 	"github.com/gin-gonic/gin"
@@ -105,7 +106,12 @@ func (c *AdminController) UpdateUser(ctx *gin.Context) {
 	}
 	err := c.adminUseCase.UpdateUser(ctx, userID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		switch err {
+		case errors.ErrEmailAlreadyExists:
+			ctx.JSON(http.StatusConflict, gin.H{"error": err})
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})

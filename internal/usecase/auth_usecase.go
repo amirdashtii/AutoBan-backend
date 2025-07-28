@@ -3,12 +3,14 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/amirdashtii/AutoBan/config"
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/internal/dto"
 	"github.com/amirdashtii/AutoBan/internal/errors"
+	"github.com/amirdashtii/AutoBan/internal/infrastructure/http"
 	"github.com/amirdashtii/AutoBan/internal/repository"
 	"github.com/amirdashtii/AutoBan/internal/validation"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
@@ -20,10 +22,12 @@ import (
 
 // AuthUseCase interface defines the methods for authentication operations
 type AuthUseCase interface {
-	Register(ctx context.Context, request *dto.RegisterRequest) error
+	Register(ctx context.Context, request *dto.RegisterRequest) (*dto.TokenResponse, error)
 	Login(ctx context.Context, request *dto.LoginRequest) (*dto.TokenResponse, error)
 	Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error
 	RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
+	SendVerificationCode(ctx context.Context, request *dto.VerifyPhoneRequest) error
+	ActiveUser(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error)
 	GenerateAccessToken(ctx context.Context, user *entity.User) (string, error)
 	GenerateRefreshToken(ctx context.Context, userID string, deviceID string) (string, error)
 	GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error)
@@ -32,9 +36,11 @@ type AuthUseCase interface {
 
 // authUseCase struct implements the AuthUseCase interface
 type authUseCase struct {
-	authRepository    repository.AuthRepository
-	sessionRepository repository.SessionRepository
-	secretKey         string
+	authRepository         repository.AuthRepository
+	sessionRepository      repository.SessionRepository
+	verificationRepository repository.VerificationRepository
+	smsService             http.SMSService
+	secretKey              string
 }
 
 // NewAuthUseCase creates a new instance of authUseCase
@@ -46,24 +52,28 @@ func NewAuthUseCase() AuthUseCase {
 	}
 	authRepository := repository.NewAuthRepository()
 	sessionRepository := repository.NewSessionRepository()
+	verificationRepository := repository.NewVerificationRepository()
+	smsService := http.NewSMSService(cfg.SMS.BaseURL, cfg.SMS.XAPIKey)
 	return &authUseCase{
-		authRepository:    authRepository,
-		sessionRepository: sessionRepository,
-		secretKey:         cfg.JWT.Secret,
+		authRepository:         authRepository,
+		sessionRepository:      sessionRepository,
+		verificationRepository: verificationRepository,
+		smsService:             smsService,
+		secretKey:              cfg.JWT.Secret,
 	}
 }
 
-func (a *authUseCase) Register(ctx context.Context, request *dto.RegisterRequest) error {
+func (a *authUseCase) Register(ctx context.Context, request *dto.RegisterRequest) (*dto.TokenResponse, error) {
 	err := validation.ValidateRegisterRequest(request)
 	if err != nil {
 		logger.Error(err, "Failed to validate register request")
-		return err
+		return nil, err
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Error(err, "Failed to hash password")
-		return errors.ErrInternalServerError
+		return nil, errors.ErrInternalServerError
 	}
 
 	user := entity.NewUser(request.PhoneNumber, string(hashedPassword))
@@ -72,11 +82,29 @@ func (a *authUseCase) Register(ctx context.Context, request *dto.RegisterRequest
 	if err != nil {
 		logger.Error(err, "Failed to register user")
 		if err == errors.ErrUserAlreadyExists {
-			return err
+			return nil, err
 		}
-		return errors.ErrInternalServerError
+		return nil, errors.ErrInternalServerError
 	}
-	return nil
+
+	// login user
+	tokens, err := a.Login(ctx, &dto.LoginRequest{
+		PhoneNumber: request.PhoneNumber,
+		Password:    request.Password,
+	})
+	if err != nil {
+		return nil, errors.TokenGenerationFailed
+	}
+
+	// send verification code
+	err = a.SendVerificationCode(ctx, &dto.VerifyPhoneRequest{
+		PhoneNumber: request.PhoneNumber,
+	})
+	if err != nil {
+		return tokens, errors.VerificationCodeSendingFailed
+	}
+
+	return tokens, nil
 }
 
 func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dto.TokenResponse, error) {
@@ -103,6 +131,7 @@ func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dt
 	deviceID := generateDeviceID()
 	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
 	if err != nil {
+		logger.Error(err, "Failed to generate tokens")
 		return nil, errors.ErrInternalServerError
 	}
 
@@ -223,6 +252,98 @@ func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshToke
 	}
 
 	return &tokens, nil
+}
+
+func (a *authUseCase) SendVerificationCode(ctx context.Context, request *dto.VerifyPhoneRequest) error {
+	err := validation.ValidateVerifyPhoneRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate verify phone request")
+		return err
+	}
+
+	var user entity.User
+	user.PhoneNumber = request.PhoneNumber
+	err = a.authRepository.FindByPhoneNumber(ctx, &user)
+	if err != nil {
+		logger.Error(err, "Failed to find user")
+		return err
+	}
+
+	code := generateCode()
+
+	// ذخیره کد تایید در Redis
+	err = a.verificationRepository.SaveVerificationCode(ctx, request.PhoneNumber, code)
+	if err != nil {
+		logger.Error(err, "Failed to save verification code to Redis")
+		return errors.ErrInternalServerError
+	}
+	logger.Info(fmt.Sprintf("Verification code saved for phone: %s", request.PhoneNumber))
+
+	// ارسال کد تایید از طریق SMS
+	err = a.smsService.SendVerificationCode(ctx, request.PhoneNumber, code)
+	if err != nil {
+		logger.Error(err, "Failed to send verification code via SMS")
+		return errors.ErrInternalServerError
+	}
+	logger.Info(fmt.Sprintf("SMS verification code sent successfully to %s", request.PhoneNumber))
+
+	return nil
+}
+
+func (a *authUseCase) ActiveUser(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error) {
+	// اعتبارسنجی درخواست
+	if err := validation.ValidateVerifyCodeRequest(request); err != nil {
+		logger.Error(err, "Failed to validate verify code request")
+		return nil, err
+	}
+	var user entity.User
+	user.PhoneNumber = request.PhoneNumber
+	err := a.authRepository.FindByPhoneNumber(ctx, &user)
+	if err != nil {
+		logger.Error(err, "Failed to find user")
+		return nil, err
+	}
+
+	// بررسی اعتبار کد تایید
+	if !a.verificationRepository.IsVerificationCodeValid(ctx, request.PhoneNumber, request.Code) {
+		logger.Error(errors.ErrInvalidVerificationCode, "Invalid verification code")
+		return nil, errors.ErrInvalidVerificationCode
+	}
+
+	// حذف کد تایید پس از تایید موفق
+	err = a.verificationRepository.DeleteVerificationCode(ctx, request.PhoneNumber)
+	if err != nil {
+		logger.Error(err, "Failed to delete verification code after successful verification")
+		// این خطا نباید باعث شکست تایید شود
+	}
+
+	user.Status = entity.Active
+	err = a.authRepository.UpdateUser(ctx, &user)
+	if err != nil {
+		logger.Error(err, "Failed to update user status")
+		return nil, err
+	}
+	logger.Info(fmt.Sprintf("Verification code deleted for phone: %s", request.PhoneNumber))
+
+	deviceID := generateDeviceID()
+	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
+	if err != nil {
+		logger.Error(err, "Failed to generate tokens")
+		return nil, errors.ErrInternalServerError
+	}
+
+	session := entity.NewSession(user.ID.String(), deviceID, tokens.RefreshToken)
+	err = a.sessionRepository.SaveSession(ctx, session)
+	if err != nil {
+		logger.Error(err, "Failed to save session")
+		return nil, err
+	}
+
+	return &tokens, nil
+}
+
+func generateCode() string {
+	return fmt.Sprintf("%d", rand.Intn(1000000))
 }
 
 func generateDeviceID() string {
