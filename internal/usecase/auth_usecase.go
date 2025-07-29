@@ -27,7 +27,7 @@ type AuthUseCase interface {
 	Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error
 	RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
 	SendVerificationCode(ctx context.Context, request *dto.VerifyPhoneRequest) error
-	ActiveUser(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error)
+	VerifyCode(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error)
 	GenerateAccessToken(ctx context.Context, user *entity.User) (string, error)
 	GenerateRefreshToken(ctx context.Context, userID string, deviceID string) (string, error)
 	GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error)
@@ -290,7 +290,7 @@ func (a *authUseCase) SendVerificationCode(ctx context.Context, request *dto.Ver
 	return nil
 }
 
-func (a *authUseCase) ActiveUser(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error) {
+func (a *authUseCase) VerifyCode(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error) {
 	// اعتبارسنجی درخواست
 	if err := validation.ValidateVerifyCodeRequest(request); err != nil {
 		logger.Error(err, "Failed to validate verify code request")

@@ -2025,40 +2025,6 @@ paths:
       summary: Update a vehicle generation
       tags:
       - Admin - Generations
-  /auth/active:
-    post:
-      consumes:
-      - application/json
-      description: Active user
-      parameters:
-      - description: Verify code request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.VerifyCodeRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.TokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Active user
-      tags:
-      - Authentication
   /auth/login:
     post:
       consumes:
@@ -2306,6 +2272,40 @@ paths:
       security:
       - BearerAuth: []
       summary: Get user sessions
+      tags:
+      - Authentication
+  /auth/verify-code:
+    post:
+      consumes:
+      - application/json
+      description: Active user
+      parameters:
+      - description: Verify code request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VerifyCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Active user
       tags:
       - Authentication
   /user/vehicles:

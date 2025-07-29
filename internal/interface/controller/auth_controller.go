@@ -31,7 +31,7 @@ func AuthRoutes(router *gin.Engine) {
 		authGroup.POST("/login", c.Login)
 		authGroup.POST("/refresh-token", c.RefreshToken)
 		authGroup.POST("/send-verification-code", c.SendVerificationCode)
-		authGroup.POST("/active", c.ActiveUser)
+		authGroup.POST("/verify-code", c.VerifyCode)
 
 		// Protected routes
 		protected := authGroup.Use(middleware.AuthMiddleware())
@@ -263,8 +263,8 @@ func (c *AuthController) SendVerificationCode(ctx *gin.Context) {
 // @Success     200 {object} dto.TokenResponse
 // @Failure     400 {object} map[string]string
 // @Failure     500 {object} map[string]string
-// @Router      /auth/active [post]
-func (c *AuthController) ActiveUser(ctx *gin.Context) {
+// @Router      /auth/verify-code [post]
+func (c *AuthController) VerifyCode(ctx *gin.Context) {
 	var request dto.VerifyCodeRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
@@ -272,7 +272,7 @@ func (c *AuthController) ActiveUser(ctx *gin.Context) {
 		return
 	}
 
-	response, err := c.authUseCase.ActiveUser(ctx, &request)
+	response, err := c.authUseCase.VerifyCode(ctx, &request)
 	if err != nil {
 		switch err {
 
