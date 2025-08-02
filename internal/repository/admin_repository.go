@@ -43,7 +43,7 @@ func (r *adminRepository) UpdateUser(ctx context.Context, user *entity.User) err
 	err := r.db.WithContext(ctx).Updates(user).Error
 	if err != nil {
 		// Check if it's a unique constraint violation for email
-		if err == gorm.ErrDuplicatedKey {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
 			return errors.ErrEmailAlreadyExists
 		}
 		return errors.ErrInternalServerError

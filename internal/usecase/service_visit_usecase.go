@@ -264,7 +264,7 @@ func (uc *serviceVisitUseCase) UpdateServiceVisit(ctx context.Context, userID, v
 	// Update oil change if provided
 	if request.OilChange != nil {
 		oilChange := entity.OilChange{}
-		
+
 		// Update oil change fields if provided
 		if request.OilChange.OilName != nil {
 			oilChange.OilName = *request.OilChange.OilName

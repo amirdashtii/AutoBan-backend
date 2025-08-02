@@ -44,11 +44,16 @@ func (u *userUseCase) GetProfile(ctx context.Context, userID string) (*dto.GetPr
 	}
 
 	return &dto.GetProfileResponse{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Birthday:  user.Birthday.Format("2006-01-02"),
+		ID:          user.ID,
+		PhoneNumber: user.PhoneNumber,
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
+		Email:       user.Email,
+		Birthday:    user.Birthday.Format("2006-01-02"),
+		Status:      user.Status.String(),
+		Role:        user.Role.String(),
+		CreatedAt:   user.CreatedAt.Format("2006-01-02"),
+		UpdatedAt:   user.UpdatedAt.Format("2006-01-02"),
 	}, nil
 }
 

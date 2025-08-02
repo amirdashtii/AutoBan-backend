@@ -2775,7 +2775,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.GetProfileResponse"
+                            "$ref": "#/definitions/dto.UpdateProfileResponse"
                         }
                     },
                     "400": {
@@ -3647,6 +3647,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "1990-01-01"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "email": {
                     "description": "User's email address (optional)",
                     "type": "string",
@@ -3666,6 +3669,18 @@ const docTemplate = `{
                     "description": "User's last name (optional)",
                     "type": "string",
                     "example": "Doe"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -4290,6 +4305,37 @@ const docTemplate = `{
                     "description": "User's first name (optional)",
                     "type": "string",
                     "example": "John"
+                },
+                "last_name": {
+                    "description": "User's last name (optional)",
+                    "type": "string",
+                    "example": "Doe"
+                }
+            }
+        },
+        "dto.UpdateProfileResponse": {
+            "description": "User profile update response",
+            "type": "object",
+            "properties": {
+                "birthday": {
+                    "description": "User's birthday (optional)",
+                    "type": "string",
+                    "example": "1990-01-01"
+                },
+                "email": {
+                    "description": "User's email address (optional)",
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                },
+                "first_name": {
+                    "description": "User's first name (optional)",
+                    "type": "string",
+                    "example": "John"
+                },
+                "id": {
+                    "description": "User's ID",
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
                 },
                 "last_name": {
                     "description": "User's last name (optional)",

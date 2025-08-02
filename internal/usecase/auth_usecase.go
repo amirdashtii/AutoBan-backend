@@ -96,14 +96,6 @@ func (a *authUseCase) Register(ctx context.Context, request *dto.RegisterRequest
 		return nil, errors.TokenGenerationFailed
 	}
 
-	// send verification code
-	err = a.SendVerificationCode(ctx, &dto.VerifyPhoneRequest{
-		PhoneNumber: request.PhoneNumber,
-	})
-	if err != nil {
-		return tokens, errors.VerificationCodeSendingFailed
-	}
-
 	return tokens, nil
 }
 
@@ -270,6 +262,7 @@ func (a *authUseCase) SendVerificationCode(ctx context.Context, request *dto.Ver
 	}
 
 	code := generateCode()
+	fmt.Println(code)
 
 	// ذخیره کد تایید در Redis
 	err = a.verificationRepository.SaveVerificationCode(ctx, request.PhoneNumber, code)

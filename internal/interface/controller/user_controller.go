@@ -67,7 +67,7 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 // @Produce     json
 // @Security    BearerAuth
 // @Param       request body dto.UpdateProfileRequest true "Profile update information"
-// @Success     200 {object} dto.GetProfileResponse
+// @Success     200 {object} dto.UpdateProfileResponse
 // @Failure     400 {object} map[string]string "Bad Request"
 // @Failure     401 {object} map[string]string "Unauthorized"
 // @Failure     500 {object} map[string]string "Internal Server Error"

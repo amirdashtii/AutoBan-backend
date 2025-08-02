@@ -1,4 +1,5 @@
 package errors
+import "reflect"
 
 // ErrorMessage defines a structure for bilingual error messages
 // ErrorMessage ساختاری برای پیام‌های خطای دو زبانه تعریف می‌کند
@@ -35,5 +36,42 @@ func New(messageEn, messageFa string) *CustomError {
 			English: messageEn,
 			Persian: messageFa,
 		},
+	}
+}
+
+
+func Is(err, target error) bool {
+	if err == nil || target == nil {
+		return err == target
+	}
+
+	isComparable := reflect.TypeOf(target).Comparable()
+	return is(err, target, isComparable)
+}
+
+func is(err, target error, targetComparable bool) bool {
+	for {
+		if targetComparable && err == target {
+			return true
+		}
+		if x, ok := err.(interface{ Is(error) bool }); ok && x.Is(target) {
+			return true
+		}
+		switch x := err.(type) {
+		case interface{ Unwrap() error }:
+			err = x.Unwrap()
+			if err == nil {
+				return false
+			}
+		case interface{ Unwrap() []error }:
+			for _, err := range x.Unwrap() {
+				if is(err, target, targetComparable) {
+					return true
+				}
+			}
+			return false
+		default:
+			return false
+		}
 	}
 }

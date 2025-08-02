@@ -28,8 +28,9 @@ func NewAuthRepository() AuthRepository {
 
 func (r *authRepository) Register(ctx context.Context, user *entity.User) error {
 	err := r.db.WithContext(ctx).Create(user).Error
+
 	if err != nil {
-		if err == gorm.ErrDuplicatedKey {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
 			return errors.ErrUserAlreadyExists
 		}
 		return errors.ErrInternalServerError
@@ -40,7 +41,7 @@ func (r *authRepository) Register(ctx context.Context, user *entity.User) error 
 func (r *authRepository) FindByPhoneNumber(ctx context.Context, user *entity.User) error {
 	err := r.db.WithContext(ctx).Where("phone_number = ?", user.PhoneNumber).First(user).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.ErrUserNotFound
 		}
 		return errors.ErrInternalServerError
@@ -51,7 +52,7 @@ func (r *authRepository) FindByPhoneNumber(ctx context.Context, user *entity.Use
 func (r *authRepository) FindByID(ctx context.Context, user *entity.User) error {
 	err := r.db.WithContext(ctx).Where("id = ?", user.ID).First(user).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.ErrUserNotFound
 		}
 		return errors.ErrInternalServerError

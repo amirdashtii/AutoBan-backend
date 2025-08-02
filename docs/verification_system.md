@@ -5,26 +5,32 @@ This system is designed for sending and verifying verification codes via SMS.
 ## System Architecture
 
 ### 1. Infrastructure Layer
+
 - **`internal/infrastructure/http/client.go`** - General HTTP client
 - **`internal/infrastructure/http/sms_service.go`** - SMS service
 
 ### 2. Repository Layer
+
 - **`internal/repository/verification_repository.go`** - Verification code management in Redis
 
 ### 3. UseCase Layer
+
 - **`internal/usecase/auth_usecase.go`** - Verification code business logic
 
 ### 4. Controller Layer
+
 - **`internal/interface/controller/auth_controller.go`** - API endpoints
 
 ## Workflow
 
-### 1. Send Verification Code
-```
-POST /api/v1/auth/send-verifycode
+### 1. Example: Send Verification Code
+
+```http
+POST /api/v1/auth/send-verification-code
 ```
 
 **Request:**
+
 ```json
 {
   "phone_number": "09123456789"
@@ -32,6 +38,7 @@ POST /api/v1/auth/send-verifycode
 ```
 
 **Response:**
+
 ```json
 {
   "message": "verify code sent successfully"
@@ -39,18 +46,21 @@ POST /api/v1/auth/send-verifycode
 ```
 
 **Steps:**
+
 1. Phone number validation
 2. Check user existence
 3. Generate 6-digit random code
 4. Store code in Redis (2 minutes validity)
 5. Send code via SMS
 
-### 2. Verify Code
-```
+### 2. Verify Code (API)
+
+```http
 POST /api/v1/auth/verify-code
 ```
 
 **Request:**
+
 ```json
 {
   "phone_number": "09123456789",
@@ -59,13 +69,16 @@ POST /api/v1/auth/verify-code
 ```
 
 **Response:**
+
 ```json
 {
-  "message": "code verified successfully"
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 **Steps:**
+
 1. Request validation
 2. Check code in Redis
 3. Compare sent code with stored code
@@ -74,6 +87,7 @@ POST /api/v1/auth/verify-code
 ## Configuration
 
 ### `.env` File
+
 ```env
 # SMS Service Configuration
 SMS_BASE_URL=https://api.sms.ir
@@ -81,6 +95,7 @@ SMS_X_API_KEY=your-api-key
 ```
 
 ### `config/config.go` File
+
 ```go
 SMS struct {
     BaseURL string `mapstructure:"base_url"`
@@ -91,14 +106,17 @@ SMS struct {
 ## Security Features
 
 ### 1. Time Limitation
+
 - Verification code is valid for **2 minutes**
 - After expiration, code is automatically removed from Redis
 
 ### 2. Auto Deletion
+
 - After successful verification, code is deleted from Redis
 - Prevents code reuse
 
 ### 3. Validation
+
 - Phone number must have Iranian format (09XXXXXXXXX)
 - Code must be exactly 6 characters
 - Only numbers are allowed
@@ -106,12 +124,14 @@ SMS struct {
 ## Errors
 
 ### Common Errors
+
 - `ErrInvalidPhoneNumber` - Invalid phone number
 - `ErrInvalidVerificationCode` - Invalid verification code
 - `ErrVerificationCodeNotFound` - Verification code not found
 - `ErrVerificationCodeExpired` - Verification code expired
 
 ### HTTP Status Codes
+
 - `200` - Successful verification
 - `400` - Invalid request
 - `404` - Verification code not found
@@ -120,13 +140,15 @@ SMS struct {
 ## Usage Examples
 
 ### 1. Send Verification Code
+
 ```bash
-curl -X POST http://localhost:8080/api/v1/auth/send-verifycode \
+curl -X POST http://localhost:8080/api/v1/auth/send-verification-code \
   -H "Content-Type: application/json" \
   -d '{"phone_number": "09123456789"}'
 ```
 
 ### 2. Verify Code
+
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/verify-code \
   -H "Content-Type: application/json" \
@@ -152,6 +174,7 @@ curl -X POST http://localhost:8080/api/v1/auth/verify-code \
 ## Technical Details
 
 ### Code Generation
+
 ```go
 func generateCode() string {
     return fmt.Sprintf("%d", rand.Intn(1000000))
@@ -159,6 +182,7 @@ func generateCode() string {
 ```
 
 ### Redis Key Structure
+
 ```go
 func makeVerificationKey(phoneNumber string) string {
     return fmt.Sprintf("verification:%s", phoneNumber)
@@ -166,6 +190,7 @@ func makeVerificationKey(phoneNumber string) string {
 ```
 
 ### SMS Service Integration
+
 ```go
 type SMSService interface {
     SendVerificationCode(ctx context.Context, phoneNumber, code string) error
@@ -175,11 +200,13 @@ type SMSService interface {
 ## Testing
 
 ### Unit Tests
+
 - Repository layer tests
 - UseCase layer tests
 - Validation tests
 
 ### Integration Tests
+
 - SMS service integration
 - Redis integration
 - API endpoint tests
@@ -187,13 +214,15 @@ type SMSService interface {
 ## Monitoring
 
 ### Metrics
+
 - SMS delivery success rate
 - Code verification success rate
 - Redis operation performance
 - API response times
 
 ### Alerts
+
 - SMS service failures
 - Redis connection issues
 - High error rates
-- Code expiration warnings 
+- Code expiration warnings

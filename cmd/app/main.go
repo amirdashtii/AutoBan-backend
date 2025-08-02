@@ -8,6 +8,8 @@ import (
 	_ "github.com/amirdashtii/AutoBan/docs"
 
 	"github.com/gin-gonic/gin"
+    "github.com/gin-contrib/cors"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -77,8 +79,6 @@ import (
 // @tag.name        Admin - Generations
 // @tag.description Admin vehicle generation management operations
 
-
-
 func main() {
 	logger.InitLogger()
 	config, err := config.GetConfig()
@@ -87,6 +87,15 @@ func main() {
 	}
 
 	r := gin.New()
+	// CORS middleware configuration
+	conf := cors.DefaultConfig()
+	conf.AllowOrigins = []string{"http://localhost:5173", "http://localhost:3000"}
+	conf.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	conf.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
+	conf.AllowCredentials = true
+    r.Use(cors.New(conf))
+
+
 	r.Use(gin.Recovery())
 
 	// Setup routes

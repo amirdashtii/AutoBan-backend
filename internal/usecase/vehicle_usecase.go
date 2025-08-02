@@ -1057,7 +1057,7 @@ func (uc *vehicleUseCase) convertToHierarchyResponse(vehicleTypes []entity.Vehic
 					totalGenerations++
 
 					generationTree := dto.VehicleGenerationTreeResponse{
-						ID: generation.ID,
+						ID:     generation.ID,
 						NameFa: generation.NameFa,
 						NameEn: generation.NameEn,
 					}
@@ -1065,9 +1065,9 @@ func (uc *vehicleUseCase) convertToHierarchyResponse(vehicleTypes []entity.Vehic
 				}
 
 				modelTree := dto.VehicleModelTreeResponse{
-					ID: model.ID,
-					NameFa: model.NameFa,
-					NameEn: model.NameEn,
+					ID:          model.ID,
+					NameFa:      model.NameFa,
+					NameEn:      model.NameEn,
 					Generations: generationTrees,
 				}
 				modelTrees = append(modelTrees, modelTree)

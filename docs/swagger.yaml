@@ -288,6 +288,8 @@ definitions:
         description: User's birthday (optional)
         example: "1990-01-01"
         type: string
+      created_at:
+        type: string
       email:
         description: User's email address (optional)
         example: john.doe@example.com
@@ -303,6 +305,14 @@ definitions:
       last_name:
         description: User's last name (optional)
         example: Doe
+        type: string
+      phone_number:
+        type: string
+      role:
+        type: string
+      status:
+        type: string
+      updated_at:
         type: string
     type: object
   dto.GetSessionsResponse:
@@ -767,6 +777,30 @@ definitions:
       first_name:
         description: User's first name (optional)
         example: John
+        type: string
+      last_name:
+        description: User's last name (optional)
+        example: Doe
+        type: string
+    type: object
+  dto.UpdateProfileResponse:
+    description: User profile update response
+    properties:
+      birthday:
+        description: User's birthday (optional)
+        example: "1990-01-01"
+        type: string
+      email:
+        description: User's email address (optional)
+        example: john.doe@example.com
+        type: string
+      first_name:
+        description: User's first name (optional)
+        example: John
+        type: string
+      id:
+        description: User's ID
+        example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       last_name:
         description: User's last name (optional)
@@ -3109,7 +3143,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.GetProfileResponse'
+            $ref: '#/definitions/dto.UpdateProfileResponse'
         "400":
           description: Bad Request
           schema:
