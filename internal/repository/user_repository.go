@@ -47,5 +47,5 @@ func (r *userRepository) ChangePassword(ctx context.Context, user *entity.User) 
 }
 
 func (r *userRepository) DeleteUser(ctx context.Context, user *entity.User) error {
-	return r.db.WithContext(ctx).Delete(&user).Error
+	return r.db.WithContext(ctx).Unscoped().Delete(&user).Error
 }

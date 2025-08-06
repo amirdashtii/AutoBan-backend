@@ -22,20 +22,19 @@ import (
 
 // AuthUseCase interface defines the methods for authentication operations
 type AuthUseCase interface {
-	// public methods
 	Register(ctx context.Context, request *dto.RegisterRequest) (*dto.TokenResponse, error)
 	Login(ctx context.Context, request *dto.LoginRequest) (*dto.TokenResponse, error)
 	RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
 	ResetPassword(ctx context.Context, request *dto.ResetPasswordRequest) (*dto.TokenResponse, error)
 
-	// private methods
 	Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error
 	SendVerificationCode(ctx context.Context, verifyPhoneRequest *dto.VerifyPhoneRequest) error
 	VerifyPhone(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error)
 	GenerateAccessToken(ctx context.Context, user *entity.User) (string, error)
 	GenerateRefreshToken(ctx context.Context, userID string, deviceID string) (string, error)
-	GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error)
 	LogoutAllDevices(ctx context.Context, userID string) error
+	GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error)
+	DeleteSession(ctx context.Context, deviceID string, userID string) error
 }
 
 // authUseCase struct implements the AuthUseCase interface
@@ -257,7 +256,7 @@ func (a *authUseCase) ResetPassword(ctx context.Context, request *dto.ResetPassw
 }
 
 func (a *authUseCase) Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error {
-	// پارس کردن توکن برای دریافت شناسه کاربر و دستگاه
+	// parse token
 	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.ErrInvalidToken
@@ -282,7 +281,7 @@ func (a *authUseCase) Logout(ctx context.Context, request *dto.LogoutRequest, us
 
 	deviceID := claims["device_id"].(string)
 
-	// حذف نشست از Redis
+	// delete session from Redis
 	var session entity.Session
 	session.UserID = userID
 	session.DeviceID = deviceID
@@ -451,6 +450,14 @@ func (a *authUseCase) GenerateRefreshToken(ctx context.Context, userID string, d
 	return token.SignedString([]byte(a.secretKey))
 }
 
+func (a *authUseCase) LogoutAllDevices(ctx context.Context, userID string) error {
+	err := a.sessionRepository.DeleteAllSessions(ctx, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (a *authUseCase) GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error) {
 	var sessions []entity.Session
 	err := a.sessionRepository.GetAllSessions(ctx, userID, &sessions)
@@ -470,8 +477,11 @@ func (a *authUseCase) GetUserSessions(ctx context.Context, userID string) ([]dto
 	return sessionResponses, nil
 }
 
-func (a *authUseCase) LogoutAllDevices(ctx context.Context, userID string) error {
-	err := a.sessionRepository.DeleteAllSessions(ctx, userID)
+func (a *authUseCase) DeleteSession(ctx context.Context, deviceID string, userID string) error {
+	var session entity.Session
+	session.DeviceID = deviceID
+	session.UserID = userID
+	err := a.sessionRepository.DeleteSession(ctx, &session)
 	if err != nil {
 		return err
 	}

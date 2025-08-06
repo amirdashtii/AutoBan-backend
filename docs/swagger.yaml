@@ -2390,6 +2390,43 @@ paths:
       summary: Get user sessions
       tags:
       - Authentication
+  /auth/sessions/{device_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a session by ID
+      parameters:
+      - description: Device ID
+        in: path
+        name: device_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Session deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request - Invalid request body
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized - Invalid token
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+      security:
+      - BearerAuth: []
+      summary: Delete session
+      tags:
+      - Authentication
   /auth/verify-phone:
     post:
       consumes:

@@ -4,6 +4,10 @@ package errors
 var (
 	ErrBadRequest          = New("Invalid request body", "درخواست معتبر نیست")
 	ErrInternalServerError = New("Internal Server Error", "خطای داخلی سرور")
+	ErrInvalidToken        = New("invalid or expired token", "توکن نامعتبر یا منقضی شده است")
+	ErrUserNotActive       = New("user not active", "کاربر فعال نیست")
+	ErrInvalidPhoneNumber  = New("invalid phone number", "شماره تلفن معتبر نیست")
+	ErrInvalidPassword     = New("invalid password", "رمز عبور نامعتبر است")
 )
 
 // Auth Errors
@@ -13,7 +17,12 @@ var (
 	TokenGenerationFailed           = New("User Create successfully but failed to generate tokens", "کاربر ساخته شده اما توکن تولید نشد")
 	ErrInvalidPhoneNumberOrPassword = New("invalid phone number or password", "شماره تلفن یا رمز عبور معتبر نیست")
 	ErrTokenNotFound                = New("authentication token not found", "توکن احراز هویت یافت نشد")
-	ErrInvalidPhoneNumber           = New("invalid phone number", "شماره تلفن معتبر نیست")
+)
+
+// Verification Errors
+var (
+	ErrVerificationCodeNotFound = New("verification code not found", "کد تایید یافت نشد")
+	ErrInvalidVerificationCode  = New("invalid verification code", "کد تایید نامعتبر است")
 )
 
 var (
@@ -23,8 +32,6 @@ var (
 	ErrInvalidRole                = New("invalid role", "نقش معتبر نیست")
 	ErrInvalidStatus              = New("invalid status", "وضعیت معتبر نیست")
 	ErrLoadConfig                 = New("failed to load config", "خطای بارگذاری کانفیگ")
-	ErrUserNotActive              = New("user not active", "کاربر فعال نیست")
-	ErrInvalidToken               = New("invalid or expired token", "توکن نامعتبر یا منقضی شده است")
 	ErrInvalidTokenFormat         = New("invalid token format", "فرمت توکن احراز هویت نامعتبر است")
 	ErrInvalidTokenClaims         = New("invalid token claims", "اطلاعات توکن نامعتبر است")
 	ErrAccessDenied               = New("access denied", "شما دسترسی لازم برای این عملیات را ندارید")
@@ -42,7 +49,6 @@ var (
 	ErrInvalidUserID              = New("invalid user id", "شناسه کاربر نامعتبر است")
 	ErrInvalidPurchaseDate        = New("invalid purchase date", "تاریخ خرید نامعتبر است")
 	ErrUserVehicleNotOwned        = New("user vehicle not owned by user", "این وسیله نقلیه متعلق به شما نیست")
-	ErrInvalidPassword            = New("invalid password", "رمز عبور نامعتبر است")
 )
 
 var (
@@ -143,10 +149,4 @@ var (
 	ErrFailedToListServiceVisits        = New("failed to list service visits", "خطای فهرست بازدیدهای سرویس")
 	ErrFailedToUpdateServiceVisit       = New("failed to update service visit", "خطای به روز رسانی بازدید سرویس")
 	ErrFailedToDeleteServiceVisit       = New("failed to delete service visit", "خطای حذف بازدید سرویس")
-)
-
-// Verification Errors
-var (
-	ErrVerificationCodeNotFound = New("verification code not found", "کد تایید یافت نشد")
-	ErrInvalidVerificationCode  = New("invalid verification code", "کد تایید نامعتبر است")
 )

@@ -38,6 +38,7 @@ func AuthRoutes(router *gin.Engine) {
 		protected.POST("/logout", c.Logout)
 		protected.POST("/logout-all", c.LogoutAllDevices)
 		protected.GET("/sessions", c.GetUserSessions)
+		protected.DELETE("/sessions/:id", c.DeleteSession)
 		authGroup.POST("/send-verification-code", c.SendVerificationCode)
 		authGroup.POST("/verify-phone", c.VerifyPhone)
 	}
@@ -323,6 +324,41 @@ func (c *AuthController) GetUserSessions(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, sessionResponses)
+}
+
+// @Summary     Delete session
+// @Description Delete a session by ID
+// @Tags        Authentication
+// @Accept      json
+// @Produce     json
+// @Security    BearerAuth
+// @Param       device_id path string true "Device ID"
+// @Success     200 {object} map[string]string "Session deleted successfully"
+// @Failure     400 {object} errors.CustomError "Bad Request - Invalid request body"
+// @Failure     401 {object} errors.CustomError "Unauthorized - Invalid token"
+// @Failure     500 {object} errors.CustomError "Internal Server Error"
+// @Router      /auth/sessions/{device_id} [delete]
+func (c *AuthController) DeleteSession(ctx *gin.Context) {
+	deviceID := ctx.Param("device_id")
+	if deviceID == "" {
+		logger.Error(nil, "device_id not found")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		return
+	}
+	userID := ctx.GetString("user_id")
+	if userID == "" {
+		logger.Error(nil, "User ID not found")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrTokenNotFound})
+		return
+	}
+
+	err := c.authUseCase.DeleteSession(ctx, deviceID, userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Session deleted successfully"})
 }
 
 // @Summary     Send verification code
