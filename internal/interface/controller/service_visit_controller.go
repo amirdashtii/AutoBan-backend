@@ -57,7 +57,7 @@ func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 	var request dto.CreateServiceVisitRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind JSON")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 
@@ -179,7 +179,7 @@ func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 	var request dto.UpdateServiceVisitRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind JSON")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 

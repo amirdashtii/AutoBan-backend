@@ -40,14 +40,7 @@ func ValidateRegisterRequest(request *dto.RegisterRequest) error {
 
 	err := validate.Struct(request)
 	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			switch err.Tag() {
-			case "iranphone":
-				return errors.ErrInvalidPhoneNumber
-			case "password":
-				return errors.ErrInvalidPassword
-			}
-		}
+		return err
 	}
 	return nil
 }
@@ -59,14 +52,7 @@ func ValidateLoginRequest(request *dto.LoginRequest) error {
 
 	err := validate.Struct(request)
 	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			switch err.Tag() {
-			case "iranphone":
-				return errors.ErrInvalidPhoneNumber
-			case "password":
-				return errors.ErrInvalidPassword
-			}
-		}
+		return err
 	}
 	return nil
 }
@@ -81,6 +67,27 @@ func ValidateVerifyPhoneRequest(request *dto.VerifyPhoneRequest) error {
 			switch err.Tag() {
 			case "iranphone":
 				return errors.ErrInvalidPhoneNumber
+			}
+		}
+	}
+	return nil
+}
+
+func ValidateResetPasswordRequest(request *dto.ResetPasswordRequest) error {
+	validate := validator.New()
+	validate.RegisterValidation("iranphone", iranPhone)
+	validate.RegisterValidation("password", password)
+
+	err := validate.Struct(request)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			switch err.Tag() {
+			case "iranphone":
+				return errors.ErrInvalidPhoneNumber
+			case "password":
+				return errors.ErrInvalidPassword
+			case "len":
+				return errors.ErrInvalidVerificationCode
 			}
 		}
 	}

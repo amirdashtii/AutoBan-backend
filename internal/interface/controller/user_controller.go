@@ -77,7 +77,7 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 	var request dto.UpdateProfileRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	user, err := c.userUseCase.UpdateProfile(ctx, userID, request)
@@ -111,7 +111,7 @@ func (c *UserController) ChangePassword(ctx *gin.Context) {
 	var request dto.UpdatePasswordRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	err := c.userUseCase.ChangePassword(ctx, userID, request)

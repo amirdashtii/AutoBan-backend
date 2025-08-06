@@ -14,7 +14,8 @@ type AuthRepository interface {
 	Register(ctx context.Context, user *entity.User) error
 	FindByPhoneNumber(ctx context.Context, user *entity.User) error
 	FindByID(ctx context.Context, user *entity.User) error
-	UpdateUser(ctx context.Context, user *entity.User) error
+	UpdateUserPassword(ctx context.Context, user *entity.User) error
+	UpdateUserStatus(ctx context.Context, user *entity.User) error
 }
 
 type authRepository struct {
@@ -60,8 +61,16 @@ func (r *authRepository) FindByID(ctx context.Context, user *entity.User) error 
 	return nil
 }
 
-func (r *authRepository) UpdateUser(ctx context.Context, user *entity.User) error {
-	err := r.db.WithContext(ctx).Model(&entity.User{}).Where("id = ?", user.ID).Updates(user).Error
+func (r *authRepository) UpdateUserPassword(ctx context.Context, user *entity.User) error {
+	err := r.db.WithContext(ctx).Model(&entity.User{}).Where("id = ?", user.ID).Update("password", user.Password).Error
+	if err != nil {
+		return errors.ErrInternalServerError
+	}
+	return nil
+}
+
+func (r *authRepository) UpdateUserStatus(ctx context.Context, user *entity.User) error {
+	err := r.db.WithContext(ctx).Model(&entity.User{}).Where("id = ?", user.ID).Update("status", user.Status).Error
 	if err != nil {
 		return errors.ErrInternalServerError
 	}

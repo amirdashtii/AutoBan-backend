@@ -33,6 +33,16 @@ definitions:
         example: Active
         type: string
     type: object
+  dto.CodeRequest:
+    description: Code request
+    properties:
+      code:
+        description: Verification code
+        example: "123456"
+        type: string
+    required:
+    - code
+    type: object
   dto.CompleteVehicleHierarchyResponse:
     description: Complete vehicle hierarchy with all types, brands, models, and generations
     properties:
@@ -554,6 +564,27 @@ definitions:
     required:
     - password
     - phone_number
+    type: object
+  dto.ResetPasswordRequest:
+    description: Reset password request
+    properties:
+      new_password:
+        description: New password
+        example: Password123
+        minLength: 8
+        type: string
+      phone_number:
+        description: Iranian phone number in format 09XXXXXXXXX
+        example: "09123456789"
+        type: string
+      verification_code:
+        description: Verification code
+        example: "123456"
+        type: string
+    required:
+    - new_password
+    - phone_number
+    - verification_code
     type: object
   dto.ServiceVisitOilChange:
     description: add oil change to create service visit
@@ -1301,25 +1332,27 @@ definitions:
         description: Name of the vehicle type
         type: string
     type: object
-  dto.VerifyCodeRequest:
+  dto.VerifyPhoneRequest:
+    description: Verify phone request
     properties:
-      code:
-        example: "123456"
-        type: string
       phone_number:
+        description: Iranian phone number in format 09XXXXXXXXX
         example: "09123456789"
         type: string
     required:
-    - code
     - phone_number
     type: object
-  dto.VerifyPhoneRequest:
+  errors.CustomError:
     properties:
-      phone_number:
-        example: "09123456789"
+      message:
+        $ref: '#/definitions/errors.ErrorMessage'
+    type: object
+  errors.ErrorMessage:
+    properties:
+      english:
         type: string
-    required:
-    - phone_number
+      persian:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -2059,6 +2092,42 @@ paths:
       summary: Update a vehicle generation
       tags:
       - Admin - Generations
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Get verification code to reset password
+      parameters:
+      - description: Forgot password request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VerifyPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Verification code sent successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request - Invalid request body
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found - User not found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+      summary: Forgot password
+      tags:
+      - Authentication
   /auth/login:
     post:
       consumes:
@@ -2075,21 +2144,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Login successfully
           schema:
             $ref: '#/definitions/dto.TokenResponse'
         "400":
-          description: Bad Request
+          description: Bad Request - Invalid request body
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized - Invalid phone number or password
+          schema:
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       summary: User login
       tags:
       - Authentication
@@ -2109,29 +2178,23 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Logout successfully
           schema:
             additionalProperties:
               type: string
             type: object
         "400":
-          description: Bad Request
+          description: Bad Request - Invalid request body
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
-          description: Unauthorized
+          description: Unauthorized - Invalid token
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: User logout
@@ -2147,29 +2210,25 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Logout from all devices successfully
           schema:
             additionalProperties:
               type: string
             type: object
         "401":
-          description: Unauthorized
+          description: Unauthorized - Invalid token
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Logout from all devices
       tags:
       - Authentication
-  /auth/refresh-token:
+  /auth/refresh:
     post:
       consumes:
       - application/json
@@ -2185,27 +2244,21 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Refresh token successfully
           schema:
             $ref: '#/definitions/dto.TokenResponse'
         "400":
-          description: Bad Request
+          description: Bad Request - Invalid request body
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
-          description: Unauthorized
+          description: Unauthorized - Invalid token
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       summary: Refresh access token
       tags:
       - Authentication
@@ -2224,23 +2277,61 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: User registered successfully
           schema:
             $ref: '#/definitions/dto.TokenResponse'
-        "400":
-          description: Bad Request
+        "201":
+          description: User registered successfully but failed to generate tokens
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+        "400":
+          description: Bad Request - Invalid request body
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "409":
+          description: Conflict - User already exists
+          schema:
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       summary: Register a new user
+      tags:
+      - Authentication
+  /auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Reset password with verification code
+      parameters:
+      - description: Reset password request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset successfully
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request - Invalid request body
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized - Invalid verification code
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+      summary: Reset password
       tags:
       - Authentication
   /auth/send-verification-code:
@@ -2248,34 +2339,29 @@ paths:
       consumes:
       - application/json
       description: Send verification code to user's phone number
-      parameters:
-      - description: Verify phone request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.VerifyPhoneRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Send verification code successfully
           schema:
             additionalProperties:
               type: string
             type: object
         "400":
-          description: Bad Request
+          description: Bad Request - Invalid request body
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found - User not found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+      security:
+      - BearerAuth: []
       summary: Send verification code
       tags:
       - Authentication
@@ -2288,27 +2374,23 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Get user sessions successfully
           schema:
             $ref: '#/definitions/dto.GetSessionsResponse'
         "401":
-          description: Unauthorized
+          description: Unauthorized - Invalid token
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get user sessions
       tags:
       - Authentication
-  /auth/verify-code:
+  /auth/verify-phone:
     post:
       consumes:
       - application/json
@@ -2319,26 +2401,28 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.VerifyCodeRequest'
+          $ref: '#/definitions/dto.CodeRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Verify code successfully
           schema:
             $ref: '#/definitions/dto.TokenResponse'
         "400":
-          description: Bad Request
+          description: Bad Request - Invalid request body
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found - Verification code not found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+      security:
+      - BearerAuth: []
       summary: Active user
       tags:
       - Authentication

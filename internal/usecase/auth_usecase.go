@@ -22,12 +22,16 @@ import (
 
 // AuthUseCase interface defines the methods for authentication operations
 type AuthUseCase interface {
+	// public methods
 	Register(ctx context.Context, request *dto.RegisterRequest) (*dto.TokenResponse, error)
 	Login(ctx context.Context, request *dto.LoginRequest) (*dto.TokenResponse, error)
-	Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error
 	RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error)
-	SendVerificationCode(ctx context.Context, request *dto.VerifyPhoneRequest) error
-	VerifyCode(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error)
+	ResetPassword(ctx context.Context, request *dto.ResetPasswordRequest) (*dto.TokenResponse, error)
+
+	// private methods
+	Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error
+	SendVerificationCode(ctx context.Context, verifyPhoneRequest *dto.VerifyPhoneRequest) error
+	VerifyPhone(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error)
 	GenerateAccessToken(ctx context.Context, user *entity.User) (string, error)
 	GenerateRefreshToken(ctx context.Context, userID string, deviceID string) (string, error)
 	GetUserSessions(ctx context.Context, userID string) ([]dto.SessionResponse, error)
@@ -67,7 +71,7 @@ func (a *authUseCase) Register(ctx context.Context, request *dto.RegisterRequest
 	err := validation.ValidateRegisterRequest(request)
 	if err != nil {
 		logger.Error(err, "Failed to validate register request")
-		return nil, err
+		return nil, errors.ErrBadRequest
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
@@ -82,7 +86,6 @@ func (a *authUseCase) Register(ctx context.Context, request *dto.RegisterRequest
 	if err != nil {
 		logger.Error(err, "Failed to register user")
 		if err == errors.ErrUserAlreadyExists {
-			return nil, err
 		}
 		return nil, errors.ErrInternalServerError
 	}
@@ -103,7 +106,7 @@ func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dt
 	err := validation.ValidateLoginRequest(request)
 	if err != nil {
 		logger.Error(err, "Failed to validate login request")
-		return nil, err
+		return nil, errors.ErrBadRequest
 	}
 
 	var user entity.User
@@ -117,14 +120,14 @@ func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dt
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
 	if err != nil {
 		logger.Error(err, "Failed to compare hash and password")
-		return nil, errors.ErrInvalidPhoneNumberOrPassword
+		return nil, err
 	}
 
 	deviceID := generateDeviceID()
 	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
 	if err != nil {
 		logger.Error(err, "Failed to generate tokens")
-		return nil, errors.ErrInternalServerError
+		return nil, err
 	}
 
 	// ذخیره نشست در Redis
@@ -137,44 +140,6 @@ func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dt
 	return &tokens, nil
 }
 
-func (a *authUseCase) Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error {
-	// پارس کردن توکن برای دریافت شناسه کاربر و دستگاه
-	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.ErrInvalidToken
-		}
-		return []byte(a.secretKey), nil
-	})
-
-	if err != nil {
-		logger.Error(err, "Failed to parse refresh token")
-		return err
-	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		logger.Error(nil, "Failed to get token claims")
-		return errors.ErrInvalidToken
-	}
-	if userID != claims["user_id"].(string) {
-		logger.Error(nil, "User ID does not match")
-		return errors.ErrInvalidToken
-	}
-
-	deviceID := claims["device_id"].(string)
-
-	// حذف نشست از Redis
-	var session entity.Session
-	session.UserID = userID
-	session.DeviceID = deviceID
-	err = a.sessionRepository.DeleteSession(ctx, &session)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshTokenRequest) (*dto.TokenResponse, error) {
 	// چک کردن اعتبار توکن در وایت‌لیست
 	if !a.sessionRepository.IsRefreshTokenValid(ctx, request.RefreshToken) {
@@ -184,6 +149,7 @@ func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshToke
 	// پارس کردن توکن
 	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			logger.Error(nil, "Invalid token signing method")
 			return nil, errors.ErrInvalidToken
 		}
 		return []byte(a.secretKey), nil
@@ -231,7 +197,7 @@ func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshToke
 	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
 	if err != nil {
 		logger.Error(err, "Failed to generate new access token")
-		return nil, errors.ErrInternalServerError
+		return nil, err
 	}
 
 	// بروزرسانی نشست در Redis
@@ -240,10 +206,92 @@ func (a *authUseCase) RefreshToken(ctx context.Context, request *dto.RefreshToke
 	err = a.sessionRepository.SaveSession(ctx, &session)
 	if err != nil {
 		logger.Error(err, "Failed to update session")
-		return nil, errors.ErrInternalServerError
+		return nil, err
 	}
 
 	return &tokens, nil
+}
+
+func (a *authUseCase) ResetPassword(ctx context.Context, request *dto.ResetPasswordRequest) (*dto.TokenResponse, error) {
+	err := validation.ValidateResetPasswordRequest(request)
+	if err != nil {
+		logger.Error(err, "Failed to validate reset password request")
+		return nil, errors.ErrBadRequest
+	}
+
+	// verify code
+	user, err := a.VerifyCode(ctx, request.PhoneNumber, request.VerificationCode)
+	if err != nil {
+		logger.Error(err, "Failed to verify code")
+		return nil, err
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		logger.Error(err, "Failed to hash password")
+		return nil, err
+	}
+
+	user.Password = string(hashedPassword)
+	err = a.authRepository.UpdateUserPassword(ctx, &user)
+	if err != nil {
+		logger.Error(err, "Failed to update user password")
+		return nil, err
+	}
+	logger.Info(fmt.Sprintf("Password updated for user: %s", request.PhoneNumber))
+
+	deviceID := generateDeviceID()
+	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
+	if err != nil {
+		logger.Error(err, "Failed to generate tokens")
+		return nil, err
+	}
+
+	session := entity.NewSession(user.ID.String(), deviceID, tokens.RefreshToken)
+	err = a.sessionRepository.SaveSession(ctx, session)
+	if err != nil {
+		logger.Error(err, "Failed to save session")
+		return nil, err
+	}
+	return &tokens, nil
+}
+
+func (a *authUseCase) Logout(ctx context.Context, request *dto.LogoutRequest, userID string) error {
+	// پارس کردن توکن برای دریافت شناسه کاربر و دستگاه
+	token, err := jwt.Parse(request.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.ErrInvalidToken
+		}
+		return []byte(a.secretKey), nil
+	})
+
+	if err != nil {
+		logger.Error(err, "Failed to parse refresh token")
+		return err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		logger.Error(nil, "Failed to get token claims")
+		return errors.ErrInvalidToken
+	}
+	if userID != claims["user_id"].(string) {
+		logger.Error(nil, "User ID does not match")
+		return errors.ErrInvalidToken
+	}
+
+	deviceID := claims["device_id"].(string)
+
+	// حذف نشست از Redis
+	var session entity.Session
+	session.UserID = userID
+	session.DeviceID = deviceID
+	err = a.sessionRepository.DeleteSession(ctx, &session)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (a *authUseCase) SendVerificationCode(ctx context.Context, request *dto.VerifyPhoneRequest) error {
@@ -264,7 +312,7 @@ func (a *authUseCase) SendVerificationCode(ctx context.Context, request *dto.Ver
 	code := generateCode()
 	fmt.Println(code)
 
-	// ذخیره کد تایید در Redis
+	// save verification code to Redis
 	err = a.verificationRepository.SaveVerificationCode(ctx, request.PhoneNumber, code)
 	if err != nil {
 		logger.Error(err, "Failed to save verification code to Redis")
@@ -272,7 +320,7 @@ func (a *authUseCase) SendVerificationCode(ctx context.Context, request *dto.Ver
 	}
 	logger.Info(fmt.Sprintf("Verification code saved for phone: %s", request.PhoneNumber))
 
-	// ارسال کد تایید از طریق SMS
+	// send verification code via SMS
 	err = a.smsService.SendVerificationCode(ctx, request.PhoneNumber, code)
 	if err != nil {
 		logger.Error(err, "Failed to send verification code via SMS")
@@ -283,40 +331,29 @@ func (a *authUseCase) SendVerificationCode(ctx context.Context, request *dto.Ver
 	return nil
 }
 
-func (a *authUseCase) VerifyCode(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error) {
-	// اعتبارسنجی درخواست
+func (a *authUseCase) VerifyPhone(ctx context.Context, request *dto.VerifyCodeRequest) (*dto.TokenResponse, error) {
+	// validate request
 	if err := validation.ValidateVerifyCodeRequest(request); err != nil {
 		logger.Error(err, "Failed to validate verify code request")
 		return nil, err
 	}
-	var user entity.User
-	user.PhoneNumber = request.PhoneNumber
-	err := a.authRepository.FindByPhoneNumber(ctx, &user)
+
+	// verify code
+	user, err := a.VerifyCode(ctx, request.PhoneNumber, request.Code)
 	if err != nil {
-		logger.Error(err, "Failed to find user")
+		logger.Error(err, "Failed to verify code")
 		return nil, err
 	}
 
-	// بررسی اعتبار کد تایید
-	if !a.verificationRepository.IsVerificationCodeValid(ctx, request.PhoneNumber, request.Code) {
-		logger.Error(errors.ErrInvalidVerificationCode, "Invalid verification code")
-		return nil, errors.ErrInvalidVerificationCode
-	}
-
-	// حذف کد تایید پس از تایید موفق
-	err = a.verificationRepository.DeleteVerificationCode(ctx, request.PhoneNumber)
-	if err != nil {
-		logger.Error(err, "Failed to delete verification code after successful verification")
-		// این خطا نباید باعث شکست تایید شود
-	}
-
+	// Update user status to Active
 	user.Status = entity.Active
-	err = a.authRepository.UpdateUser(ctx, &user)
+	err = a.authRepository.UpdateUserStatus(ctx, &user)
 	if err != nil {
 		logger.Error(err, "Failed to update user status")
 		return nil, err
 	}
-	logger.Info(fmt.Sprintf("Verification code deleted for phone: %s", request.PhoneNumber))
+
+	logger.Info(fmt.Sprintf("User status updated to Active for phone: %s", request.PhoneNumber))
 
 	deviceID := generateDeviceID()
 	tokens, err := a.GenerateTokens(ctx, &user, deviceID)
@@ -335,8 +372,33 @@ func (a *authUseCase) VerifyCode(ctx context.Context, request *dto.VerifyCodeReq
 	return &tokens, nil
 }
 
+func (a *authUseCase) VerifyCode(ctx context.Context, phoneNumber, code string) (entity.User, error) {
+	var user entity.User
+	user.PhoneNumber = phoneNumber
+	err := a.authRepository.FindByPhoneNumber(ctx, &user)
+	if err != nil {
+		logger.Error(err, "Failed to find user")
+		return entity.User{}, err
+	}
+
+	// check verification code
+	if !a.verificationRepository.IsVerificationCodeValid(ctx, phoneNumber, code) {
+		logger.Error(errors.ErrInvalidVerificationCode, "Invalid verification code")
+		return entity.User{}, errors.ErrInvalidVerificationCode
+	}
+
+	// delete verification code after successful verification
+	err = a.verificationRepository.DeleteVerificationCode(ctx, phoneNumber)
+	if err != nil {
+		logger.Error(err, "Failed to delete verification code after successful verification")
+		// this error should not cause verification failure
+	}
+
+	return user, nil
+}
+
 func generateCode() string {
-	return fmt.Sprintf("%d", rand.Intn(1000000))
+	return fmt.Sprintf("%06d", rand.Intn(1000000))
 }
 
 func generateDeviceID() string {

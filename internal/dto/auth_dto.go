@@ -27,16 +27,50 @@ type TokenResponse struct {
 	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
 }
 
-// LogoutRequest represents the request body for user logout
-// @Description User logout request
-type LogoutRequest struct {
+// RefreshTokenRequest represents the request body for token refresh
+// @Description Token refresh request
+type RefreshTokenRequest struct {
 	// JWT refresh token
 	RefreshToken string `validate:"required" json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
 }
 
-// RefreshTokenRequest represents the request body for token refresh
-// @Description Token refresh request
-type RefreshTokenRequest struct {
+// VerifyPhoneRequest represents the request body for verify phone
+// @Description Verify phone request
+type VerifyPhoneRequest struct {
+	// Iranian phone number in format 09XXXXXXXXX
+	PhoneNumber string `validate:"required,iranphone" json:"phone_number" example:"09123456789"`
+}
+
+// ResetPasswordRequest represents the request body for reset password
+// @Description Reset password request
+type ResetPasswordRequest struct {
+	// Iranian phone number in format 09XXXXXXXXX
+	PhoneNumber string `validate:"required,iranphone" json:"phone_number" example:"09123456789"`
+	// New password
+	NewPassword string `validate:"required,min=8,password" json:"new_password" example:"Password123"`
+	// Verification code
+	VerificationCode string `validate:"required,len=6" json:"verification_code" example:"123456"`
+}
+
+// VerifyCodeRequest represents the request body for verify code
+// @Description Verify code request
+type VerifyCodeRequest struct {
+	// Iranian phone number in format 09XXXXXXXXX
+	PhoneNumber string `validate:"required,iranphone" json:"phone_number" example:"09123456789"`
+	// Verification code
+	Code string `validate:"required,len=6" json:"code" example:"123456"`
+}
+
+// CodeRequest represents the request body for code
+// @Description Code request
+type CodeRequest struct {
+	// Verification code
+	Code string `validate:"required,len=6" json:"code" example:"123456"`
+}
+
+// LogoutRequest represents the request body for user logout
+// @Description User logout request
+type LogoutRequest struct {
 	// JWT refresh token
 	RefreshToken string `validate:"required" json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
 }
@@ -57,15 +91,6 @@ type SessionResponse struct {
 type GetSessionsResponse struct {
 	// List of user sessions
 	Sessions []SessionResponse `json:"sessions"`
-}
-
-type VerifyPhoneRequest struct {
-	PhoneNumber string `validate:"required,iranphone" json:"phone_number" example:"09123456789"`
-}
-
-type VerifyCodeRequest struct {
-	PhoneNumber string `validate:"required,iranphone" json:"phone_number" example:"09123456789"`
-	Code        string `validate:"required,len=6" json:"code" example:"123456"`
 }
 
 type SmsIrRequest struct {

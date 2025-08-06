@@ -5,15 +5,15 @@ import "reflect"
 // ErrorMessage ساختاری برای پیام‌های خطای دو زبانه تعریف می‌کند
 
 type ErrorMessage struct {
-	English string
-	Persian string
+	English string `json:"english"`
+	Persian string `json:"persian"`
 }
 
 // CustomError defines a custom error structure
 // CustomError ساختار خطای کاستوم را تعریف می‌کند
 
 type CustomError struct {
-	Message ErrorMessage
+	Message ErrorMessage `json:"message"`
 }
 
 // Error implements the error interface

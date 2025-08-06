@@ -42,14 +42,14 @@ func (r *sessionRepository) SaveSession(ctx context.Context, session *entity.Ses
 	sessionData, err := json.Marshal(session)
 	if err != nil {
 		logger.Error(err, "Failed to marshal session")
-		return errors.ErrInternalServerError
+		return err
 	}
 
 	key := makeSessionKey(session.UserID, session.DeviceID)
 	err = r.client.Set(ctx, key, sessionData, 7*24*time.Hour).Err()
 	if err != nil {
 		logger.Error(err, "Failed to save session to Redis")
-		return errors.ErrInternalServerError
+		return err
 	}
 
 	return nil
@@ -79,7 +79,7 @@ func (r *sessionRepository) DeleteSession(ctx context.Context, session *entity.S
 	err := r.client.Del(ctx, key).Err()
 	if err != nil {
 		logger.Error(err, "Failed to delete session from Redis")
-		return errors.ErrInternalServerError
+		return err
 	}
 	return nil
 }
@@ -89,14 +89,14 @@ func (r *sessionRepository) DeleteAllSessions(ctx context.Context, userID string
 	keys, err := r.client.Keys(ctx, pattern).Result()
 	if err != nil {
 		logger.Error(err, "Failed to get user sessions from Redis")
-		return errors.ErrInternalServerError
+		return err
 	}
 
 	if len(keys) > 0 {
 		err = r.client.Del(ctx, keys...).Err()
 		if err != nil {
 			logger.Error(err, "Failed to delete user sessions from Redis")
-			return errors.ErrInternalServerError
+			return err
 		}
 	}
 	return nil

@@ -1149,6 +1149,61 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/forgot-password": {
+            "post": {
+                "description": "Get verification code to reset password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Forgot password",
+                "parameters": [
+                    {
+                        "description": "Forgot password request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.VerifyPhoneRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Verification code sent successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - User not found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Login a user with phone number and password",
@@ -1175,27 +1230,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Login successfully",
                         "schema": {
                             "$ref": "#/definitions/dto.TokenResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad Request - Invalid request body",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid phone number or password",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
@@ -1232,7 +1287,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Logout successfully",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1241,30 +1296,21 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad Request - Invalid request body",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "Unauthorized - Invalid token",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
@@ -1290,7 +1336,7 @@ const docTemplate = `{
                 "summary": "Logout from all devices",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Logout from all devices successfully",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1299,27 +1345,21 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "Unauthorized - Invalid token",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
             }
         },
-        "/auth/refresh-token": {
+        "/auth/refresh": {
             "post": {
                 "description": "Get new access and refresh tokens using a valid refresh token",
                 "consumes": [
@@ -1345,36 +1385,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Refresh token successfully",
                         "schema": {
                             "$ref": "#/definitions/dto.TokenResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad Request - Invalid request body",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "Unauthorized - Invalid token",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
@@ -1405,28 +1436,86 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "User registered successfully",
                         "schema": {
                             "$ref": "#/definitions/dto.TokenResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "201": {
+                        "description": "User registered successfully but failed to generate tokens",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - User already exists",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/reset-password": {
+            "post": {
+                "description": "Reset password with verification code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset password",
+                "parameters": [
+                    {
+                        "description": "Reset password request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid verification code",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
@@ -1434,6 +1523,11 @@ const docTemplate = `{
         },
         "/auth/send-verification-code": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Send verification code to user's phone number",
                 "consumes": [
                     "application/json"
@@ -1445,20 +1539,9 @@ const docTemplate = `{
                     "Authentication"
                 ],
                 "summary": "Send verification code",
-                "parameters": [
-                    {
-                        "description": "Verify phone request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.VerifyPhoneRequest"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Send verification code successfully",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1467,21 +1550,21 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad Request - Invalid request body",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - User not found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
@@ -1507,34 +1590,33 @@ const docTemplate = `{
                 "summary": "Get user sessions",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Get user sessions successfully",
                         "schema": {
                             "$ref": "#/definitions/dto.GetSessionsResponse"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "Unauthorized - Invalid token",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
             }
         },
-        "/auth/verify-code": {
+        "/auth/verify-phone": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Active user",
                 "consumes": [
                     "application/json"
@@ -1553,33 +1635,33 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.VerifyCodeRequest"
+                            "$ref": "#/definitions/dto.CodeRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Verify code successfully",
                         "schema": {
                             "$ref": "#/definitions/dto.TokenResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad Request - Invalid request body",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - Verification code not found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/errors.CustomError"
                         }
                     }
                 }
@@ -3312,6 +3394,20 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CodeRequest": {
+            "description": "Code request",
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "description": "Verification code",
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
         "dto.CompleteVehicleHierarchyResponse": {
             "description": "Complete vehicle hierarchy with all types, brands, models, and generations",
             "type": "object",
@@ -4006,6 +4102,33 @@ const docTemplate = `{
                     "description": "Iranian phone number in format 09XXXXXXXXX",
                     "type": "string",
                     "example": "09123456789"
+                }
+            }
+        },
+        "dto.ResetPasswordRequest": {
+            "description": "Reset password request",
+            "type": "object",
+            "required": [
+                "new_password",
+                "phone_number",
+                "verification_code"
+            ],
+            "properties": {
+                "new_password": {
+                    "description": "New password",
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "Password123"
+                },
+                "phone_number": {
+                    "description": "Iranian phone number in format 09XXXXXXXXX",
+                    "type": "string",
+                    "example": "09123456789"
+                },
+                "verification_code": {
+                    "description": "Verification code",
+                    "type": "string",
+                    "example": "123456"
                 }
             }
         },
@@ -5002,32 +5125,36 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.VerifyCodeRequest": {
+        "dto.VerifyPhoneRequest": {
+            "description": "Verify phone request",
             "type": "object",
             "required": [
-                "code",
                 "phone_number"
             ],
             "properties": {
-                "code": {
-                    "type": "string",
-                    "example": "123456"
-                },
                 "phone_number": {
+                    "description": "Iranian phone number in format 09XXXXXXXXX",
                     "type": "string",
                     "example": "09123456789"
                 }
             }
         },
-        "dto.VerifyPhoneRequest": {
+        "errors.CustomError": {
             "type": "object",
-            "required": [
-                "phone_number"
-            ],
             "properties": {
-                "phone_number": {
-                    "type": "string",
-                    "example": "09123456789"
+                "message": {
+                    "$ref": "#/definitions/errors.ErrorMessage"
+                }
+            }
+        },
+        "errors.ErrorMessage": {
+            "type": "object",
+            "properties": {
+                "english": {
+                    "type": "string"
+                },
+                "persian": {
+                    "type": "string"
                 }
             }
         }

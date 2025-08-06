@@ -280,7 +280,7 @@ func (c *VehicleController) AddUserVehicle(ctx *gin.Context) {
 	var userVehicle dto.CreateUserVehicleRequest
 	if err := ctx.ShouldBindJSON(&userVehicle); err != nil {
 		logger.Error(err, "Failed to bind user vehicle request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	createdUserVehicle, err := c.vehicleUseCase.AddUserVehicle(ctx, userID, &userVehicle)
@@ -345,7 +345,7 @@ func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 	var userVehicle dto.UpdateUserVehicleRequest
 	if err := ctx.ShouldBindJSON(&userVehicle); err != nil {
 		logger.Error(err, "Failed to bind user vehicle request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	updatedUserVehicle, err := c.vehicleUseCase.UpdateUserVehicle(ctx, userID, vehicleID, &userVehicle)
@@ -393,7 +393,7 @@ func (c *VehicleController) CreateVehicleType(ctx *gin.Context) {
 	var vehicleType dto.CreateVehicleTypeRequest
 	if err := ctx.ShouldBindJSON(&vehicleType); err != nil {
 		logger.Error(err, "Failed to bind vehicle type request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	createdVehicleType, err := c.vehicleUseCase.CreateVehicleType(ctx, vehicleType)
@@ -418,7 +418,7 @@ func (c *VehicleController) UpdateVehicleType(ctx *gin.Context) {
 	var vehicleType dto.UpdateVehicleTypeRequest
 	if err := ctx.ShouldBindJSON(&vehicleType); err != nil {
 		logger.Error(err, "Failed to bind vehicle type request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	updatedVehicleType, err := c.vehicleUseCase.UpdateVehicleType(ctx, typeID, vehicleType)
@@ -460,7 +460,7 @@ func (c *VehicleController) CreateBrand(ctx *gin.Context) {
 	var request dto.CreateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	createdBrand, err := c.vehicleUseCase.CreateBrand(ctx, typeID, request)
@@ -487,7 +487,7 @@ func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 	var brand dto.UpdateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&brand); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	updatedBrand, err := c.vehicleUseCase.UpdateBrand(ctx, typeID, brandID, brand)
@@ -534,7 +534,7 @@ func (c *VehicleController) CreateModel(ctx *gin.Context) {
 	var request dto.CreateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	createdModel, err := c.vehicleUseCase.CreateModel(ctx, typeID, brandID, request)
@@ -563,7 +563,7 @@ func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 	var model dto.UpdateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&model); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	updatedModel, err := c.vehicleUseCase.UpdateModel(ctx, typeID, brandID, modelID, model)
@@ -614,7 +614,7 @@ func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 	var request dto.CreateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	createdModel, err := c.vehicleUseCase.CreateGeneration(ctx, typeID, brandID, modelID, request)
@@ -645,7 +645,7 @@ func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 	var generation dto.UpdateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&generation); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrInvalidRequestBody})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
 		return
 	}
 	updatedGeneration, err := c.vehicleUseCase.UpdateGeneration(ctx, typeID, brandID, modelID, generationID, generation)
