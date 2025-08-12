@@ -46,14 +46,14 @@ func UserRoutes(router *gin.Engine) {
 // @Produce     json
 // @Security    BearerAuth
 // @Success     200 {object} dto.GetProfileResponse
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     401 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /users/me [get]
 func (c *UserController) GetProfile(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	user, err := c.userUseCase.GetProfile(ctx, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 
@@ -68,26 +68,22 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       request body dto.UpdateProfileRequest true "Profile update information"
 // @Success     200 {object} dto.UpdateProfileResponse
-// @Failure     400 {object} map[string]string "Bad Request"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     409 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /users/me [put]
 func (c *UserController) UpdateProfile(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	var request dto.UpdateProfileRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	user, err := c.userUseCase.UpdateProfile(ctx, userID, request)
 	if err != nil {
-		switch err {
-		case errors.ErrEmailAlreadyExists:
-			ctx.JSON(http.StatusConflict, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		}
+		respondError(ctx, err)
 		return
 	}
 
@@ -102,21 +98,21 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       request body dto.UpdatePasswordRequest true "Password update information"
 // @Success     200 {object} map[string]string "Password updated successfully"
-// @Failure     400 {object} map[string]string "Bad Request"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /users/me/change-password [put]
 func (c *UserController) ChangePassword(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	var request dto.UpdatePasswordRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	err := c.userUseCase.ChangePassword(ctx, userID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 
@@ -130,15 +126,15 @@ func (c *UserController) ChangePassword(ctx *gin.Context) {
 // @Produce     json
 // @Security    BearerAuth
 // @Success     200 {object} map[string]string "User deleted successfully"
-// @Failure     400 {object} map[string]string "Bad Request"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /users/me [delete]
 func (c *UserController) DeleteUser(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	err := c.userUseCase.DeleteUser(ctx, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 

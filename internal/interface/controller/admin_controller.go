@@ -44,15 +44,15 @@ func AdminRoutes(router *gin.Engine) {
 // @Produce     json
 // @Security    BearerAuth
 // @Success     200 {object} dto.ListUsersResponse
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     403 {object} map[string]string "Forbidden - Admin access required"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/users [get]
 func (c *AdminController) ListUsers(ctx *gin.Context) {
 
 	users, err := c.adminUseCase.ListUsers(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 
@@ -67,16 +67,16 @@ func (c *AdminController) ListUsers(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       id path string true "User ID"
 // @Success     200 {object} dto.User
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     403 {object} map[string]string "Forbidden - Admin access required"
-// @Failure     404 {object} map[string]string "User not found"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/users/{id} [get]
 func (c *AdminController) GetUserById(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	user, err := c.adminUseCase.GetUserById(ctx, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, user)
@@ -91,27 +91,23 @@ func (c *AdminController) GetUserById(ctx *gin.Context) {
 // @Param       id path string true "User ID"
 // @Param       request body dto.UpdateUserRequest true "User update information"
 // @Success     200 {object} map[string]string "User updated successfully"
-// @Failure     400 {object} map[string]string "Bad Request"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     403 {object} map[string]string "Forbidden - Admin access required"
-// @Failure     404 {object} map[string]string "User not found"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     409 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/users/{id} [put]
 func (c *AdminController) UpdateUser(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.UpdateUserRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	err := c.adminUseCase.UpdateUser(ctx, userID, request)
 	if err != nil {
-		switch err {
-		case errors.ErrEmailAlreadyExists:
-			ctx.JSON(http.StatusConflict, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
@@ -126,22 +122,22 @@ func (c *AdminController) UpdateUser(ctx *gin.Context) {
 // @Param       id path string true "User ID"
 // @Param       request body dto.ChangeUserRoleRequest true "Change user role request"
 // @Success     200 {object} map[string]string "User role changed successfully"
-// @Failure     400 {object} map[string]string "Bad Request"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     403 {object} map[string]string "Forbidden - Admin access required"
-// @Failure     404 {object} map[string]string "User not found"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/users/{id}/role [post]
 func (c *AdminController) ChangeUserRole(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.ChangeUserRoleRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	err := c.adminUseCase.ChangeUserRole(ctx, userID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "User role changed successfully"})
@@ -156,22 +152,22 @@ func (c *AdminController) ChangeUserRole(ctx *gin.Context) {
 // @Param       id path string true "User ID"
 // @Param       request body dto.ChangeUserStatusRequest true "Change user status request"
 // @Success     200 {object} map[string]string "User status changed successfully"
-// @Failure     400 {object} map[string]string "Bad Request"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     403 {object} map[string]string "Forbidden - Admin access required"
-// @Failure     404 {object} map[string]string "User not found"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/users/{id}/status [post]
 func (c *AdminController) ChangeUserStatus(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.ChangeUserStatusRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	err := c.adminUseCase.ChangeUserStatus(ctx, userID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "User status changed successfully"})
@@ -186,22 +182,22 @@ func (c *AdminController) ChangeUserStatus(ctx *gin.Context) {
 // @Param       id path string true "User ID"
 // @Param       request body dto.ChangeUserPasswordRequest true "Change user password request"
 // @Success     200 {object} map[string]string "User password changed successfully"
-// @Failure     400 {object} map[string]string "Bad Request"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     403 {object} map[string]string "Forbidden - Admin access required"
-// @Failure     404 {object} map[string]string "User not found"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/users/{id}/change-password [post]
 func (c *AdminController) ChangeUserPassword(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	var request dto.ChangeUserPasswordRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	err := c.adminUseCase.ChangeUserPassword(ctx, userID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "User password changed successfully"})
@@ -215,16 +211,16 @@ func (c *AdminController) ChangeUserPassword(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       id path string true "User ID"
 // @Success     200 {object} map[string]string "User deleted successfully"
-// @Failure     401 {object} map[string]string "Unauthorized"
-// @Failure     403 {object} map[string]string "Forbidden - Admin access required"
-// @Failure     404 {object} map[string]string "User not found"
-// @Failure     500 {object} map[string]string "Internal Server Error"
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/users/{id} [delete]
 func (c *AdminController) DeleteUser(ctx *gin.Context) {
 	userID := ctx.Param("id")
 	err := c.adminUseCase.DeleteUser(ctx, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})

@@ -45,10 +45,10 @@ func ServiceVisitRoutes(router *gin.Engine) {
 // @Param vehicle_id path string true "Vehicle ID"
 // @Param service_visit body dto.CreateServiceVisitRequest true "Service visit data"
 // @Success 201 {object} dto.ServiceVisitResponse
-// @Failure 400 {object} map[string]string
-// @Failure 401 {object} map[string]string
-// @Failure 403 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} errors.CustomError
+// @Failure 401 {object} errors.CustomError
+// @Failure 403 {object} errors.CustomError
+// @Failure 500 {object} errors.CustomError
 // @Router /user/vehicles/{vehicle_id}/service-visits [post]
 func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 	vehicleID := ctx.Param("vehicle_id")
@@ -57,27 +57,14 @@ func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 	var request dto.CreateServiceVisitRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind JSON")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	// اعتبارسنجی مالکیت و وجود
 	response, err := c.serviceVisitUseCase.CreateServiceVisit(ctx, userID, vehicleID, request)
 	if err != nil {
-		switch err {
-		case errors.ErrInvalidServiceVisitCreateRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserVehicleNotOwned:
-			ctx.JSON(http.StatusForbidden, gin.H{"error": err})
-		case errors.ErrInvalidDate:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrFailedToCreateOilChange:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		case errors.ErrFailedToCreateOilFilter:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, response)
@@ -93,11 +80,11 @@ func (c *ServiceVisitController) CreateServiceVisit(ctx *gin.Context) {
 // @Param vehicle_id path string true "Vehicle ID"
 // @Param visit_id path string true "Service visit ID"
 // @Success 200 {object} dto.ServiceVisitResponse
-// @Failure 400 {object} map[string]string
-// @Failure 401 {object} map[string]string
-// @Failure 403 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} errors.CustomError
+// @Failure 401 {object} errors.CustomError
+// @Failure 403 {object} errors.CustomError
+// @Failure 404 {object} errors.CustomError
+// @Failure 500 {object} errors.CustomError
 // @Router /user/vehicles/{vehicle_id}/service-visits/{visit_id} [get]
 func (c *ServiceVisitController) GetServiceVisit(ctx *gin.Context) {
 	vehicleID := ctx.Param("vehicle_id")
@@ -106,16 +93,7 @@ func (c *ServiceVisitController) GetServiceVisit(ctx *gin.Context) {
 
 	response, err := c.serviceVisitUseCase.GetServiceVisit(ctx, userID, vehicleID, visitID)
 	if err != nil {
-		switch err {
-		case errors.ErrInvalidServiceVisitID:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserVehicleNotOwned:
-			ctx.JSON(http.StatusForbidden, gin.H{"error": err})
-		case errors.ErrFailedToGetServiceVisit:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -130,10 +108,10 @@ func (c *ServiceVisitController) GetServiceVisit(ctx *gin.Context) {
 // @Security BearerAuth
 // @Param vehicle_id path string true "Vehicle ID"
 // @Success 200 {object} dto.ListServiceVisitsResponse
-// @Failure 400 {object} map[string]string
-// @Failure 401 {object} map[string]string
-// @Failure 403 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} errors.CustomError
+// @Failure 401 {object} errors.CustomError
+// @Failure 403 {object} errors.CustomError
+// @Failure 500 {object} errors.CustomError
 // @Router /user/vehicles/{vehicle_id}/service-visits [get]
 func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
 	vehicleID := ctx.Param("vehicle_id")
@@ -141,14 +119,7 @@ func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
 
 	response, err := c.serviceVisitUseCase.ListServiceVisits(ctx, userID, vehicleID)
 	if err != nil {
-		switch err {
-		case errors.ErrUserVehicleNotOwned:
-			ctx.JSON(http.StatusForbidden, gin.H{"error": err})
-		case errors.ErrFailedToListServiceVisits:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -165,11 +136,11 @@ func (c *ServiceVisitController) ListServiceVisits(ctx *gin.Context) {
 // @Param visit_id path string true "Service visit ID"
 // @Param service_visit body dto.UpdateServiceVisitRequest true "Updated service visit data"
 // @Success 200 {object} dto.ServiceVisitResponse
-// @Failure 400 {object} map[string]string
-// @Failure 401 {object} map[string]string
-// @Failure 403 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} errors.CustomError
+// @Failure 401 {object} errors.CustomError
+// @Failure 403 {object} errors.CustomError
+// @Failure 404 {object} errors.CustomError
+// @Failure 500 {object} errors.CustomError
 // @Router /user/vehicles/{vehicle_id}/service-visits/{visit_id} [put]
 func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 	vehicleID := ctx.Param("vehicle_id")
@@ -179,30 +150,13 @@ func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 	var request dto.UpdateServiceVisitRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind JSON")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	response, err := c.serviceVisitUseCase.UpdateServiceVisit(ctx, userID, vehicleID, visitID, request)
 	if err != nil {
-		switch err {
-		case errors.ErrInvalidServiceVisitID:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrInvalidServiceVisitUpdateRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserVehicleNotOwned:
-			ctx.JSON(http.StatusForbidden, gin.H{"error": err})
-		case errors.ErrFailedToGetServiceVisit:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
-		case errors.ErrInvalidDate:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrFailedToUpdateOilChange:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		case errors.ErrFailedToUpdateOilFilter:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -218,11 +172,11 @@ func (c *ServiceVisitController) UpdateServiceVisit(ctx *gin.Context) {
 // @Param vehicle_id path string true "Vehicle ID"
 // @Param visit_id path string true "Service visit ID"
 // @Success 204 "No Content"
-// @Failure 400 {object} map[string]string
-// @Failure 401 {object} map[string]string
-// @Failure 403 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} errors.CustomError
+// @Failure 401 {object} errors.CustomError
+// @Failure 403 {object} errors.CustomError
+// @Failure 404 {object} errors.CustomError
+// @Failure 500 {object} errors.CustomError
 // @Router /user/vehicles/{vehicle_id}/service-visits/{visit_id} [delete]
 func (c *ServiceVisitController) DeleteServiceVisit(ctx *gin.Context) {
 	vehicleID := ctx.Param("vehicle_id")
@@ -231,16 +185,7 @@ func (c *ServiceVisitController) DeleteServiceVisit(ctx *gin.Context) {
 
 	err := c.serviceVisitUseCase.DeleteServiceVisit(ctx, userID, vehicleID, visitID)
 	if err != nil {
-		switch err {
-		case errors.ErrInvalidServiceVisitID:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserVehicleNotOwned:
-			ctx.JSON(http.StatusForbidden, gin.H{"error": err})
-		case errors.ErrFailedToDeleteServiceVisit:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.Status(http.StatusNoContent)
@@ -255,11 +200,11 @@ func (c *ServiceVisitController) DeleteServiceVisit(ctx *gin.Context) {
 // @Security BearerAuth
 // @Param vehicle_id path string true "Vehicle ID"
 // @Success 200 {object} dto.ServiceVisitResponse
-// @Failure 400 {object} map[string]string
-// @Failure 401 {object} map[string]string
-// @Failure 403 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} errors.CustomError
+// @Failure 401 {object} errors.CustomError
+// @Failure 403 {object} errors.CustomError
+// @Failure 404 {object} errors.CustomError
+// @Failure 500 {object} errors.CustomError
 // @Router /user/vehicles/{vehicle_id}/service-visits/last [get]
 func (c *ServiceVisitController) GetLastServiceVisit(ctx *gin.Context) {
 	vehicleID := ctx.Param("vehicle_id")
@@ -267,14 +212,7 @@ func (c *ServiceVisitController) GetLastServiceVisit(ctx *gin.Context) {
 
 	response, err := c.serviceVisitUseCase.GetLastServiceVisit(ctx, userID, vehicleID)
 	if err != nil {
-		switch err {
-		case errors.ErrUserVehicleNotOwned:
-			ctx.JSON(http.StatusForbidden, gin.H{"error": err})
-		case errors.ErrFailedToGetServiceVisit:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

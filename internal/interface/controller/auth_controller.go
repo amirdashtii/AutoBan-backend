@@ -62,24 +62,13 @@ func (c *AuthController) Register(ctx *gin.Context) {
 	var request dto.RegisterRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	response, err := c.authUseCase.Register(ctx, &request)
 	if err != nil {
-		switch err {
-		case errors.ErrBadRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserAlreadyExists:
-			ctx.JSON(http.StatusConflict, gin.H{"error": err})
-		case errors.TokenGenerationFailed:
-			ctx.JSON(http.StatusCreated, gin.H{"message": err})
-		case errors.TokenGenerationFailed:
-			ctx.JSON(http.StatusCreated, gin.H{"message": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 
@@ -101,20 +90,13 @@ func (c *AuthController) Login(ctx *gin.Context) {
 	var request dto.LoginRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	response, err := c.authUseCase.Login(ctx, &request)
 	if err != nil {
-		switch err {
-		case errors.ErrBadRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserNotFound:
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		}
+		respondError(ctx, err)
 		return
 	}
 
@@ -136,20 +118,13 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 	var request dto.RefreshTokenRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	response, err := c.authUseCase.RefreshToken(ctx, &request)
 	if err != nil {
-		switch err {
-		case errors.ErrInvalidToken:
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err})
-		case errors.ErrUserNotFound:
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		}
+		respondError(ctx, err)
 		return
 	}
 
@@ -171,22 +146,13 @@ func (c *AuthController) ForgotPassword(ctx *gin.Context) {
 	var request dto.VerifyPhoneRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	err := c.authUseCase.SendVerificationCode(ctx, &request)
 	if err != nil {
-		switch err {
-		case errors.ErrBadRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserNotFound:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
-		case errors.ErrInvalidPhoneNumber:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 
@@ -208,22 +174,13 @@ func (c *AuthController) ResetPassword(ctx *gin.Context) {
 	var request dto.ResetPasswordRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	response, err := c.authUseCase.ResetPassword(ctx, &request)
 	if err != nil {
-		switch err {
-		case errors.ErrBadRequest:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserNotActive:
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err})
-		case errors.ErrInvalidVerificationCode:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 
@@ -248,24 +205,19 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 	var request dto.LogoutRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
 	userID := ctx.GetString("user_id")
 	if userID == "" {
 		logger.Error(nil, "User ID not found")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrTokenNotFound})
+		respondError(ctx, errors.ErrTokenNotFound)
 		return
 	}
 
 	if err := c.authUseCase.Logout(ctx, &request, userID); err != nil {
-		switch err {
-		case errors.ErrInvalidToken:
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 
@@ -286,13 +238,13 @@ func (c *AuthController) LogoutAllDevices(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	if userID == "" {
 		logger.Error(nil, "User ID not found")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrTokenNotFound})
+		respondError(ctx, errors.ErrTokenNotFound)
 		return
 	}
 
 	err := c.authUseCase.LogoutAllDevices(ctx, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 
@@ -313,13 +265,13 @@ func (c *AuthController) GetUserSessions(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	if userID == "" {
 		logger.Error(nil, "User ID not found")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrTokenNotFound})
+		respondError(ctx, errors.ErrTokenNotFound)
 		return
 	}
 
 	sessionResponses, err := c.authUseCase.GetUserSessions(ctx, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 
@@ -342,19 +294,19 @@ func (c *AuthController) DeleteSession(ctx *gin.Context) {
 	deviceID := ctx.Param("device_id")
 	if deviceID == "" {
 		logger.Error(nil, "device_id not found")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	userID := ctx.GetString("user_id")
 	if userID == "" {
 		logger.Error(nil, "User ID not found")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrTokenNotFound})
+		respondError(ctx, errors.ErrTokenNotFound)
 		return
 	}
 
 	err := c.authUseCase.DeleteSession(ctx, deviceID, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 
@@ -376,7 +328,7 @@ func (c *AuthController) SendVerificationCode(ctx *gin.Context) {
 	phoneNumber := ctx.GetString("phone_number")
 	if phoneNumber == "" {
 		logger.Error(nil, "Phone number not found")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrTokenNotFound})
+		respondError(ctx, errors.ErrTokenNotFound)
 		return
 	}
 	var verifyPhoneRequest dto.VerifyPhoneRequest
@@ -384,14 +336,7 @@ func (c *AuthController) SendVerificationCode(ctx *gin.Context) {
 
 	err := c.authUseCase.SendVerificationCode(ctx, &verifyPhoneRequest)
 	if err != nil {
-		switch err {
-		case errors.ErrInvalidPhoneNumber:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrUserNotFound:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "verify code sent successfully"})
@@ -413,14 +358,14 @@ func (c *AuthController) VerifyPhone(ctx *gin.Context) {
 	phoneNumber := ctx.GetString("phone_number")
 	if phoneNumber == "" {
 		logger.Error(nil, "Phone number not found")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": errors.ErrTokenNotFound})
+		respondError(ctx, errors.ErrTokenNotFound)
 		return
 	}
 
 	var request dto.CodeRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 
@@ -430,14 +375,7 @@ func (c *AuthController) VerifyPhone(ctx *gin.Context) {
 
 	response, err := c.authUseCase.VerifyPhone(ctx, &verifyCodeRequest)
 	if err != nil {
-		switch err {
-		case errors.ErrInvalidVerificationCode:
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
-		case errors.ErrVerificationCodeNotFound:
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err})
-		default:
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors.ErrInternalServerError})
-		}
+		respondError(ctx, err)
 		return
 	}
 

@@ -92,11 +92,15 @@ func VehicleRoutes(router *gin.Engine) {
 // @Accept      json
 // @Produce     json
 // @Success     200 {object} dto.CompleteVehicleHierarchyResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/hierarchy [get]
 func (c *VehicleController) GetCompleteHierarchy(ctx *gin.Context) {
 	hierarchy, err := c.vehicleUseCase.GetCompleteVehicleHierarchy(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, hierarchy)
@@ -109,11 +113,12 @@ func (c *VehicleController) GetCompleteHierarchy(ctx *gin.Context) {
 // @Produce     json
 // @Order       1
 // @Success     200 {object} dto.ListVehicleTypesResponse
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types [get]
 func (c *VehicleController) ListTypes(ctx *gin.Context) {
 	types, err := c.vehicleUseCase.ListVehicleTypes(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, types)
@@ -127,12 +132,15 @@ func (c *VehicleController) ListTypes(ctx *gin.Context) {
 // @Param       type_id path string true "Vehicle Type ID"
 // @Order       2
 // @Success     200 {object} dto.VehicleTypeResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types/{type_id} [get]
 func (c *VehicleController) GetType(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	vehicleType, err := c.vehicleUseCase.GetVehicleType(ctx, typeID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, vehicleType)
@@ -145,12 +153,14 @@ func (c *VehicleController) GetType(ctx *gin.Context) {
 // @Produce     json
 // @Param       type_id path string true "Vehicle Type ID"
 // @Success     200 {object} dto.ListVehicleBrandsResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types/{type_id}/brands [get]
 func (c *VehicleController) ListBrands(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	brands, err := c.vehicleUseCase.ListBrands(ctx, typeID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, brands)
@@ -164,13 +174,16 @@ func (c *VehicleController) ListBrands(ctx *gin.Context) {
 // @Param       type_id path string true "Vehicle Type ID"
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Success     200 {object} dto.VehicleBrandResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types/{type_id}/brands/{brand_id} [get]
 func (c *VehicleController) GetBrand(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	brandID := ctx.Param("brand_id")
 	brand, err := c.vehicleUseCase.GetBrand(ctx, typeID, brandID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, brand)
@@ -184,13 +197,15 @@ func (c *VehicleController) GetBrand(ctx *gin.Context) {
 // @Param       type_id path string true "Vehicle Type ID"
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Success     200 {object} dto.ListVehicleModelsResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types/{type_id}/brands/{brand_id}/models [get]
 func (c *VehicleController) ListModels(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	brandID := ctx.Param("brand_id")
 	models, err := c.vehicleUseCase.ListModels(ctx, typeID, brandID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, models)
@@ -205,6 +220,9 @@ func (c *VehicleController) ListModels(ctx *gin.Context) {
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Param       model_id path string true "Vehicle Model ID"
 // @Success     200 {object} dto.VehicleModelResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types/{type_id}/brands/{brand_id}/models/{model_id} [get]
 func (c *VehicleController) GetModel(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -212,7 +230,7 @@ func (c *VehicleController) GetModel(ctx *gin.Context) {
 	modelID := ctx.Param("model_id")
 	model, err := c.vehicleUseCase.GetModel(ctx, typeID, brandID, modelID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, model)
@@ -228,6 +246,9 @@ func (c *VehicleController) GetModel(ctx *gin.Context) {
 // @Param       model_id path string true "Vehicle Model ID"
 // @Param       generation_id path string true "Vehicle Generation ID"
 // @Success     200 {object} dto.VehicleGenerationResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id} [get]
 func (c *VehicleController) GetGeneration(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -236,7 +257,7 @@ func (c *VehicleController) GetGeneration(ctx *gin.Context) {
 	generationID := ctx.Param("generation_id")
 	generation, err := c.vehicleUseCase.GetGeneration(ctx, typeID, brandID, modelID, generationID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, generation)
@@ -251,6 +272,8 @@ func (c *VehicleController) GetGeneration(ctx *gin.Context) {
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Param       model_id path string true "Vehicle Model ID"
 // @Success     200 {object} dto.ListVehicleGenerationsResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations [get]
 func (c *VehicleController) ListGenerations(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -258,7 +281,7 @@ func (c *VehicleController) ListGenerations(ctx *gin.Context) {
 	modelID := ctx.Param("model_id")
 	generations, err := c.vehicleUseCase.ListGenerations(ctx, typeID, brandID, modelID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, generations)
@@ -274,18 +297,22 @@ func (c *VehicleController) ListGenerations(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       vehicleType body dto.CreateUserVehicleRequest true "UserVehicle Type"
 // @Success     201 {object} dto.UserVehicleResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /user/vehicles [post]
 func (c *VehicleController) AddUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	var userVehicle dto.CreateUserVehicleRequest
 	if err := ctx.ShouldBindJSON(&userVehicle); err != nil {
 		logger.Error(err, "Failed to bind user vehicle request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	createdUserVehicle, err := c.vehicleUseCase.AddUserVehicle(ctx, userID, &userVehicle)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, createdUserVehicle)
@@ -298,12 +325,16 @@ func (c *VehicleController) AddUserVehicle(ctx *gin.Context) {
 // @Produce     json
 // @Security    BearerAuth
 // @Success     200 {object} dto.ListUserVehiclesResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /user/vehicles [get]
 func (c *VehicleController) ListUserVehicles(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	userVehicles, err := c.vehicleUseCase.ListUserVehicles(ctx, userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, userVehicles)
@@ -317,13 +348,18 @@ func (c *VehicleController) ListUserVehicles(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       vehicle_id path string true "Vehicle ID"
 // @Success     200 {object} dto.UserVehicleResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /user/vehicles/{vehicle_id} [get]
 func (c *VehicleController) GetUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
 	vehicleID := ctx.Param("vehicle_id")
 	userVehicle, err := c.vehicleUseCase.GetUserVehicle(ctx, userID, vehicleID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, userVehicle)
@@ -338,6 +374,11 @@ func (c *VehicleController) GetUserVehicle(ctx *gin.Context) {
 // @Param       vehicle_id path string true "Vehicle ID"
 // @Param       userVehicle body dto.UpdateUserVehicleRequest true "User Vehicle"
 // @Success     200 {object} dto.UpdateUserVehicleRequest
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /user/vehicles/{vehicle_id} [put]
 func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
@@ -345,12 +386,12 @@ func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 	var userVehicle dto.UpdateUserVehicleRequest
 	if err := ctx.ShouldBindJSON(&userVehicle); err != nil {
 		logger.Error(err, "Failed to bind user vehicle request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	updatedUserVehicle, err := c.vehicleUseCase.UpdateUserVehicle(ctx, userID, vehicleID, &userVehicle)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, updatedUserVehicle)
@@ -364,6 +405,11 @@ func (c *VehicleController) UpdateUserVehicle(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       vehicle_id path string true "Vehicle ID"
 // @Success     204
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /user/vehicles/{vehicle_id} [delete]
 func (c *VehicleController) DeleteUserVehicle(ctx *gin.Context) {
 	userID := ctx.GetString("user_id")
@@ -371,7 +417,7 @@ func (c *VehicleController) DeleteUserVehicle(ctx *gin.Context) {
 
 	err := c.vehicleUseCase.DeleteUserVehicle(ctx, userID, vehicleID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.Status(http.StatusNoContent)
@@ -388,17 +434,22 @@ func (c *VehicleController) DeleteUserVehicle(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       vehicleType body dto.CreateVehicleTypeRequest true "Vehicle Type"
 // @Success     201 {object} dto.VehicleTypeResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types [post]
 func (c *VehicleController) CreateVehicleType(ctx *gin.Context) {
 	var vehicleType dto.CreateVehicleTypeRequest
 	if err := ctx.ShouldBindJSON(&vehicleType); err != nil {
 		logger.Error(err, "Failed to bind vehicle type request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	createdVehicleType, err := c.vehicleUseCase.CreateVehicleType(ctx, vehicleType)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, createdVehicleType)
@@ -412,18 +463,23 @@ func (c *VehicleController) CreateVehicleType(ctx *gin.Context) {
 // @Param       type_id path string true "Vehicle Type ID"
 // @Param       vehicleType body dto.UpdateVehicleTypeRequest true "Vehicle Type"
 // @Success     200 {object} dto.VehicleTypeResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id} [put]
 func (c *VehicleController) UpdateVehicleType(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	var vehicleType dto.UpdateVehicleTypeRequest
 	if err := ctx.ShouldBindJSON(&vehicleType); err != nil {
 		logger.Error(err, "Failed to bind vehicle type request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	updatedVehicleType, err := c.vehicleUseCase.UpdateVehicleType(ctx, typeID, vehicleType)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, updatedVehicleType)
@@ -436,12 +492,17 @@ func (c *VehicleController) UpdateVehicleType(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       type_id path string true "Vehicle Type ID"
 // @Success     204
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id} [delete]
 func (c *VehicleController) DeleteVehicleType(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	err := c.vehicleUseCase.DeleteVehicleType(ctx, typeID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.Status(http.StatusNoContent)
@@ -454,18 +515,23 @@ func (c *VehicleController) DeleteVehicleType(ctx *gin.Context) {
 // @Security    BearerAuth
 // @Param       brand body dto.CreateVehicleBrandRequest true "Vehicle Brand"
 // @Success     201 {object} dto.VehicleBrandResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands [post]
 func (c *VehicleController) CreateBrand(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	var request dto.CreateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	createdBrand, err := c.vehicleUseCase.CreateBrand(ctx, typeID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, createdBrand)
@@ -480,6 +546,11 @@ func (c *VehicleController) CreateBrand(ctx *gin.Context) {
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Param       brand body dto.UpdateVehicleBrandRequest true "Vehicle Brand"
 // @Success     200 {object} dto.VehicleBrandResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id} [put]
 func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -487,12 +558,12 @@ func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 	var brand dto.UpdateVehicleBrandRequest
 	if err := ctx.ShouldBindJSON(&brand); err != nil {
 		logger.Error(err, "Failed to bind vehicle brand request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	updatedBrand, err := c.vehicleUseCase.UpdateBrand(ctx, typeID, brandID, brand)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, updatedBrand)
@@ -506,13 +577,18 @@ func (c *VehicleController) UpdateBrand(ctx *gin.Context) {
 // @Param       type_id path string true "Vehicle Type ID"
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Success     204
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id} [delete]
 func (c *VehicleController) DeleteBrand(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
 	brandID := ctx.Param("brand_id")
 	err := c.vehicleUseCase.DeleteBrand(ctx, typeID, brandID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.Status(http.StatusNoContent)
@@ -527,6 +603,10 @@ func (c *VehicleController) DeleteBrand(ctx *gin.Context) {
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Param       model body dto.CreateVehicleModelRequest true "Vehicle Model"
 // @Success     201 {object} dto.VehicleModelResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models [post]
 func (c *VehicleController) CreateModel(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -534,12 +614,12 @@ func (c *VehicleController) CreateModel(ctx *gin.Context) {
 	var request dto.CreateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	createdModel, err := c.vehicleUseCase.CreateModel(ctx, typeID, brandID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, createdModel)
@@ -555,6 +635,11 @@ func (c *VehicleController) CreateModel(ctx *gin.Context) {
 // @Param       model_id path string true "Vehicle Model ID"
 // @Param       model body dto.UpdateVehicleModelRequest true "Vehicle Model"
 // @Success     200 {object} dto.VehicleModelResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id} [put]
 func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -563,12 +648,12 @@ func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 	var model dto.UpdateVehicleModelRequest
 	if err := ctx.ShouldBindJSON(&model); err != nil {
 		logger.Error(err, "Failed to bind vehicle model request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	updatedModel, err := c.vehicleUseCase.UpdateModel(ctx, typeID, brandID, modelID, model)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, updatedModel)
@@ -583,6 +668,11 @@ func (c *VehicleController) UpdateModel(ctx *gin.Context) {
 // @Param       brand_id path string true "Vehicle Brand ID"
 // @Param       model_id path string true "Vehicle Model ID"
 // @Success     204
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id} [delete]
 func (c *VehicleController) DeleteModel(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -590,7 +680,7 @@ func (c *VehicleController) DeleteModel(ctx *gin.Context) {
 	modelID := ctx.Param("model_id")
 	err := c.vehicleUseCase.DeleteModel(ctx, typeID, brandID, modelID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.Status(http.StatusNoContent)
@@ -606,6 +696,10 @@ func (c *VehicleController) DeleteModel(ctx *gin.Context) {
 // @Param       model_id path string true "Vehicle Model ID"
 // @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     201 {object} dto.VehicleGenerationResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations [post]
 func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -614,12 +708,12 @@ func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 	var request dto.CreateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	createdModel, err := c.vehicleUseCase.CreateGeneration(ctx, typeID, brandID, modelID, request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, createdModel)
@@ -636,6 +730,11 @@ func (c *VehicleController) CreateGeneration(ctx *gin.Context) {
 // @Param       generation_id path string true "Vehicle Generation ID"
 // @Param       generation body dto.CreateVehicleGenerationRequest true "Vehicle Generation"
 // @Success     200 {object} dto.VehicleGenerationResponse
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id} [put]
 func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -645,12 +744,12 @@ func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 	var generation dto.UpdateVehicleGenerationRequest
 	if err := ctx.ShouldBindJSON(&generation); err != nil {
 		logger.Error(err, "Failed to bind vehicle generation request")
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.ErrBadRequest})
+		respondError(ctx, errors.ErrBadRequest)
 		return
 	}
 	updatedGeneration, err := c.vehicleUseCase.UpdateGeneration(ctx, typeID, brandID, modelID, generationID, generation)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, updatedGeneration)
@@ -666,6 +765,11 @@ func (c *VehicleController) UpdateGeneration(ctx *gin.Context) {
 // @Param       model_id path string true "Vehicle Model ID"
 // @Param       generation_id path string true "Vehicle Generation ID"
 // @Success     204
+// @Failure     400 {object} errors.CustomError
+// @Failure     401 {object} errors.CustomError
+// @Failure     403 {object} errors.CustomError
+// @Failure     404 {object} errors.CustomError
+// @Failure     500 {object} errors.CustomError
 // @Router      /admin/vehicles/types/{type_id}/brands/{brand_id}/models/{model_id}/generations/{generation_id} [delete]
 func (c *VehicleController) DeleteGeneration(ctx *gin.Context) {
 	typeID := ctx.Param("type_id")
@@ -674,7 +778,7 @@ func (c *VehicleController) DeleteGeneration(ctx *gin.Context) {
 	generationID := ctx.Param("generation_id")
 	err := c.vehicleUseCase.DeleteGeneration(ctx, typeID, brandID, modelID, generationID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		respondError(ctx, err)
 		return
 	}
 	ctx.Status(http.StatusNoContent)

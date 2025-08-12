@@ -1344,8 +1344,25 @@ definitions:
     type: object
   errors.CustomError:
     properties:
+      code:
+        description: Machine-readable code (stable across languages)
+        type: string
+      details:
+        additionalProperties: {}
+        description: Optional structured details for debugging (safe to expose)
+        type: object
+      fields:
+        description: Optional list of field-level errors (validation)
+        items:
+          $ref: '#/definitions/errors.FieldError'
+        type: array
       message:
-        $ref: '#/definitions/errors.ErrorMessage'
+        allOf:
+        - $ref: '#/definitions/errors.ErrorMessage'
+        description: Bilingual message for human-readable display
+      retryable:
+        description: Whether the operation can be retried by client later
+        type: boolean
     type: object
   errors.ErrorMessage:
     properties:
@@ -1353,6 +1370,13 @@ definitions:
         type: string
       persian:
         type: string
+    type: object
+  errors.FieldError:
+    properties:
+      field:
+        type: string
+      message:
+        $ref: '#/definitions/errors.ErrorMessage'
     type: object
 host: localhost:8080
 info:
@@ -1379,21 +1403,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
-          description: Forbidden - Admin access required
+          description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: List all users
@@ -1422,27 +1440,19 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
-          description: Forbidden - Admin access required
+          description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
-          description: User not found
+          description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Delete user
@@ -1468,27 +1478,19 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
-          description: Forbidden - Admin access required
+          description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
-          description: User not found
+          description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get user details
@@ -1522,33 +1524,27 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
-          description: Forbidden - Admin access required
+          description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
-          description: User not found
+          description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update user
@@ -1583,33 +1579,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
-          description: Forbidden - Admin access required
+          description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
-          description: User not found
+          description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Change user password
@@ -1644,33 +1630,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
-          description: Forbidden - Admin access required
+          description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
-          description: User not found
+          description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Change user role
@@ -1705,33 +1681,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
-          description: Forbidden - Admin access required
+          description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
-          description: User not found
+          description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Change user status
@@ -1756,6 +1722,26 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/dto.VehicleTypeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Create a new vehicle type
@@ -1775,6 +1761,26 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Delete a vehicle type
@@ -1801,6 +1807,26 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleTypeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update a vehicle type
@@ -1823,6 +1849,26 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/dto.VehicleBrandResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Create a new vehicle brand
@@ -1847,6 +1893,26 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Delete a vehicle brand
@@ -1878,6 +1944,26 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleBrandResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update a vehicle brand
@@ -1910,6 +1996,22 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/dto.VehicleModelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Create a new vehicle model
@@ -1939,6 +2041,26 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Delete a vehicle model
@@ -1975,6 +2097,26 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleModelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update a vehicle model
@@ -2012,6 +2154,22 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/dto.VehicleGenerationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Create a new vehicle generation
@@ -2046,6 +2204,26 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Delete a vehicle generation
@@ -2087,6 +2265,26 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleGenerationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update a vehicle generation
@@ -2475,6 +2673,22 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.ListUserVehiclesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: List all user vehicles
@@ -2498,6 +2712,22 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/dto.UserVehicleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Add new vehicle to
@@ -2519,6 +2749,26 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: delete a user vehicle
@@ -2541,6 +2791,26 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.UserVehicleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get user vehicle details
@@ -2569,6 +2839,26 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.UpdateUserVehicleRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update user vehicle details
@@ -2595,15 +2885,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: List all oil changes
@@ -2635,21 +2921,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get oil change information
@@ -2674,21 +2954,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Last oil change
@@ -2715,27 +2989,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: List oil filter changes for a user vehicle
@@ -2767,33 +3033,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get oil filter change by ID
@@ -2821,33 +3077,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get last oil filter change for a user vehicle
@@ -2874,27 +3120,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: List service visits for a user vehicle
@@ -2927,27 +3165,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Create a new service visit
@@ -2977,33 +3207,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Delete service visit
@@ -3034,33 +3254,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get service visit by ID
@@ -3097,33 +3307,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update service visit
@@ -3150,33 +3350,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "403":
           description: Forbidden
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get last service visit for a user vehicle
@@ -3199,21 +3389,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Delete user
@@ -3233,15 +3417,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Get user profile
@@ -3268,21 +3448,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update user profile
@@ -3312,21 +3490,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/errors.CustomError'
       security:
       - BearerAuth: []
       summary: Update user password
@@ -3345,6 +3517,22 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.CompleteVehicleHierarchyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: Get complete vehicle hierarchy
       tags:
       - Hierarchy
@@ -3360,6 +3548,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.ListVehicleTypesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: List all vehicle types
       tags:
       - Types
@@ -3381,6 +3573,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleTypeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: Get vehicle type details
       tags:
       - Types
@@ -3402,6 +3606,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.ListVehicleBrandsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: List vehicle brands by type
       tags:
       - Brands
@@ -3428,6 +3640,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleBrandResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: Get vehicle brand details
       tags:
       - Brands
@@ -3454,6 +3678,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.ListVehicleModelsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: List vehicle models by brand
       tags:
       - Models
@@ -3485,6 +3717,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleModelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: Get vehicle model details
       tags:
       - Models
@@ -3516,6 +3760,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.ListVehicleGenerationsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: List vehicle generations by model
       tags:
       - Generations
@@ -3552,6 +3804,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleGenerationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.CustomError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.CustomError'
       summary: Get vehicle generation details
       tags:
       - Generations
