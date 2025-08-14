@@ -2106,7 +2106,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get details of a specific user vehicle",
+                "description": "Get details of a specific user vehicle (includes expanded type/brand/model/generation)",
                 "consumes": [
                     "application/json"
                 ],
@@ -5233,6 +5233,9 @@ const docTemplate = `{
             "description": "User vehicle response",
             "type": "object",
             "properties": {
+                "brand": {
+                    "$ref": "#/definitions/dto.VehicleBrandResponse"
+                },
                 "color": {
                     "description": "Color of the user vehicle",
                     "type": "string"
@@ -5240,6 +5243,9 @@ const docTemplate = `{
                 "current_mileage": {
                     "description": "Current mileage of the user vehicle",
                     "type": "integer"
+                },
+                "generation": {
+                    "$ref": "#/definitions/dto.VehicleGenerationResponse"
                 },
                 "generation_id": {
                     "description": "ID of the vehicle generation",
@@ -5253,6 +5259,9 @@ const docTemplate = `{
                     "description": "License plate of the user vehicle",
                     "type": "string"
                 },
+                "model": {
+                    "$ref": "#/definitions/dto.VehicleModelResponse"
+                },
                 "name": {
                     "description": "Name of the user vehicle",
                     "type": "string"
@@ -5264,6 +5273,14 @@ const docTemplate = `{
                 "purchase_date": {
                     "description": "Purchase date of the user vehicle",
                     "type": "string"
+                },
+                "type": {
+                    "description": "Expanded path (optional)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.VehicleTypeResponse"
+                        }
+                    ]
                 },
                 "user_id": {
                     "description": "ID of the user",

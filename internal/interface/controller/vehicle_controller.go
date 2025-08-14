@@ -341,7 +341,7 @@ func (c *VehicleController) ListUserVehicles(ctx *gin.Context) {
 }
 
 // @Summary     Get user vehicle details
-// @Description Get details of a specific user vehicle
+// @Description Get details of a specific user vehicle (includes expanded type/brand/model/generation)
 // @Tags        User - Vehicles
 // @Accept      json
 // @Produce     json

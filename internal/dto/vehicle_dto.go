@@ -337,6 +337,11 @@ type UserVehicleResponse struct {
 	CurrentMileage int `json:"current_mileage"`
 	// Purchase date of the user vehicle
 	PurchaseDate time.Time `json:"purchase_date"`
+	// Expanded path (optional)
+	Type       *VehicleTypeResponse       `json:"type,omitempty"`
+	Brand      *VehicleBrandResponse      `json:"brand,omitempty"`
+	Model      *VehicleModelResponse      `json:"model,omitempty"`
+	Generation *VehicleGenerationResponse `json:"generation,omitempty"`
 }
 
 // ListVehicleTypesResponse represents the response for listing vehicle types

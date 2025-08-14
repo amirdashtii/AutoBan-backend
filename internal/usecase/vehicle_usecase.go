@@ -884,7 +884,50 @@ func (uc *vehicleUseCase) GetUserVehicle(ctx context.Context, userID, vehicleID 
 		return nil, errors.ErrFailedToGetUserVehicle
 	}
 
-	return uc.convertToUserVehicleResponse(userVehicle), nil
+	resp := uc.convertToUserVehicleResponse(userVehicle)
+	// Enrich with expanded path objects
+	if t, b, m, g, e := uc.resolvePathForGeneration(ctx, userVehicle.GenerationID); e == nil {
+		resp.Type = t
+		resp.Brand = b
+		resp.Model = m
+		resp.Generation = g
+	} else {
+		logger.Error(e, "Failed to resolve vehicle path for generation")
+	}
+
+	return resp, nil
+}
+
+// resolvePathForGeneration resolves and converts type/brand/model/generation for a generation id
+func (uc *vehicleUseCase) resolvePathForGeneration(
+	ctx context.Context,
+	generationID uint64,
+) (*dto.VehicleTypeResponse, *dto.VehicleBrandResponse, *dto.VehicleModelResponse, *dto.VehicleGenerationResponse, error) {
+	// Generation
+	gen := entity.VehicleGeneration{BaseModel: entity.BaseModel{ID: generationID}}
+	if err := uc.vehicleRepository.GetGeneration(ctx, &gen); err != nil {
+		return nil, nil, nil, nil, err
+	}
+	genResp := uc.convertToVehicleGenerationResponse(gen)
+	// Model
+	model := entity.VehicleModel{BaseModel: entity.BaseModel{ID: gen.ModelID}}
+	if err := uc.vehicleRepository.GetModel(ctx, &model); err != nil {
+		return nil, nil, nil, nil, err
+	}
+	modelResp := uc.convertToVehicleModelResponse(model)
+	// Brand
+	brand := entity.VehicleBrand{BaseModel: entity.BaseModel{ID: model.BrandID}}
+	if err := uc.vehicleRepository.GetBrand(ctx, &brand); err != nil {
+		return nil, nil, nil, nil, err
+	}
+	brandResp := uc.convertToVehicleBrandResponse(brand)
+	// Type
+	vtype := entity.VehicleType{BaseModel: entity.BaseModel{ID: brand.VehicleTypeID}}
+	if err := uc.vehicleRepository.GetVehicleType(ctx, &vtype); err != nil {
+		return nil, nil, nil, nil, err
+	}
+	typeResp := uc.convertToVehicleTypeResponse(vtype)
+	return typeResp, brandResp, modelResp, genResp, nil
 }
 
 func (uc *vehicleUseCase) UpdateUserVehicle(ctx context.Context, userID, vehicleID string, request *dto.UpdateUserVehicleRequest) (*dto.UserVehicleResponse, error) {

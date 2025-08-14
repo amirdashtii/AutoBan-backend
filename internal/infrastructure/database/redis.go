@@ -2,11 +2,25 @@ package database
 
 import (
 	"context"
+	"sync"
 
 	"github.com/amirdashtii/AutoBan/config"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
 	"github.com/redis/go-redis/v9"
 )
+
+var (
+	redisClient *redis.Client
+	redisOnce   sync.Once
+)
+
+// GetRedisClient returns a singleton Redis client instance
+func GetRedisClient() *redis.Client {
+	redisOnce.Do(func() {
+		redisClient = ConnectRedis()
+	})
+	return redisClient
+}
 
 func ConnectRedis() *redis.Client {
 	cfg, err := config.GetConfig()
@@ -27,5 +41,6 @@ func ConnectRedis() *redis.Client {
 		return nil
 	}
 
+	logger.Info("Connected to Redis successfully")
 	return client
 }

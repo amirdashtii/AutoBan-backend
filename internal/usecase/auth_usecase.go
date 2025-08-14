@@ -119,7 +119,7 @@ func (a *authUseCase) Login(ctx context.Context, request *dto.LoginRequest) (*dt
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
 	if err != nil {
 		logger.Error(err, "Failed to compare hash and password")
-		return nil, err
+		return nil, errors.ErrInvalidPhoneNumberOrPassword
 	}
 
 	deviceID := generateDeviceID()

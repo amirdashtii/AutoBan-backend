@@ -2,9 +2,12 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
 	"github.com/amirdashtii/AutoBan/internal/infrastructure/database"
+	"github.com/amirdashtii/AutoBan/pkg/logger"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -48,12 +51,17 @@ type VehicleRepository interface {
 }
 
 type vehicleRepository struct {
-	db *gorm.DB
+	db    *gorm.DB
+	cache CacheRepository
 }
 
 func NewVehicleRepository() VehicleRepository {
 	db := database.ConnectDatabase()
-	return &vehicleRepository{db: db}
+	cache := NewCacheRepository()
+	return &vehicleRepository{
+		db:    db,
+		cache: cache,
+	}
 }
 
 // Vehicle Types
@@ -151,33 +159,134 @@ func (r *vehicleRepository) DeleteGeneration(ctx context.Context, generation *en
 	return r.db.WithContext(ctx).Delete(generation).Error
 }
 
-// User Vehicles
+// User Vehicles with caching
 func (r *vehicleRepository) CreateUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Create(userVehicle).Error
+	err := r.db.WithContext(ctx).Create(userVehicle).Error
+	if err != nil {
+		return err
+	}
+
+	// Invalidate user vehicles cache
+	userCacheKey := BuildCacheKey(CacheKeyUserVehicles, userVehicle.UserID.String())
+	r.cache.Delete(ctx, userCacheKey)
+	
+	return nil
 }
 
 func (r *vehicleRepository) ListUserVehicles(ctx context.Context, userID uuid.UUID, userVehicles *[]entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&userVehicles).Error
+	// Try cache first
+	cacheKey := BuildCacheKey(CacheKeyUserVehicles, userID.String())
+	
+	err := r.cache.Get(ctx, cacheKey, userVehicles)
+	if err == nil {
+		logger.Info(fmt.Sprintf("User vehicles retrieved from cache for user: %s", userID.String()))
+		return nil
+	}
+
+	// Cache miss - fetch from database
+	err = r.db.WithContext(ctx).Where("user_id = ?", userID).Find(userVehicles).Error
+	if err != nil {
+		return err
+	}
+
+	// Cache for 5 minutes
+	cacheErr := r.cache.SetWithTags(ctx, cacheKey, *userVehicles, 5*time.Minute, []string{CacheTagUserData})
+	if cacheErr != nil {
+		logger.Error(cacheErr, "Failed to cache user vehicles")
+	}
+
+	return nil
 }
 
 func (r *vehicleRepository) GetUserVehicle(ctx context.Context, userID uuid.UUID, vehicleId uint64, userVehicle *entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Where("user_id = ? AND id = ?", userID, vehicleId).First(userVehicle).Error
+	// Try cache first
+	cacheKey := BuildCacheKey(CacheKeyUserVehicles, userID.String(), fmt.Sprintf("%d", vehicleId))
+	
+	err := r.cache.Get(ctx, cacheKey, userVehicle)
+	if err == nil {
+		logger.Info(fmt.Sprintf("User vehicle retrieved from cache: %d", vehicleId))
+		return nil
+	}
+
+	// Cache miss - fetch from database
+	err = r.db.WithContext(ctx).Where("user_id = ? AND id = ?", userID, vehicleId).First(userVehicle).Error
+	if err != nil {
+		return err
+	}
+
+	// Cache for 10 minutes
+	cacheErr := r.cache.SetWithTags(ctx, cacheKey, *userVehicle, 10*time.Minute, []string{CacheTagUserData})
+	if cacheErr != nil {
+		logger.Error(cacheErr, "Failed to cache user vehicle")
+	}
+
+	return nil
 }
 
 func (r *vehicleRepository) UpdateUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Model(userVehicle).Updates(userVehicle).Error
+	err := r.db.WithContext(ctx).Model(userVehicle).Updates(userVehicle).Error
+	if err != nil {
+		return err
+	}
+
+	// Invalidate related caches
+	userCacheKey := BuildCacheKey(CacheKeyUserVehicles, userVehicle.UserID.String())
+	vehicleCacheKey := BuildCacheKey(CacheKeyUserVehicles, userVehicle.UserID.String(), fmt.Sprintf("%d", userVehicle.ID))
+	
+	r.cache.Delete(ctx, userCacheKey)
+	r.cache.Delete(ctx, vehicleCacheKey)
+	
+	return nil
 }
 
 func (r *vehicleRepository) DeleteUserVehicle(ctx context.Context, userVehicle *entity.UserVehicle) error {
-	return r.db.WithContext(ctx).Delete(userVehicle).Error
+	err := r.db.WithContext(ctx).Delete(userVehicle).Error
+	if err != nil {
+		return err
+	}
+
+	// Invalidate related caches
+	userCacheKey := BuildCacheKey(CacheKeyUserVehicles, userVehicle.UserID.String())
+	vehicleCacheKey := BuildCacheKey(CacheKeyUserVehicles, userVehicle.UserID.String(), fmt.Sprintf("%d", userVehicle.ID))
+	
+	r.cache.Delete(ctx, userCacheKey)
+	r.cache.Delete(ctx, vehicleCacheKey)
+	
+	return nil
 }
 
-// Complete hierarchy methods
+// Complete hierarchy methods with caching
 func (r *vehicleRepository) GetCompleteVehicleHierarchy(ctx context.Context, vehicleTypes *[]entity.VehicleType) error {
-	err := r.db.WithContext(ctx).
+	// Try to get from cache first
+	cacheKey := BuildCacheKey(CacheKeyVehicleHierarchy)
+	
+	err := r.cache.Get(ctx, cacheKey, vehicleTypes)
+	if err == nil {
+		logger.Info("Vehicle hierarchy retrieved from cache")
+		return nil
+	}
+
+	// Cache miss - fetch from database
+	logger.Info("Cache miss for vehicle hierarchy, fetching from database")
+	
+	err = r.db.WithContext(ctx).
 		Preload("VehicleBrands").
 		Preload("VehicleBrands.VehicleModels").
 		Preload("VehicleBrands.VehicleModels.VehicleGenerations").
-		Find(&vehicleTypes).Error
-	return err
+		Find(vehicleTypes).Error
+	
+	if err != nil {
+		logger.Error(err, "Failed to fetch vehicle hierarchy from database")
+		return err
+	}
+
+	// Cache the result for 1 hour (vehicle hierarchy rarely changes)
+	cacheErr := r.cache.SetWithTags(ctx, cacheKey, *vehicleTypes, time.Hour, []string{CacheTagVehicleData, CacheTagStaticData})
+	if cacheErr != nil {
+		logger.Error(cacheErr, "Failed to cache vehicle hierarchy")
+		// Don't return error, just log it
+	}
+
+	logger.Info("Vehicle hierarchy fetched from database and cached")
+	return nil
 }

@@ -44,6 +44,8 @@ func validateDate(fl validator.FieldLevel) bool {
 func validateIranianLicensePlate(fl validator.FieldLevel) bool {
 	licensePlate := fl.Field().String()
 
+	// پلاک موتورسیکلت
+	motorcyclePlate := regexp.MustCompile(`^\d{3}-?\d{5}$`)
 	// پلاک سفید عادی (فقط حروف مشخص شده)
 	normalWhitePlate := regexp.MustCompile(`^\d{2}[بجدسصطلقلمنوهی]\d{3}-?\d{2}$`)
 	// پلاک سفید با حرف گ (گذر موقت)
@@ -77,7 +79,8 @@ func validateIranianLicensePlate(fl validator.FieldLevel) bool {
 	// پلاک کرِم یا خاکی (ارتش)
 	armyPlate := regexp.MustCompile(`^\d{2}[ش]\d{3}-?\d{2}$`)
 
-	return normalWhitePlate.MatchString(licensePlate) ||
+	return motorcyclePlate.MatchString(licensePlate) ||
+		normalWhitePlate.MatchString(licensePlate) ||
 		temporaryPlate.MatchString(licensePlate) ||
 		disabledPlate.MatchString(licensePlate) ||
 		motorPlate.MatchString(licensePlate) ||

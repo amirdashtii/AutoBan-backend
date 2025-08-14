@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/amirdashtii/AutoBan/config"
 	"github.com/amirdashtii/AutoBan/internal/domain/entity"
@@ -44,7 +45,7 @@ func createSuperAdmin(db *gorm.DB) error {
 	return nil
 }
 
-// ConnectDatabase initializes the database connection and performs migrations
+// ConnectDatabase initializes the database connection with optimized settings
 func ConnectDatabase() *gorm.DB {
 	cfg, err := config.GetConfig()
 	if err != nil {
@@ -55,33 +56,46 @@ func ConnectDatabase() *gorm.DB {
 	once.Do(func() {
 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 			cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
+		
 		var err error
-		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{TranslateError: true})
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+			TranslateError: true,
+			// Optimize GORM settings for performance
+			PrepareStmt:                              true,  // Enable prepared statements
+			DisableForeignKeyConstraintWhenMigrating: false, // Keep FK constraints for data integrity
+		})
 		if err != nil {
 			logger.Error(err, "failed to connect database")
+			return
 		}
 
-		// Perform migrations
-		err = db.AutoMigrate(
-			&entity.User{},
-			&entity.VehicleType{},
-			&entity.VehicleBrand{},
-			&entity.VehicleModel{},
-			&entity.VehicleGeneration{},
-			&entity.UserVehicle{},
-			&entity.ServiceVisit{},
-			&entity.OilChange{},
-			&entity.OilFilter{},
-		// Add other models as needed
-		)
+		// Configure connection pool for better performance
+		sqlDB, err := db.DB()
 		if err != nil {
-			logger.Error(err, "failed to migrate database")
+			logger.Error(err, "failed to get database instance")
+			return
+		}
+
+		// Connection pool settings
+		sqlDB.SetMaxIdleConns(10)                  // Maximum number of idle connections
+		sqlDB.SetMaxOpenConns(100)                 // Maximum number of open connections
+		sqlDB.SetConnMaxLifetime(time.Hour)        // Maximum time a connection can be reused
+		sqlDB.SetConnMaxIdleTime(10 * time.Minute) // Maximum time a connection can be idle
+
+		logger.Info("Database connection pool configured successfully")
+
+		// Run migrations with indexes
+		if err := RunMigrations(db); err != nil {
+			logger.Error(err, "failed to run migrations")
+			return
 		}
 
 		// Create super admin user
 		if err := createSuperAdmin(db); err != nil {
 			logger.Error(err, "failed to create super admin user")
 		}
+
+		logger.Info("Database connected and initialized successfully")
 	})
 	return db
 }
