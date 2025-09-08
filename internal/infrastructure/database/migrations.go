@@ -97,13 +97,13 @@ func createPerformanceIndexes(db *gorm.DB) error {
 		return err
 	}
 
-	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_service_visits_visit_date ON service_visits(visit_date)").Error; err != nil {
-		logger.Error(err, "Failed to create index on service_visits.visit_date")
+	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_service_visits_service_date ON service_visits(service_date)").Error; err != nil {
+		logger.Error(err, "Failed to create index on service_visits.service_date")
 		return err
 	}
 
-	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_service_visits_mileage ON service_visits(mileage)").Error; err != nil {
-		logger.Error(err, "Failed to create index on service_visits.mileage")
+	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_service_visits_service_mileage ON service_visits(service_mileage)").Error; err != nil {
+		logger.Error(err, "Failed to create index on service_visits.service_mileage")
 		return err
 	}
 
@@ -113,8 +113,8 @@ func createPerformanceIndexes(db *gorm.DB) error {
 		return err
 	}
 
-	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_oil_changes_date ON oil_changes(date)").Error; err != nil {
-		logger.Error(err, "Failed to create index on oil_changes.date")
+	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_oil_changes_change_date ON oil_changes(change_date)").Error; err != nil {
+		logger.Error(err, "Failed to create index on oil_changes.change_date")
 		return err
 	}
 
@@ -124,8 +124,8 @@ func createPerformanceIndexes(db *gorm.DB) error {
 		return err
 	}
 
-	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_oil_filters_date ON oil_filters(date)").Error; err != nil {
-		logger.Error(err, "Failed to create index on oil_filters.date")
+	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_oil_filters_change_date ON oil_filters(change_date)").Error; err != nil {
+		logger.Error(err, "Failed to create index on oil_filters.change_date")
 		return err
 	}
 
@@ -151,7 +151,7 @@ func createPerformanceIndexes(db *gorm.DB) error {
 		return err
 	}
 
-	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_service_visits_vehicle_date ON service_visits(user_vehicle_id, visit_date DESC)").Error; err != nil {
+	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_service_visits_vehicle_date ON service_visits(user_vehicle_id, service_date DESC)").Error; err != nil {
 		logger.Error(err, "Failed to create composite index on service_visits")
 		return err
 	}
