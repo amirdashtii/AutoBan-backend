@@ -3935,7 +3935,7 @@ const docTemplate = `{
                 "license_plate": {
                     "description": "License plate of the user vehicle",
                     "type": "string",
-                    "example": "12آلف345-67"
+                    "example": "12-ب-345-67"
                 },
                 "name": {
                     "description": "Name of the user vehicle",
@@ -5071,7 +5071,7 @@ const docTemplate = `{
                 "license_plate": {
                     "description": "License plate of the user vehicle",
                     "type": "string",
-                    "example": "۱۲الف۳۴۵۶۸"
+                    "example": "12-ب-345-67"
                 },
                 "name": {
                     "description": "Name of the user vehicle",

@@ -96,7 +96,7 @@ func NewUser(phoneNumber, password string) *User {
 		},
 		PhoneNumber: phoneNumber,
 		Password:    password,
-		Status:      Deactivated,
+		Status:      Active,
 		Role:        UserRole,
 	}
 }

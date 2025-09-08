@@ -119,7 +119,7 @@ definitions:
         type: integer
       license_plate:
         description: License plate of the user vehicle
-        example: 12آلف345-67
+        example: 12-ب-345-67
         type: string
       name:
         description: Name of the user vehicle
@@ -979,7 +979,7 @@ definitions:
         type: integer
       license_plate:
         description: License plate of the user vehicle
-        example: ۱۲الف۳۴۵۶۸
+        example: 12-ب-345-67
         type: string
       name:
         description: Name of the user vehicle

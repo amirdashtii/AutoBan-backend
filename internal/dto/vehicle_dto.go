@@ -284,7 +284,7 @@ type CreateUserVehicleRequest struct {
 	// Color of the user vehicle
 	Color string `json:"color" example:"Red"`
 	// License plate of the user vehicle
-	LicensePlate string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"12آلف345-67"`
+	LicensePlate string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"12-ب-345-67"`
 	// VIN of the user vehicle
 	VIN string `json:"vin" validate:"omitempty,iranian_vin" example:"1HGCM82633A123456"`
 	// Current mileage of the user vehicle
@@ -305,7 +305,7 @@ type UpdateUserVehicleRequest struct {
 	// Color of the user vehicle
 	Color *string `json:"color" example:"Red"`
 	// License plate of the user vehicle
-	LicensePlate *string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"۱۲الف۳۴۵۶۸"`
+	LicensePlate *string `json:"license_plate" validate:"omitempty,iranian_license_plate" example:"12-ب-345-67"`
 	// VIN of the user vehicle
 	VIN *string `json:"vin" validate:"omitempty,iranian_vin" example:"1HGCM82633A123456"`
 	// Current mileage of the user vehicle

@@ -47,43 +47,40 @@ func validateIranianLicensePlate(fl validator.FieldLevel) bool {
 	// پلاک موتورسیکلت
 	motorcyclePlate := regexp.MustCompile(`^\d{3}-?\d{5}$`)
 	// پلاک سفید عادی (فقط حروف مشخص شده)
-	normalWhitePlate := regexp.MustCompile(`^\d{2}[بجدسصطلقلمنوهی]\d{3}-?\d{2}$`)
+	normalWhitePlate := regexp.MustCompile(`^\d{2}-[بجدسصطلقلمنوهی]-\d{3}-?\d{2}$`)
 	// پلاک سفید با حرف گ (گذر موقت)
-	temporaryPlate := regexp.MustCompile(`^\d{2}گ\d{3}-?\d{2}$`)
+	temporaryPlate := regexp.MustCompile(`^\d{2}-گ-\d{3}-?\d{2}$`)
 	// پلاک سفید با حرف ژ (معلولین و جانبازان)
-	disabledPlate := regexp.MustCompile(`^\d{2}ژ\d{3}-?\d{2}$`)
-	// پلاک موتورسیکلت (۸ رقم)
-	motorPlate := regexp.MustCompile(`^\d{8}$`)
+	disabledPlate := regexp.MustCompile(`^\d{2}-ژ-\d{3}-?\d{2}$`)
 	// پلاک قرمز تشریفات دولتی
-	ceremonyPlate := regexp.MustCompile(`^تشریفات\d{4}$`)
+	ceremonyPlate := regexp.MustCompile(`^\d{2}-تشریفات-\d{4}$`)
 	// پلاک قرمز با حرف الف (دولتی)
-	governmentPlate := regexp.MustCompile(`^\d{2}الف\d{3}-?\d{2}$`)
+	governmentPlate := regexp.MustCompile(`^\d{2}-الف-\d{3}-?\d{2}$`)
 	// پلاک سبز با حرف پ (فراجا، راهور، پلیس مبارزه با مواد مخدر)
-	policePlate := regexp.MustCompile(`^\d{2}پ\d{3}-?\d{2}$`)
+	policePlate := regexp.MustCompile(`^\d{2}-پ-\d{3}-?\d{2}$`)
 	// پلاک سبز با حرف ث (سپاه پاسداران)
-	irgcPlate := regexp.MustCompile(`^\d{2}ث\d{3}-?\d{2}$`)
+	irgcPlate := regexp.MustCompile(`^\d{2}-ث-\d{3}-?\d{2}$`)
 	// پلاک زرد با حرف ک (وسایل کشاورزی)
-	agriculturalPlate := regexp.MustCompile(`^\d{2}ک\d{3}-?\d{2}$`)
+	agriculturalPlate := regexp.MustCompile(`^\d{2}-ک-\d{3}-?\d{2}$`)
 	// پلاک زرد با حرف ع (حمل‌ونقل عمومی)
-	publicTransportPlate := regexp.MustCompile(`^\d{2}ع\d{3}-?\d{2}$`)
+	publicTransportPlate := regexp.MustCompile(`^\d{2}-ع-\d{3}-?\d{2}$`)
 	// پلاک زرد با حرف ت (تاکسی)
-	taxiPlate := regexp.MustCompile(`^\d{2}ت\d{3}-?\d{2}$`)
+	taxiPlate := regexp.MustCompile(`^\d{2}-ت-\d{3}-?\d{2}$`)
 	// پلاک آبی با حرف D (دیپلمات)
-	diplomatPlate := regexp.MustCompile(`^\d{2}T\d{3}-\d{2}$`)
+	diplomatPlate := regexp.MustCompile(`^\d{2}-T-\d{3}-\d{2}$`)
 	// پلاک آبی با حرف S (سفارت)
-	embassyPlate := regexp.MustCompile(`^\d{2}S\d{3}-\d{2}$`)
+	embassyPlate := regexp.MustCompile(`^\d{2}-S-\d{3}-\d{2}$`)
 	// پلاک آبی با حرف ز (وزارت دفاع)
-	defensePlate := regexp.MustCompile(`^\d{2}ز\d{3}-?\d{2}$`)
+	defensePlate := regexp.MustCompile(`^\d{2}-ز-\d{3}-?\d{2}$`)
 	// پلاک آبی با حرف ف (ستاد کل نیروهای مسلح)
-	militaryStaffPlate := regexp.MustCompile(`^\d{2}ف\d{3}-?\d{2}$`)
+	militaryStaffPlate := regexp.MustCompile(`^\d{2}-ف-\d{3}-?\d{2}$`)
 	// پلاک کرِم یا خاکی (ارتش)
-	armyPlate := regexp.MustCompile(`^\d{2}[ش]\d{3}-?\d{2}$`)
+	armyPlate := regexp.MustCompile(`^\d{2}-ش-\d{3}-?\d{2}$`)
 
 	return motorcyclePlate.MatchString(licensePlate) ||
 		normalWhitePlate.MatchString(licensePlate) ||
 		temporaryPlate.MatchString(licensePlate) ||
 		disabledPlate.MatchString(licensePlate) ||
-		motorPlate.MatchString(licensePlate) ||
 		ceremonyPlate.MatchString(licensePlate) ||
 		governmentPlate.MatchString(licensePlate) ||
 		policePlate.MatchString(licensePlate) ||
