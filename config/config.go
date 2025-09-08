@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"sync"
+	"strings"
 
 	"github.com/amirdashtii/AutoBan/internal/errors"
 	"github.com/amirdashtii/AutoBan/pkg/logger"
@@ -64,6 +65,10 @@ func loadConfig() (*Config, error) {
 	// Set default values
 	setDefaultValues(v)
 
+	// Read environment variables directly (highest priority after explicit Set)
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	v.AutomaticEnv()
+
 	// Read from YAML file first (lower priority)
 	readYAMLConfig(v)
 
@@ -118,25 +123,27 @@ func readEnvConfig(v *viper.Viper) {
 	err := v.ReadInConfig()
 	if err != nil {
 		logger.Info("Failed to read env config")
-	} else {
-		v.Set("environment", v.GetString("ENVIRONMENT"))
-
-		v.Set("server.port", v.GetString("SERVER_PORT"))
-		v.Set("server.address", v.GetString("SERVER_ADDRESS"))
-
-		v.Set("db.host", v.GetString("DB_HOST"))
-		v.Set("db.port", v.GetString("DB_PORT"))
-		v.Set("db.user", v.GetString("DB_USER"))
-		v.Set("db.password", v.GetString("DB_PASSWORD"))
-		v.Set("db.name", v.GetString("DB_NAME"))
-
-		v.Set("redis.addr", v.GetString("REDIS_ADDR"))
-		v.Set("redis.password", v.GetString("REDIS_PASSWORD"))
-		v.Set("redis.db", v.GetString("REDIS_DB"))
-
-		v.Set("jwt.secret", v.GetString("JWT_SECRET"))
-
-		v.Set("sms.base_url", v.GetString("SMS_BASE_URL"))
-		v.Set("sms.x_api_key", v.GetString("SMS_X_API_KEY"))
 	}
+
+	// Map specific uppercase env vars to nested keys (if present)
+	if v.IsSet("ENVIRONMENT") {
+		v.Set("environment", v.GetString("ENVIRONMENT"))
+	}
+	if v.IsSet("SERVER_PORT") { v.Set("server.port", v.GetString("SERVER_PORT")) }
+	if v.IsSet("SERVER_ADDRESS") { v.Set("server.address", v.GetString("SERVER_ADDRESS")) }
+
+	if v.IsSet("DB_HOST") { v.Set("db.host", v.GetString("DB_HOST")) }
+	if v.IsSet("DB_PORT") { v.Set("db.port", v.GetString("DB_PORT")) }
+	if v.IsSet("DB_USER") { v.Set("db.user", v.GetString("DB_USER")) }
+	if v.IsSet("DB_PASSWORD") { v.Set("db.password", v.GetString("DB_PASSWORD")) }
+	if v.IsSet("DB_NAME") { v.Set("db.name", v.GetString("DB_NAME")) }
+
+	if v.IsSet("REDIS_ADDR") { v.Set("redis.addr", v.GetString("REDIS_ADDR")) }
+	if v.IsSet("REDIS_PASSWORD") { v.Set("redis.password", v.GetString("REDIS_PASSWORD")) }
+	if v.IsSet("REDIS_DB") { v.Set("redis.db", v.GetString("REDIS_DB")) }
+
+	if v.IsSet("JWT_SECRET") { v.Set("jwt.secret", v.GetString("JWT_SECRET")) }
+
+	if v.IsSet("SMS_BASE_URL") { v.Set("sms.base_url", v.GetString("SMS_BASE_URL")) }
+	if v.IsSet("SMS_X_API_KEY") { v.Set("sms.x_api_key", v.GetString("SMS_X_API_KEY")) }
 }
