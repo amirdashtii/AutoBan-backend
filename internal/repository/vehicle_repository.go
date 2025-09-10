@@ -257,19 +257,9 @@ func (r *vehicleRepository) DeleteUserVehicle(ctx context.Context, userVehicle *
 
 // Complete hierarchy methods with caching
 func (r *vehicleRepository) GetCompleteVehicleHierarchy(ctx context.Context, vehicleTypes *[]entity.VehicleType) error {
-	// Try to get from cache first
-	cacheKey := BuildCacheKey(CacheKeyVehicleHierarchy)
-	
-	err := r.cache.Get(ctx, cacheKey, vehicleTypes)
-	if err == nil {
-		logger.Info("Vehicle hierarchy retrieved from cache")
-		return nil
-	}
 
-	// Cache miss - fetch from database
-	logger.Info("Cache miss for vehicle hierarchy, fetching from database")
 	
-	err = r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Preload("VehicleBrands").
 		Preload("VehicleBrands.VehicleModels").
 		Preload("VehicleBrands.VehicleModels.VehicleGenerations").
@@ -278,13 +268,6 @@ func (r *vehicleRepository) GetCompleteVehicleHierarchy(ctx context.Context, veh
 	if err != nil {
 		logger.Error(err, "Failed to fetch vehicle hierarchy from database")
 		return err
-	}
-
-	// Cache the result for 1 hour (vehicle hierarchy rarely changes)
-	cacheErr := r.cache.SetWithTags(ctx, cacheKey, *vehicleTypes, time.Hour, []string{CacheTagVehicleData, CacheTagStaticData})
-	if cacheErr != nil {
-		logger.Error(cacheErr, "Failed to cache vehicle hierarchy")
-		// Don't return error, just log it
 	}
 
 	logger.Info("Vehicle hierarchy fetched from database and cached")

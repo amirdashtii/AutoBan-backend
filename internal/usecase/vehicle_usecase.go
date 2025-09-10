@@ -1042,15 +1042,17 @@ func (uc *vehicleUseCase) GetCompleteVehicleHierarchy(ctx context.Context) (*dto
 	if err != nil {
 		if err.Error() == "redis: nil" {
 			logger.Error(err, "Failed to get vehicle hierarchy from Redis")
-		} else if err.Error() == "json: cannot unmarshal string into Go struct field VehicleType.VehicleBrands of type []entity.VehicleBrand" {
-			logger.Error(err, "Failed to unmarshal vehicle hierarchy")
-		} else {
-			logger.Error(err, "Failed to get vehicle hierarchy from Redis")
-		}
+			} else if err.Error() == "json: cannot unmarshal string into Go struct field VehicleType.VehicleBrands of type []entity.VehicleBrand" {
+				logger.Error(err, "Failed to unmarshal vehicle hierarchy")
+				} else {
+					logger.Error(err, "Failed to get vehicle hierarchy from Redis")
+				}
 	} else {
-		// Cache hit - convert to response
-		logger.Info("Vehicle hierarchy retrieved from cache")
-		return uc.convertToHierarchyResponse(vehicleTypes), nil
+		if len(vehicleTypes) > 0 {
+			// Cache hit - convert to response
+			logger.Info("Vehicle hierarchy retrieved from cache")
+			return uc.convertToHierarchyResponse(vehicleTypes), nil
+		}
 	}
 
 	// Cache miss - query database
