@@ -40,6 +40,8 @@ type UpdateProfileRequest struct {
 type UpdateProfileResponse struct {
 	// User's ID
 	ID uuid.UUID `json:"id" example:"123e4567-e89b-12d3-a456-426614174000"`
+	// User's phone number
+	PhoneNumber string `json:"phone_number"`
 	// User's first name (optional)
 	FirstName string `json:"first_name" example:"John"`
 	// User's last name (optional)
@@ -47,7 +49,11 @@ type UpdateProfileResponse struct {
 	// User's email address (optional)
 	Email string `json:"email" example:"john.doe@example.com"`
 	// User's birthday (optional)
-	Birthday string `json:"birthday" example:"1990-01-01"`
+	Birthday  string `json:"birthday" example:"1990-01-01"`
+	Status    string `json:"status"`
+	Role      string `json:"role"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 // UpdatePasswordRequest represents the request for updating user password

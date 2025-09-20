@@ -105,12 +105,26 @@ func (u *userUseCase) UpdateProfile(ctx context.Context, userID string, request 
 		return nil, errors.ErrFailedToUpdateProfile
 	}
 
+	// Get the updated user with all fields
+	updatedUser := entity.User{}
+	updatedUser.ID = userUUID
+	err = u.userRepository.GetProfile(ctx, &updatedUser)
+	if err != nil {
+		logger.Error(err, "Failed to get updated user")
+		return nil, errors.ErrFailedToGetProfile
+	}
+
 	return &dto.UpdateProfileResponse{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Birthday:  user.Birthday.Format("2006-01-02"),
+		ID:          updatedUser.ID,
+		PhoneNumber: updatedUser.PhoneNumber,
+		FirstName:   updatedUser.FirstName,
+		LastName:    updatedUser.LastName,
+		Email:       updatedUser.Email,
+		Birthday:    updatedUser.Birthday.Format("2006-01-02"),
+		Status:      updatedUser.Status.String(),
+		Role:        updatedUser.Role.String(),
+		CreatedAt:   updatedUser.CreatedAt.Format("2006-01-02"),
+		UpdatedAt:   updatedUser.UpdatedAt.Format("2006-01-02"),
 	}, nil
 }
 
